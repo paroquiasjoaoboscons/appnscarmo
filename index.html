@@ -38,38 +38,21 @@
 
     <script>
         // Este código busca a liturgia do dia automaticamente
-        async function carregarLiturgia() {
-            const container = document.getElementById('liturgia-conteudo');
-            try {
-                // API pública gratuita de liturgia
-                const resposta = await fetch('https://liturgia.up.railway.app/v2/');
-                if (!resposta.ok) throw new Error('Erro na resposta');
-                const dados = await resposta.json();
+        <script>
+    async function carregarLiturgia() {
+        const container = document.getElementById('liturgia-conteudo');
+        try {
+            const resposta = await fetch('https://liturgia.up.railway.app/v2/');
+            if (!resposta.ok) throw new Error('Erro na resposta');
+            const dados = await resposta.json();
 
-                let html = '';
-                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
-                if (dados.data) html += `<p><strong>Data:</strong> ${dados.data}</p>`;
-
-                if (dados.leituras && dados.leituras.length > 0) {
-                    dados.leituras.forEach(leitura => {
-                        html += `
-                            <div class="leitura">
-                                <p class="titulo">${leitura.titulo}</p>
-                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto}</p>
-                            </div>
-                        `;
-                    });
-                } else {
-                    html += '<p>Não foi possível carregar as leituras de hoje.</p>';
-                }
-
-                container.innerHTML = html;
-            } catch (erro) {
-                container.innerHTML = '<p style="color: red;">Não foi possível carregar a liturgia agora. Verifique sua conexão.</p>';
-            }
+            // Mostra os dados crus para sabermos o que a API retornou
+            container.innerHTML = `<pre>${JSON.stringify(dados, null, 2)}</pre>`;
+        } catch (erro) {
+            container.innerHTML = '<p style="color: red;">Ainda não foi possível carregar. Detalhe: ' + erro.message + '</p>';
         }
-
-        carregarLiturgia();
-    </script>
+    }
+    carregarLiturgia();
+</script>
 </body>
 </html>
