@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade Nossa Senhora do Carmo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { color: #5a3e7a; text-align: center; }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .titulo { color: #8a2be2; margin-bottom: 5px; }
+        .info { font-weight: bold; color: #666; font-size: 0.9em; }
+        .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Comunidade Nossa Senhora do Carmo</h1>
+
+    <div class="card">
+        <h2>Liturgia Diária</h2>
+        <div id="liturgia-conteudo">
+            <p>Carregando a liturgia de hoje...</p>
+        </div>
+    </div>
+
+    <script>
+        // Este código busca a liturgia do dia automaticamente
+        async function carregarLiturgia() {
+            const container = document.getElementById('liturgia-conteudo');
+            try {
+                // API pública gratuita de liturgia
+                const resposta = await fetch('https://liturgia.cloudhub.ia.br/v1/liturgia');
+                if (!resposta.ok) throw new Error('Erro na resposta');
+                const dados = await resposta.json();
+
+                let html = '';
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+                if (dados.data) html += `<p><strong>Data:</strong> ${dados.data}</p>`;
+
+                if (dados.leituras && dados.leituras.length > 0) {
+                    dados.leituras.forEach(leitura => {
+                        html += `
+                            <div class="leitura">
+                                <p class="titulo">${leitura.titulo}</p>
+                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<p>Não foi possível carregar as leituras de hoje.</p>';
+                }
+
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = '<p style="color: red;">Não foi possível carregar a liturgia agora. Verifique sua conexão.</p>';
+            }
+        }
+
+        carregarLiturgia();
+    </script>
+</body>
+</html>
