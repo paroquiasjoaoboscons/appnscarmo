@@ -28,47 +28,38 @@
             const container = document.getElementById('liturgia-conteudo');
             
             try {
-                // API pública da Canção Nova (geralmente muito estável)
-                const resposta = await fetch('https://liturgia.cancaonova.com/api/liturgia');
+                // Lê o arquivo liturgia.json que está na mesma pasta
+                const resposta = await fetch('liturgia.json');
                 
                 if (!resposta.ok) {
-                    throw new Error('A API retornou status ' + resposta.status);
+                    throw new Error('Arquivo liturgia.json não encontrado.');
                 }
                 
                 const dados = await resposta.json();
 
                 let html = '';
                 
-                // Mostra a data e a cor se existirem
                 if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
                 if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
-
-                // A Canção Nova retorna um objeto com as leituras
-                if (dados.leituras) {
-                    // Primeira Leitura
-                    if (dados.leituras.primeiraLeitura) {
-                        const p = dados.leituras.primeiraLeitura;
-                        html += `<div class="leitura"><p class="titulo">${p.titulo || 'Primeira Leitura'}</p><p style="font-size: 0.9em; white-space: pre-line;">${p.texto}</p></div>`;
-                    }
-                    // Salmo
-                    if (dados.leituras.salmo) {
-                        const s = dados.leituras.salmo;
-                        html += `<div class="leitura"><p class="titulo">Salmo Responsorial</p><p style="font-size: 0.9em; white-space: pre-line;">${s.texto}</p></div>`;
-                    }
-                    // Evangelho
-                    if (dados.leituras.evangelho) {
-                        const e = dados.leituras.evangelho;
-                        html += `<div class="leitura"><p class="titulo">${e.titulo || 'Evangelho'}</p><p style="font-size: 0.9em; white-space: pre-line;">${e.texto}</p></div>`;
-                    }
+                
+                if (dados.leituras && dados.leituras.length > 0) {
+                    dados.leituras.forEach(function(leitura) {
+                        html += `
+                            <div class="leitura">
+                                <p class="titulo">${leitura.titulo || 'Leitura'}</p>
+                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto || ''}</p>
+                            </div>
+                        `;
+                    });
                 } else {
-                    html += '<p style="color: orange;">A liturgia foi carregada, mas o formato não foi reconhecido.</p>';
+                    html += '<p style="color: orange;">Nenhuma leitura encontrada no arquivo.</p>';
                 }
 
                 container.innerHTML = html;
 
             } catch (erro) {
                 container.innerHTML = `
-                    <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia agora.</p>
+                    <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia.</p>
                     <p style="font-size: 0.8em; color: #777;">Detalhe: ${erro.message}</p>
                 `;
             }
