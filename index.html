@@ -28,36 +28,40 @@
             const container = document.getElementById('liturgia-conteudo');
             
             try {
-                const resposta = await fetch('https://liturgia.cloudhub.ia.br/v1/liturgia');
+                // API pública da Canção Nova (geralmente muito estável)
+                const resposta = await fetch('https://liturgia.cancaonova.com/api/liturgia');
                 
                 if (!resposta.ok) {
                     throw new Error('A API retornou status ' + resposta.status);
                 }
                 
                 const dados = await resposta.json();
-                
-                // A API retorna os dados dentro de "liturgy"
-                const liturgia = dados.liturgy || dados;
 
                 let html = '';
                 
-                // Data e Cor Litúrgica
-                if (liturgia.date) html += `<p class="info">Data: ${liturgia.date}</p>`;
-                if (liturgia.liturgicalColor) html += `<p class="info">Cor Litúrgica: ${liturgia.liturgicalColor}</p>`;
-                if (liturgia.celebration) html += `<p class="info">${liturgia.celebration}</p>`;
-                
-                // As leituras vêm num array chamado "readings"
-                if (liturgia.readings && liturgia.readings.length > 0) {
-                    liturgia.readings.forEach(function(leitura) {
-                        html += `
-                            <div class="leitura">
-                                <p class="titulo">${leitura.title || 'Leitura'}</p>
-                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.text || ''}</p>
-                            </div>
-                        `;
-                    });
+                // Mostra a data e a cor se existirem
+                if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+
+                // A Canção Nova retorna um objeto com as leituras
+                if (dados.leituras) {
+                    // Primeira Leitura
+                    if (dados.leituras.primeiraLeitura) {
+                        const p = dados.leituras.primeiraLeitura;
+                        html += `<div class="leitura"><p class="titulo">${p.titulo || 'Primeira Leitura'}</p><p style="font-size: 0.9em; white-space: pre-line;">${p.texto}</p></div>`;
+                    }
+                    // Salmo
+                    if (dados.leituras.salmo) {
+                        const s = dados.leituras.salmo;
+                        html += `<div class="leitura"><p class="titulo">Salmo Responsorial</p><p style="font-size: 0.9em; white-space: pre-line;">${s.texto}</p></div>`;
+                    }
+                    // Evangelho
+                    if (dados.leituras.evangelho) {
+                        const e = dados.leituras.evangelho;
+                        html += `<div class="leitura"><p class="titulo">${e.titulo || 'Evangelho'}</p><p style="font-size: 0.9em; white-space: pre-line;">${e.texto}</p></div>`;
+                    }
                 } else {
-                    html += '<p style="color: orange;">A liturgia foi carregada, mas não encontrei as leituras.</p>';
+                    html += '<p style="color: orange;">A liturgia foi carregada, mas o formato não foi reconhecido.</p>';
                 }
 
                 container.innerHTML = html;
