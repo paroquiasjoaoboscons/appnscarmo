@@ -5,22 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidade Nossa Senhora do Carmo</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; padding: 20px; max-width: 600px; margin: 0 auto; }
         h1 { color: #5a3e7a; text-align: center; }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; }
         .titulo { color: #8a2be2; margin-bottom: 5px; font-weight: bold; }
         .info { font-weight: bold; color: #666; font-size: 0.9em; }
         .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
@@ -41,7 +28,6 @@
             const container = document.getElementById('liturgia-conteudo');
             
             try {
-                // API da CNBB (liturgia-catolica-api)
                 const resposta = await fetch('https://liturgia.cloudhub.ia.br/v1/liturgia');
                 
                 if (!resposta.ok) {
@@ -50,39 +36,28 @@
                 
                 const dados = await resposta.json();
                 
-                // A API retorna os dados dentro de "liturgia"
-                const liturgia = dados.liturgia || dados;
+                // A API retorna os dados dentro de "liturgy"
+                const liturgia = dados.liturgy || dados;
 
                 let html = '';
                 
                 // Data e Cor Litúrgica
-                if (liturgia.data) html += `<p class="info">Data: ${liturgia.data}</p>`;
-                if (liturgia.cor) html += `<p class="info">Cor Litúrgica: ${liturgia.cor}</p>`;
-                if (liturgia.titulo) html += `<p class="info">${liturgia.titulo}</p>`;
+                if (liturgia.date) html += `<p class="info">Data: ${liturgia.date}</p>`;
+                if (liturgia.liturgicalColor) html += `<p class="info">Cor Litúrgica: ${liturgia.liturgicalColor}</p>`;
+                if (liturgia.celebration) html += `<p class="info">${liturgia.celebration}</p>`;
                 
-                // Primeira Leitura
-                if (liturgia.leituras && liturgia.leituras.length > 0) {
-                    liturgia.leituras.forEach(function(leitura) {
+                // As leituras vêm num array chamado "readings"
+                if (liturgia.readings && liturgia.readings.length > 0) {
+                    liturgia.readings.forEach(function(leitura) {
                         html += `
                             <div class="leitura">
-                                <p class="titulo">${leitura.titulo || 'Leitura'}</p>
-                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto || ''}</p>
+                                <p class="titulo">${leitura.title || 'Leitura'}</p>
+                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.text || ''}</p>
                             </div>
                         `;
                     });
-                } else if (liturgia.primeiraLeitura) {
-                    // Fallback para formato alternativo
-                    html += `
-                        <div class="leitura">
-                            <p class="titulo">Primeira Leitura</p>
-                            <p style="font-size: 0.9em; white-space: pre-line;">${liturgia.primeiraLeitura.texto || liturgia.primeiraLeitura}</p>
-                        </div>
-                    `;
-                }
-
-                // Se não conseguiu montar nada
-                if (html === '') {
-                    html = '<p style="color: orange;">A liturgia foi carregada, mas o formato dos dados não foi reconhecido.</p>';
+                } else {
+                    html += '<p style="color: orange;">A liturgia foi carregada, mas não encontrei as leituras.</p>';
                 }
 
                 container.innerHTML = html;
@@ -91,13 +66,11 @@
                 container.innerHTML = `
                     <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia agora.</p>
                     <p style="font-size: 0.8em; color: #777;">Detalhe: ${erro.message}</p>
-                    <p style="font-size: 0.8em; color: #777;">Tente novamente em alguns minutos.</p>
                 `;
             }
         }
 
         carregarLiturgia();
     </script>
-
 </body>
 </html>
