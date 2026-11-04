@@ -1,0 +1,70 @@
+---
+// AQUI É O "CÉREBRO" (Roda no servidor, não aparece para o usuário)
+// Vamos buscar a liturgia de hoje na API pública gratuita
+let liturgia = null;
+let erro = null;
+
+try {
+  const resposta = await fetch('https://liturgia.cloudhub.ia.br/v1/liturgia');
+  if (resposta.ok) {
+    liturgia = await resposta.json();
+  } else {
+    erro = "Não foi possível carregar a liturgia agora.";
+  }
+} catch (e) {
+  erro = "Sem conexão com a internet ou serviço indisponível.";
+}
+---
+
+<!-- AQUI É O "ROSTO" (O que o usuário vê na tela) -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Paróquia - Nossa Senhora do Carmo</title>
+    <style>
+      /* Estilos simples para ficar bonito no celular */
+      body {
+        font-family: sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      h1 { color: #5a3e7a; text-align: center; }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-top: 20px;
+      }
+      .titulo-liturgia { color: #8a2be2; margin-bottom: 5px; }
+      .cor-liturgica { font-weight: bold; color: #666; font-size: 0.9em; }
+    </style>
+  </head>
+  <body>
+    <h1>Comunidade Nossa Senhora do Carmo</h1>
+
+    <div class="card">
+      <h2>Liturgia Diária</h2>
+      
+      {erro && <p style="color: red;">{erro}</p>}
+
+      {liturgia && (
+        <div>
+          <p class="cor-liturgica">Cor Litúrgica: {liturgia.cor || 'Não informada'}</p>
+          <p><strong>Data:</strong> {liturgia.data || 'Hoje'}</p>
+          
+          {liturgia.leituras && liturgia.leituras.map((leitura) => (
+            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+              <p class="titulo-liturgia">{leitura.titulo}</p>
+              <p style="font-size: 0.9em; white-space: pre-line;">{leitura.texto}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </body>
+</html>
