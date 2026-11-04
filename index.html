@@ -24,46 +24,56 @@
     </div>
 
     <script>
-        async function carregarLiturgia() {
-            const container = document.getElementById('liturgia-conteudo');
-            
-            try {
-                // Lê o arquivo liturgia.json que está na mesma pasta
-                const resposta = await fetch('liturgia.json');
-                
-                if (!resposta.ok) {
-                    throw new Error('Arquivo liturgia.json não encontrado.');
-                }
-                
-                const dados = await resposta.json();
+    async function carregarLiturgia() {
+    const container = document.getElementById('liturgia-conteudo');
 
-                let html = '';
-                
-                if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
-                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
-                
-                if (dados.leituras && dados.leituras.length > 0) {
-                    dados.leituras.forEach(function(leitura) {
-                        html += `
-                            <div class="leitura">
-                                <p class="titulo">${leitura.titulo || 'Leitura'}</p>
-                                <p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto || ''}</p>
-                            </div>
-                        `;
-                    });
-                } else {
-                    html += '<p style="color: orange;">Nenhuma leitura encontrada no arquivo.</p>';
-                }
+    // Aceita tanto lista quanto objeto único
+    const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
-                container.innerHTML = html;
+    const bloco = (tituloPadrao, itens) =>
+        lista(itens).map(i => `
+            <div class="leitura">
+                <p class="titulo">${i.titulo || tituloPadrao}</p>
+                ${i.referencia ? `<p class="info">${i.referencia}</p>` : ''}
+                ${i.refrao ? `<p><em>${i.refrao}</em></p>` : ''}
+                <p style="font-size: 0.9em; white-space: pre-line;">${i.texto || ''}</p>
+            </div>`).join('');
 
-            } catch (erro) {
-                container.innerHTML = `
-                    <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia.</p>
-                    <p style="font-size: 0.8em; color: #777;">Detalhe: ${erro.message}</p>
-                `;
-            }
+    try {
+        // Confirme esta URL no README do repositório Dancrf/liturgia-diaria
+        const resposta = await fetch('https://liturgia.up.railway.app/v2/');
+
+        if (!resposta.ok) {
+            throw new Error('A API retornou status ' + resposta.status);
         }
+
+        const dados = await resposta.json();
+        console.log('Resposta da API:', dados); // ajuda a conferir os nomes dos campos
+
+        let html = '';
+        if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
+        if (dados.liturgia) html += `<p class="info">${dados.liturgia}</p>`;
+        if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+
+        const l = dados.leituras;
+        if (l) {
+            html += bloco('Primeira Leitura', l.primeiraLeitura);
+            html += bloco('Salmo Responsorial', l.salmo);
+            html += bloco('Segunda Leitura', l.segundaLeitura);
+            html += bloco('Evangelho', l.evangelho);
+        } else {
+            html += '<p style="color: orange;">A liturgia foi carregada, mas o formato não foi reconhecido.</p>';
+        }
+
+        container.innerHTML = html;
+
+    } catch (erro) {
+        container.innerHTML = `
+            <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia agora.</p>
+            <p style="font-size: 0.8em; color: #777;">Detalhe: ${erro.message}</p>
+        `;
+    }
+}    
 
         carregarLiturgia();
     </script>
