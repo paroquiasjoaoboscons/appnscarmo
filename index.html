@@ -42,7 +42,7 @@
             const container = document.getElementById('liturgia-conteudo');
             try {
                 // API pública gratuita de liturgia
-                const resposta = await fetch('https://liturgia.cloudhub.ia.br/v1/liturgia');
+                const resposta = await fetch('https://liturgia.up.railway.app/v2/');
                 if (!resposta.ok) throw new Error('Erro na resposta');
                 const dados = await resposta.json();
 
