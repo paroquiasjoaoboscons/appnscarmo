@@ -21,7 +21,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             margin-top: 20px;
         }
-        .titulo { color: #8a2be2; margin-bottom: 5px; }
+        .titulo { color: #8a2be2; margin-bottom: 5px; font-weight: bold; }
         .info { font-weight: bold; color: #666; font-size: 0.9em; }
         .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
     </style>
@@ -36,94 +36,77 @@
         </div>
     </div>
 
+    <!-- O SCRIPT COMEÇA AQUI -->
     <script>
-
-      <script>
-    async function carregarLiturgia() {
-        const container = document.getElementById('liturgia-conteudo');
-        container.innerHTML = '<p>Carregando a liturgia de hoje...</p>';
-
-        // Lista de APIs para tentar (em ordem de preferência)
-        const apis = [
-            {
-                nome: 'Ora et Labora',
-                url: 'https://liturgia.cloudhub.ia.br',
-                parser: function(dados) {
-                    // Formato esperado: { liturgia: { ... } } ou dados diretos
-                    const l = dados.liturgia || dados;
-                    let html = '';
-                    if (l.data) html += `<p class="info">Data: ${l.data}</p>`;
-                    if (l.cor) html += `<p class="info">Cor Litúrgica: ${l.cor}</p>`;
-                    
-                    if (l.primeiraLeitura) {
-                        html += `<div class="leitura"><p class="titulo">${l.primeiraLeitura.titulo || 'Primeira Leitura'}</p><p style="font-size: 0.9em; white-space: pre-line;">${l.primeiraLeitura.texto || l.primeiraLeitura}</p></div>`;
-                    }
-                    if (l.salmo) {
-                        html += `<div class="leitura"><p class="titulo">Salmo Responsorial</p><p style="font-size: 0.9em; white-space: pre-line;">${l.salmo.refrao || ''} ${l.salmo.texto || l.salmo}</p></div>`;
-                    }
-                    if (l.evangelho) {
-                        html += `<div class="leitura"><p class="titulo">${l.evangelho.titulo || 'Evangelho'}</p><p style="font-size: 0.9em; white-space: pre-line;">${l.evangelho.texto || l.evangelho}</p></div>`;
-                    }
-                    return html;
-                }
-            },
-            {
-                nome: 'Liturgia CloudHub (CNBB)',
-                url: 'https://liturgia.cloudhub.ia.br/v1/liturgia',
-                parser: function(dados) {
-                    let html = '';
-                    if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
-                    if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
-                    
-                    if (dados.leituras && dados.leituras.length > 0) {
-                        dados.leituras.forEach(function(leitura) {
-                            html += `<div class="leitura"><p class="titulo">${leitura.titulo || 'Leitura'}</p><p style="font-size: 0.9em; white-space: pre-line;">${leitura.texto || ''}</p></div>`;
-                        });
-                    }
-                    return html;
-                }
-            }
-        ];
-
-        let sucesso = false;
-        let mensagemErro = '';
-
-        for (let i = 0; i < apis.length; i++) {
+        async function carregarLiturgia() {
+            const container = document.getElementById('liturgia-conteudo');
+            
             try {
-                const api = apis[i];
-                const resposta = await fetch(api.url, { 
-                    mode: 'cors',
-                    headers: { 'Accept': 'application/json' }
-                });
+                // Tenta buscar a liturgia da API do Ora et Labora
+                const resposta = await fetch('https://oraetlabora.com.br/api/liturgia');
                 
                 if (!resposta.ok) {
-                    throw new Error('HTTP ' + resposta.status);
+                    throw new Error('A API retornou um erro.');
                 }
                 
                 const dados = await resposta.json();
-                const html = api.parser(dados);
                 
-                if (html && html.trim().length > 0) {
-                    container.innerHTML = html;
-                    sucesso = true;
-                    break; // Para no primeiro que funcionar
-                } else {
-                    throw new Error('Dados vazios ou formato inesperado');
+                // Se a API retornar vazio, avisa
+                if (!dados || Object.keys(dados).length === 0) {
+                    throw new Error('A API retornou dados vazios.');
+                }
+
+                // Monta a tela
+                let html = '';
+                
+                if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+                
+                // Tenta ler a Primeira Leitura (pode vir em formatos diferentes dependendo da API)
+                if (dados.primeiraLeitura) {
+                    let leitura = dados.primeiraLeitura;
+                    let texto = leitura.texto || leitura;
+                    let titulo = leitura.titulo || 'Primeira Leitura';
+                    html += `<div class="leitura"><p class="titulo">${titulo}</p><p style="font-size: 0.9em; white-space: pre-line;">${texto}</p></div>`;
                 }
                 
+                // Tenta ler o Salmo
+                if (dados.salmo) {
+                    let salmo = dados.salmo;
+                    let texto = salmo.texto || salmo;
+                    let refrao = salmo.refrao || '';
+                    html += `<div class="leitura"><p class="titulo">Salmo Responsorial</p><p style="font-size: 0.9em; white-space: pre-line;"><strong>${refrao}</strong><br><br>${texto}</p></div>`;
+                }
+                
+                // Tenta ler o Evangelho
+                if (dados.evangelho) {
+                    let evangelho = dados.evangelho;
+                    let texto = evangelho.texto || evangelho;
+                    let titulo = evangelho.titulo || 'Evangelho';
+                    html += `<div class="leitura"><p class="titulo">${titulo}</p><p style="font-size: 0.9em; white-space: pre-line;">${texto}</p></div>`;
+                }
+
+                // Se conseguiu montar algo, mostra na tela
+                if (html !== '') {
+                    container.innerHTML = html;
+                } else {
+                    throw new Error('Não encontrei os dados da liturgia no formato esperado.');
+                }
+
             } catch (erro) {
-                mensagemErro = erro.message;
-                // Continua para a próxima API
+                // Se der qualquer erro, mostra a mensagem bonitinha
+                container.innerHTML = `
+                    <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia agora.</p>
+                    <p style="font-size: 0.8em; color: #777;">Motivo técnico: ${erro.message}</p>
+                    <p style="font-size: 0.8em; color: #777;">Isso pode ser instabilidade no servidor da liturgia ou bloqueio de segurança do GitHub.</p>
+                `;
             }
         }
 
-        if (!sucesso) {
-            container.innerHTML = '<p style="color: orange;">Não foi possível carregar a liturgia agora.<br><small>Tente novamente mais tarde.</small></p>';
-            console.log('Erro final:', mensagemErro);
-        }
-    }
-    
-    carregarLiturgia();
-</script>
+        // Assim que a página abrir, chama a função
+        carregarLiturgia();
+    </script>
+    <!-- O SCRIPT TERMINA AQUI -->
+
 </body>
 </html>
