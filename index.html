@@ -43,7 +43,7 @@
             
             try {
                 // Tenta buscar a liturgia da API do Ora et Labora
-                const resposta = await fetch('https://oraetlabora.com.br/api/liturgia');
+                const resposta = await fetch('https://liturgia.cloudhub.ia.br');
                 
                 if (!resposta.ok) {
                     throw new Error('A API retornou um erro.');
