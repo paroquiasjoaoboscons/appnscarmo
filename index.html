@@ -37,22 +37,66 @@
     </div>
 
     <script>
-        // Este código busca a liturgia do dia automaticamente
-        <script>
+
+      <script>
     async function carregarLiturgia() {
         const container = document.getElementById('liturgia-conteudo');
         try {
-            const resposta = await fetch('https://liturgia.up.railway.app/v2/');
-            if (!resposta.ok) throw new Error('Erro na resposta');
+            // API v1: mais simples e estável
+            const resposta = await fetch('https://liturgia.up.railway.app/');
+            if (!resposta.ok) throw new Error('Erro ' + resposta.status);
+            
             const dados = await resposta.json();
 
-            // Mostra os dados crus para sabermos o que a API retornou
-            container.innerHTML = `<pre>${JSON.stringify(dados, null, 2)}</pre>`;
+            // Monta o HTML com os campos da v1
+            let html = '';
+            
+            if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
+            if (dados.liturgia) html += `<p class="info">${dados.liturgia}</p>`;
+            if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+
+            // Primeira Leitura
+            if (dados.primeiraLeitura && dados.primeiraLeitura.texto) {
+                html += `
+                    <div class="leitura">
+                        <p class="titulo">${dados.primeiraLeitura.titulo || 'Primeira Leitura'}</p>
+                        <p style="font-size: 0.9em; white-space: pre-line;">${dados.primeiraLeitura.texto}</p>
+                    </div>
+                `;
+            }
+
+            // Salmo
+            if (dados.salmo && dados.salmo.texto) {
+                html += `
+                    <div class="leitura">
+                        <p class="titulo">Salmo Responsorial</p>
+                        <p style="font-size: 0.9em; white-space: pre-line;">${dados.salmo.refrao || ''}</p>
+                        <p style="font-size: 0.9em; white-space: pre-line;">${dados.salmo.texto}</p>
+                    </div>
+                `;
+            }
+
+            // Evangelho
+            if (dados.evangelho && dados.evangelho.texto) {
+                html += `
+                    <div class="leitura">
+                        <p class="titulo">${dados.evangelho.titulo || 'Evangelho'}</p>
+                        <p style="font-size: 0.9em; white-space: pre-line;">${dados.evangelho.texto}</p>
+                    </div>
+                `;
+            }
+
+            if (!html) {
+                html = '<p>Não foi possível montar a liturgia. A API retornou dados vazios.</p>';
+            }
+
+            container.innerHTML = html;
+
         } catch (erro) {
-            container.innerHTML = '<p style="color: red;">Ainda não foi possível carregar. Detalhe: ' + erro.message + '</p>';
+            container.innerHTML = '<p style="color: red;">Erro: ' + erro.message + '</p>';
         }
     }
     carregarLiturgia();
-</script>
+</script>  
 </body>
 </html>
