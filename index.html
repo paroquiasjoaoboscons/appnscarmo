@@ -6,76 +6,142 @@
     <title>Comunidade Nossa Senhora do Carmo</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; padding: 20px; max-width: 600px; margin: 0 auto; }
-        h1 { color: #5a3e7a; text-align: center; }
+        h1 { color: #5a3e7a; text-align: center; font-size: 1.5em; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; }
+        .card h2 { color: #5a3e7a; border-bottom: 2px solid #f4f4f9; padding-bottom: 10px; margin-top: 0; }
         .titulo { color: #8a2be2; margin-bottom: 5px; font-weight: bold; }
         .info { font-weight: bold; color: #666; font-size: 0.9em; }
         .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+        
+        /* Estilos para Horários */
+        .horario-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 10px 0; font-size: 0.95em; }
+        .horario-item:last-child { border-bottom: none; }
+        .horario-dia { font-weight: bold; color: #5a3e7a; }
+        
+        /* Estilos para Avisos */
+        .aviso-item { border-left: 4px solid #8a2be2; padding-left: 10px; margin-bottom: 15px; }
+        .aviso-data { font-size: 0.8em; color: #999; text-transform: uppercase; font-weight: bold; }
     </style>
 </head>
 <body>
     <h1>Comunidade Nossa Senhora do Carmo</h1>
 
+    <!-- CARD: LITURGIA -->
     <div class="card">
         <h2>Liturgia Diária</h2>
-        <div id="liturgia-conteudo">
-            <p>Carregando a liturgia de hoje...</p>
-        </div>
+        <div id="liturgia-conteudo"><p>Carregando a liturgia de hoje...</p></div>
+    </div>
+
+    <!-- CARD: HORÁRIOS -->
+    <div class="card">
+        <h2>Horários e Confissões</h2>
+        <div id="horarios-conteudo"><p>Carregando horários...</p></div>
+    </div>
+
+    <!-- CARD: AVISOS -->
+    <div class="card">
+        <h2>Mural de Avisos</h2>
+        <div id="avisos-conteudo"><p>Carregando avisos...</p></div>
     </div>
 
     <script>
-    async function carregarLiturgia() {
-    const container = document.getElementById('liturgia-conteudo');
+        // --- 1. SCRIPT DA LITURGIA (O que já funcionou) ---
+        async function carregarLiturgia() {
+            const container = document.getElementById('liturgia-conteudo');
+            const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+            const bloco = (tituloPadrao, itens) =>
+                lista(itens).map(i => `
+                    <div class="leitura">
+                        <p class="titulo">${i.titulo || tituloPadrao}</p>
+                        ${i.referencia ? `<p class="info">${i.referencia}</p>` : ''}
+                        ${i.refrao ? `<p><em>${i.refrao}</em></p>` : ''}
+                        <p style="font-size: 0.9em; white-space: pre-line;">${i.texto || ''}</p>
+                    </div>`).join('');
 
-    // Aceita tanto lista quanto objeto único
-    const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+            try {
+                const resposta = await fetch('https://liturgia.up.railway.app/v2/');
+                if (!resposta.ok) throw new Error('API fora do ar');
+                const dados = await resposta.json();
 
-    const bloco = (tituloPadrao, itens) =>
-        lista(itens).map(i => `
-            <div class="leitura">
-                <p class="titulo">${i.titulo || tituloPadrao}</p>
-                ${i.referencia ? `<p class="info">${i.referencia}</p>` : ''}
-                ${i.refrao ? `<p><em>${i.refrao}</em></p>` : ''}
-                <p style="font-size: 0.9em; white-space: pre-line;">${i.texto || ''}</p>
-            </div>`).join('');
+                let html = '';
+                if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
+                if (dados.liturgia) html += `<p class="info">${dados.liturgia}</p>`;
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
 
-    try {
-        // Confirme esta URL no README do repositório Dancrf/liturgia-diaria
-        const resposta = await fetch('https://liturgia.up.railway.app/v2/');
-
-        if (!resposta.ok) {
-            throw new Error('A API retornou status ' + resposta.status);
+                const l = dados.leituras;
+                if (l) {
+                    html += bloco('Primeira Leitura', l.primeiraLeitura);
+                    html += bloco('Salmo Responsorial', l.salmo);
+                    html += bloco('Segunda Leitura', l.segundaLeitura);
+                    html += bloco('Evangelho', l.evangelho);
+                } else {
+                    html += '<p>A liturgia não está disponível agora.</p>';
+                }
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = `<p style="color: #d9534f;">Não foi possível carregar a liturgia.</p>`;
+            }
         }
 
-        const dados = await resposta.json();
-        console.log('Resposta da API:', dados); // ajuda a conferir os nomes dos campos
+        // --- 2. SCRIPT DE HORÁRIOS ---
+        async function carregarHorarios() {
+            const container = document.getElementById('horarios-conteudo');
+            try {
+                const resposta = await fetch('horarios.json');
+                const dados = await resposta.json();
 
-        let html = '';
-        if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
-        if (dados.liturgia) html += `<p class="info">${dados.liturgia}</p>`;
-        if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+                if (dados.length === 0) {
+                    container.innerHTML = '<p>Nenhum horário cadastrado.</p>';
+                    return;
+                }
 
-        const l = dados.leituras;
-        if (l) {
-            html += bloco('Primeira Leitura', l.primeiraLeitura);
-            html += bloco('Salmo Responsorial', l.salmo);
-            html += bloco('Segunda Leitura', l.segundaLeitura);
-            html += bloco('Evangelho', l.evangelho);
-        } else {
-            html += '<p style="color: orange;">A liturgia foi carregada, mas o formato não foi reconhecido.</p>';
+                let html = '';
+                dados.forEach(item => {
+                    html += `
+                        <div class="horario-item">
+                            <span class="horario-dia">${item.dia} (${item.tipo})</span>
+                            <span>${item.horario} - ${item.local}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>';
+            }
         }
 
-        container.innerHTML = html;
+        // --- 3. SCRIPT DE AVISOS ---
+        async function carregarAvisos() {
+            const container = document.getElementById('avisos-conteudo');
+            try {
+                const resposta = await fetch('avisos.json');
+                const dados = await resposta.json();
 
-    } catch (erro) {
-        container.innerHTML = `
-            <p style="color: #d9534f; font-weight: bold;">Não foi possível carregar a liturgia agora.</p>
-            <p style="font-size: 0.8em; color: #777;">Detalhe: ${erro.message}</p>
-        `;
-    }
-}    
+                if (dados.length === 0) {
+                    container.innerHTML = '<p>Nenhum aviso no momento.</p>';
+                    return;
+                }
 
+                let html = '';
+                dados.forEach(aviso => {
+                    html += `
+                        <div class="aviso-item">
+                            <span class="aviso-data">${aviso.data}</span>
+                            <h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3>
+                            <p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>';
+            }
+        }
+
+        // Executa todas as funções ao carregar a página
         carregarLiturgia();
+        carregarHorarios();
+        carregarAvisos();
     </script>
 </body>
 </html>
