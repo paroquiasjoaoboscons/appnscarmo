@@ -1,0 +1,20 @@
+[
+  {
+    "tipo": "Missa",
+    "dia": "Domingo",
+    "horario": "19:00",
+    "local": "Capela Nossa Senhora do Carmo"
+  },
+  {
+    "tipo": "Missa",
+    "dia": "Quarta-feira",
+    "horario": "19:30",
+    "local": "Capela Nossa Senhora do Carmo"
+  },
+  {
+    "tipo": "Confissão",
+    "dia": "Sexta-feira",
+    "horario": "16:00 às 18:00",
+    "local": "Secretaria Paroquial"
+  }
+]
