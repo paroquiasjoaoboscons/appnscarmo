@@ -21,6 +21,25 @@
         /* Estilos para Avisos */
         .aviso-item { border-left: 4px solid #8a2be2; padding-left: 10px; margin-bottom: 15px; }
         .aviso-data { font-size: 0.8em; color: #999; text-transform: uppercase; font-weight: bold; }
+
+        /* Estilos para Intenções */
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.9em; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
+        .form-group textarea { height: 80px; resize: vertical; }
+        .btn-enviar { background-color: #5a3e7a; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 1em; width: 100%; font-weight: bold; }
+        .btn-enviar:hover { background-color: #8a2be2; }
+        .btn-enviar:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .intencao-item { background: #fafafa; border: 1px solid #eee; padding: 12px; border-radius: 5px; margin-bottom: 10px; }
+        .intencao-nome { font-weight: bold; color: #5a3e7a; font-size: 0.9em; }
+        .intencao-texto { margin: 5px 0; font-size: 0.95em; }
+        .intencao-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8em; color: #888; margin-top: 5px; }
+        .btn-rezar { background: none; border: 1px solid #8a2be2; color: #8a2be2; border-radius: 15px; padding: 4px 10px; cursor: pointer; font-size: 0.8em; display: flex; align-items: center; gap: 5px; }
+        .btn-rezar:hover { background: #8a2be2; color: white; }
+        .msg-alerta { padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 0.9em; display: none; }
+        .msg-sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .msg-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
@@ -44,8 +63,40 @@
         <div id="avisos-conteudo"><p>Carregando avisos...</p></div>
     </div>
 
+    <!-- CARD: INTENÇÕES -->
+    <div class="card">
+        <h2>Mural de Intenções de Oração</h2>
+        
+        <div id="mensagem-intencao" class="msg-alerta"></div>
+
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; font-size: 1em; color: #555;">Deixe seu pedido de oração</h3>
+            <form id="form-intencao">
+                <div class="form-group">
+                    <label for="nome">Seu nome (opcional)</label>
+                    <input type="text" id="nome" placeholder="Ex: Maria">
+                </div>
+                <div class="form-group">
+                    <label for="pedido">Seu pedido de oração *</label>
+                    <textarea id="pedido" placeholder="Escreva aqui sua intenção..." required></textarea>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 5px;">
+                    <input type="checkbox" id="privada" style="width: auto;">
+                    <label for="privada" style="margin-bottom: 0; font-weight: normal; font-size: 0.85em;">Manter em sigilo (apenas o padre verá)</label>
+                </div>
+                <button type="submit" class="btn-enviar" id="btn-enviar-intencao">Enviar Intenção</button>
+            </form>
+        </div>
+
+        <h3 style="margin-top: 0; font-size: 1em; color: #555;">Intenções da Comunidade</h3>
+        <div id="lista-intencoes"><p>Carregando intenções...</p></div>
+    </div>
+
     <script>
-        // --- 1. SCRIPT DA LITURGIA (O que já funcionou) ---
+        // ⚠️ ATENÇÃO: SUBSTITUA O LINK ABAIXO PELO LINK DO SEU WORKER NA CLOUDFLARE
+        const URL_API = 'api-paroquia.paroquiasjoaoboscons.workers.dev'; 
+
+        // --- 1. SCRIPT DA LITURGIA ---
         async function carregarLiturgia() {
             const container = document.getElementById('liturgia-conteudo');
             const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
@@ -138,10 +189,102 @@
             }
         }
 
-        // Executa todas as funções ao carregar a página
+        // --- 4. SCRIPT DE INTENÇÕES ---
+        async function carregarIntencoes() {
+            const container = document.getElementById('lista-intencoes');
+            try {
+                const resposta = await fetch(`${URL_API}/intencoes`);
+                if (!resposta.ok) throw new Error('Erro na API');
+                const dados = await resposta.json();
+
+                if (dados.length === 0) {
+                    container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda. Seja o primeiro a deixar seu pedido!</p>';
+                    return;
+                }
+
+                let html = '';
+                dados.forEach(item => {
+                    const nome = item.nome ? item.nome : 'Anônimo';
+                    const data = new Date(item.criado_em).toLocaleDateString('pt-BR');
+                    html += `
+                        <div class="intencao-item">
+                            <p class="intencao-nome">${nome}</p>
+                            <p class="intencao-texto">${item.pedido}</p>
+                            <div class="intencao-footer">
+                                <span>${data}</span>
+                                <button class="btn-rezar" onclick="rezar(${item.id})">🙏 Rezei (${item.rezadas})</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções agora.</p>';
+            }
+        }
+
+        // Função para enviar nova intenção
+        document.getElementById('form-intencao').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-enviar-intencao');
+            const msgDiv = document.getElementById('mensagem-intencao');
+            const nome = document.getElementById('nome').value;
+            const pedido = document.getElementById('pedido').value;
+            const privada = document.getElementById('privada').checked;
+
+            btn.disabled = true;
+            btn.innerText = 'Enviando...';
+            msgDiv.style.display = 'none';
+
+            try {
+                const resposta = await fetch(`${URL_API}/intencoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nome: nome,
+                        pedido: pedido,
+                        visibilidade: privada ? 'privada' : 'publica'
+                    })
+                });
+
+                if (!resposta.ok) throw new Error('Erro ao enviar');
+
+                msgDiv.className = 'msg-alerta msg-sucesso';
+                msgDiv.innerText = 'Sua intenção foi enviada com sucesso!';
+                msgDiv.style.display = 'block';
+                
+                document.getElementById('form-intencao').reset();
+                carregarIntencoes(); // Recarrega a lista
+                
+                setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
+
+            } catch (erro) {
+                msgDiv.className = 'msg-alerta msg-erro';
+                msgDiv.innerText = 'Erro ao enviar. Tente novamente.';
+                msgDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Enviar Intenção';
+            }
+        });
+
+        // Função do botão "Rezei"
+        async function rezar(id) {
+            try {
+                // Aqui precisamos de uma rota PATCH no Worker para somar 1. 
+                // Como não criamos ainda, vamos apenas avisar o usuário por enquanto.
+                alert("Obrigado por rezar! (Em breve o contador será atualizado)");
+                // A lógica real de incremento virá no próximo passo.
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        // Executa tudo ao carregar
         carregarLiturgia();
         carregarHorarios();
         carregarAvisos();
+        carregarIntencoes();
     </script>
 </body>
 </html>
