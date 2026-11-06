@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Acessos - Paróquia</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        h1 { color: #5a3e7a; text-align: center; margin-bottom: 30px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        p { text-align: center; color: #666; margin-bottom: 25px; font-size: 0.95em; }
+        
+        .btn-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+        .btn-app { background: #5a3e7a; }
+        .btn-padre { background: #8a2be2; }
+        .btn-secretaria { background: #2b8a8a; }
+        .btn-link:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        .icone { font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Central de Acessos</h1>
+        <p>Selecione a área que deseja acessar.</p>
+
+        <!-- Link para o App dos Fiéis -->
+        <a href="index.html" class="btn-link btn-app">
+            <span class="icone">⛪</span> App da Comunidade
+        </a>
+
+        <!-- Link para o Painel do Padre -->
+        <a href="admin.html" class="btn-link btn-padre">
+            <span class="icone">🔒</span> Painel do Padre
+        </a>
+
+        <!-- Link para o Painel da Secretaria -->
+        <a href="secretaria.html" class="btn-link btn-secretaria">
+            <span class="icone">📋</span> Painel da Secretaria
+        </a>
+    </div>
+
+</body>
+</html>
