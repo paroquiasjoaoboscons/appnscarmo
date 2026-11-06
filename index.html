@@ -10,17 +10,17 @@
         navigator.serviceWorker.register('sw.js');
       }
     </script>
-    <!-- Ícones do FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- VARIÁVEIS DE CORES (Identidade Visual) --- */
+        /* --- VARIÁVEIS DE CORES (Dinâmicas conforme a Liturgia) --- */
         :root {
-            --cor-primaria: #5a3e7a;
+            --cor-primaria: #5a3e7a; /* Roxo padrão (Carmo) */
             --cor-secundaria: #8a2be2;
             --cor-fundo: #f4f4f9;
             --cor-texto: #333;
             --cor-branca: #ffffff;
+            --cor-hero-overlay: rgba(90, 62, 122, 0.7); /* Sobreposição da foto */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,29 +32,34 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- CABEÇALHO --- */
-        header {
-            background: var(--cor-primaria);
-            color: var(--cor-branca);
-            padding: 15px 20px;
+        /* --- HERO (Topo com Foto) --- */
+        .hero {
+            position: relative;
+            height: 220px;
+            background-image: url('igreja.jpg');
+            background-size: cover;
+            background-position: center;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        header img {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: white;
-            display: none;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--cor-hero-overlay);
         }
-        header h1 { font-size: 1.2em; font-weight: bold; text-align: center; }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 0 20px;
+        }
+        .hero h1 { font-size: 1.4em; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .hero p { font-size: 0.9em; opacity: 0.9; margin-top: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 
         /* --- CONTEÚDO DAS ABAS --- */
         .aba-conteudo {
@@ -139,13 +144,15 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
-    <header>
-        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
-        <h1>Comunidade Nossa Senhora do Carmo</h1>
+    <!-- HERO (Topo com Foto) -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Comunidade Nossa Senhora do Carmo</h1>
+            <p>Boa Vista de Minas - Nova Serrana/MG</p>
+        </div>
     </header>
 
-    <!-- ABA 1: LITURGIA (Início) -->
+    <!-- ABA 1: LITURGIA -->
     <div id="aba-liturgia" class="aba-conteudo ativa">
         <div class="card">
             <h2><i class="fas fa-bible"></i> Liturgia Diária</h2>
@@ -167,7 +174,6 @@
             <h2><i class="fas fa-bullhorn"></i> Mural de Avisos</h2>
             <div id="avisos-conteudo"><p>Carregando avisos...</p></div>
         </div>
-        
         <div class="card">
             <h2><i class="fas fa-birthday-cake"></i> Aniversariantes Dizimistas</h2>
             <div id="aniversariantes-conteudo"><p>Carregando aniversariantes...</p></div>
@@ -178,9 +184,7 @@
     <div id="aba-intencoes" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-praying-hands"></i> Intenções de Oração</h2>
-            
             <div id="mensagem-intencao" class="msg-alerta"></div>
-
             <div style="background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee;">
                 <h3 style="margin-top: 0; font-size: 1em; color: #555; margin-bottom: 10px;">Deixe seu pedido</h3>
                 <form id="form-intencao">
@@ -199,7 +203,6 @@
                     <button type="submit" class="btn-enviar" id="btn-enviar-intencao" style="margin-top: 15px;">Enviar Intenção</button>
                 </form>
             </div>
-
             <h3 style="margin-top: 0; font-size: 1em; color: #555; margin-bottom: 15px;">Intenções da Comunidade</h3>
             <div id="lista-intencoes"><p>Carregando intenções...</p></div>
         </div>
@@ -210,18 +213,16 @@
         <div class="card">
             <h2><i class="fas fa-church"></i> Nossa História</h2>
             <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
-              A Capela de Nossa Senhora do Carmo, localizada no distrito de Boa Vista de Minas (em Nova Serrana, Minas Gerais), possui uma história marcada pela fé popular, pela mão de obra escravizada e pela preservação de tradições centenárias.
-• Origem e Construção: O templo foi erguido há mais de 100 anos (com registros e tradições locais apontando raízes que remontam ao século XIX) a pedido de um fazendeiro da região, sendo construído pelas mãos de pessoas escravizadas.
-• O Altar-Mor Histórico: Um dos destaques da capela é seu altar-mor do século XVIII, entalhado em madeira com acabamento em tons de branco e dourado (em estilo rococó), cuja tradição local associa à autoria ou à influência de oficinas ligadas a Antônio Francisco Lisboa, o Aleijadinho.
+              A Capela de Nossa Senhora do Carmo, no distrito de Boa Vista de Minas, é um marco de fé que atravessa gerações. Segundo a Prefeitura de Nova Serrana, a capela foi <strong>construída pelas mãos de pessoas escravizadas, há mais de 100 anos, a pedido de um fazendeiro da região</strong> [citation:5]. O templo é reconhecido como patrimônio cultural do município [citation:1].
             </p>
             <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
-               A escolha de Nossa Senhora do Carmo para a capela está profundamente ligada à devoção mariana tradicional da região e à forte influência de figuras religiosas locais.
+               <strong>O Altar-Mor:</strong> Um dos maiores tesouros da capela é seu altar esculpido em madeira. A tradição local, preservada pela comunidade e registrada pela Prefeitura, associa a obra ao mestre <strong>Aleijadinho</strong> ou à sua escola [citation:5]. O estilo rococó, com detalhes em branco e dourado, encanta fiéis e visitantes.
             </p>
-
-            <h3 style="color: #5a3e7a; margin-top: 20px; margin-bottom: 10px; font-size: 1.05em;">💡 Curiosidades</h3>
+            <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
+               <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região [citation:4][citation:5].
+            </p>
             <p style="font-size: 0.95em; line-height: 1.6;">
-                Você Sabia?<br>
-                • A Congada de Boa Vista: A história da capela caminha lado a lado com a tradicional Congada de Boa Vista, uma manifestação cultural e religiosa de origem no período da escravidão que mantém viva a dança, a música e a devoção no distrito.  
+               Atualmente, a Capela pertence à <strong>Paróquia São João Bosco</strong> e continua sendo um espaço de oração, encontros e celebrações para toda a comunidade [citation:5].
             </p>
         </div>
     </div>
@@ -229,45 +230,35 @@
     <!-- MENU INFERIOR -->
     <nav class="menu-inferior">
         <a class="menu-item ativo" onclick="mudarAba('liturgia', this)">
-            <i class="fas fa-book-open"></i>
-            <span>Liturgia</span>
+            <i class="fas fa-book-open"></i><span>Liturgia</span>
         </a>
         <a class="menu-item" onclick="mudarAba('horarios', this)">
-            <i class="fas fa-clock"></i>
-            <span>Horários</span>
+            <i class="fas fa-clock"></i><span>Horários</span>
         </a>
         <a class="menu-item" onclick="mudarAba('avisos', this)">
-            <i class="fas fa-bullhorn"></i>
-            <span>Avisos</span>
+            <i class="fas fa-bullhorn"></i><span>Avisos</span>
         </a>
         <a class="menu-item" onclick="mudarAba('intencoes', this)">
-            <i class="fas fa-praying-hands"></i>
-            <span>Intenções</span>
+            <i class="fas fa-praying-hands"></i><span>Intenções</span>
         </a>
         <a class="menu-item" onclick="mudarAba('institucional', this)">
-            <i class="fas fa-church"></i>
-            <span>Institucional</span>
+            <i class="fas fa-church"></i><span>Institucional</span>
         </a>
     </nav>
 
     <script>
-        // ⚠️ ATENÇÃO: LINK DO SEU WORKER NA CLOUDFLARE
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev'; 
 
         // --- LÓGICA DAS ABAS ---
         function mudarAba(nomeAba, elementoMenu) {
-            document.querySelectorAll('.aba-conteudo').forEach(aba => {
-                aba.classList.remove('ativa');
-            });
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('ativo');
-            });
+            document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
             document.getElementById('aba-' + nomeAba).classList.add('ativa');
             elementoMenu.classList.add('ativo');
             window.scrollTo(0, 0);
         }
 
-        // --- 1. SCRIPT DA LITURGIA ---
+        // --- 1. LITURGIA (COM CORES DINÂMICAS) ---
         async function carregarLiturgia() {
             const container = document.getElementById('liturgia-conteudo');
             const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
@@ -284,6 +275,39 @@
                 const resposta = await fetch('https://liturgia.up.railway.app/v2/');
                 if (!resposta.ok) throw new Error('API fora do ar');
                 const dados = await resposta.json();
+
+                // --- MÁGICA DA COR LITÚRGICA ---
+                if (dados.cor) {
+                    const corTexto = dados.cor.toLowerCase();
+                    const root = document.documentElement;
+
+                    if (corTexto.includes('verde')) {
+                        // Tempo Comum
+                        root.style.setProperty('--cor-primaria', '#2e7d32');
+                        root.style.setProperty('--cor-secundaria', '#4caf50');
+                        root.style.setProperty('--cor-hero-overlay', 'rgba(46, 125, 50, 0.7)');
+                    } else if (corTexto.includes('roxo')) {
+                        // Advento / Quaresma
+                        root.style.setProperty('--cor-primaria', '#5a3e7a');
+                        root.style.setProperty('--cor-secundaria', '#8a2be2');
+                        root.style.setProperty('--cor-hero-overlay', 'rgba(90, 62, 122, 0.7)');
+                    } else if (corTexto.includes('branco') || corTexto.includes('dourado')) {
+                        // Natal / Páscoa / Solenidades
+                        root.style.setProperty('--cor-primaria', '#b8860b');
+                        root.style.setProperty('--cor-secundaria', '#daa520');
+                        root.style.setProperty('--cor-hero-overlay', 'rgba(184, 134, 11, 0.7)');
+                    } else if (corTexto.includes('vermelho')) {
+                        // Pentecostes / Mártires
+                        root.style.setProperty('--cor-primaria', '#c62828');
+                        root.style.setProperty('--cor-secundaria', '#e53935');
+                        root.style.setProperty('--cor-hero-overlay', 'rgba(198, 40, 40, 0.7)');
+                    } else if (corTexto.includes('rosa')) {
+                        // Gaudete / Laetare
+                        root.style.setProperty('--cor-primaria', '#c2185b');
+                        root.style.setProperty('--cor-secundaria', '#e91e63');
+                        root.style.setProperty('--cor-hero-overlay', 'rgba(194, 24, 91, 0.7)');
+                    }
+                }
 
                 let html = '';
                 if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
@@ -305,123 +329,70 @@
             }
         }
 
-        // --- 2. SCRIPT DE HORÁRIOS (AGORA PUXA DO BANCO) ---
+        // --- 2. HORÁRIOS ---
         async function carregarHorarios() {
             const container = document.getElementById('horarios-conteudo');
             try {
                 const resposta = await fetch(`${URL_API}/horarios`);
                 const dados = await resposta.json();
-
-                if (dados.length === 0) {
-                    container.innerHTML = '<p>Nenhum horário cadastrado.</p>';
-                    return;
-                }
-
+                if (dados.length === 0) { container.innerHTML = '<p>Nenhum horário cadastrado.</p>'; return; }
                 let html = '';
                 dados.forEach(item => {
-                    html += `
-                        <div class="horario-item">
-                            <span class="horario-dia">${item.dia} (${item.tipo})</span>
-                            <span>${item.horario} - ${item.local}</span>
-                        </div>
-                    `;
+                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></div>`;
                 });
                 container.innerHTML = html;
-            } catch (erro) {
-                container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>';
-            }
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>'; }
         }
 
-        // --- 3. SCRIPT DE AVISOS (AGORA PUXA DO BANCO) ---
+        // --- 3. AVISOS ---
         async function carregarAvisos() {
             const container = document.getElementById('avisos-conteudo');
             try {
                 const resposta = await fetch(`${URL_API}/avisos`);
                 const dados = await resposta.json();
-
-                if (dados.length === 0) {
-                    container.innerHTML = '<p>Nenhum aviso no momento.</p>';
-                    return;
-                }
-
+                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aviso no momento.</p>'; return; }
                 let html = '';
                 dados.forEach(aviso => {
-                    html += `
-                        <div class="aviso-item">
-                            <span class="aviso-data">${aviso.data}</span>
-                            <h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3>
-                            <p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p>
-                        </div>
-                    `;
+                    html += `<div class="aviso-item"><span class="aviso-data">${aviso.data}</span><h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3><p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p></div>`;
                 });
                 container.innerHTML = html;
-            } catch (erro) {
-                container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>';
-            }
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>'; }
         }
 
-        // --- 4. SCRIPT DE ANIVERSARIANTES (NOVO) ---
+        // --- 4. ANIVERSARIANTES ---
         async function carregarAniversariantes() {
             const container = document.getElementById('aniversariantes-conteudo');
             try {
                 const resposta = await fetch(`${URL_API}/aniversariantes`);
                 const dados = await resposta.json();
-
-                if (dados.length === 0) {
-                    container.innerHTML = '<p>Nenhum aniversariante cadastrado neste mês.</p>';
-                    return;
-                }
-
+                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aniversariante cadastrado.</p>'; return; }
                 let html = '';
                 dados.forEach(item => {
-                    html += `
-                        <div class="aniversariante-item">
-                            <span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span>
-                            <span>${item.nome}</span>
-                        </div>
-                    `;
+                    html += `<div class="aniversariante-item"><span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span><span>${item.nome}</span></div>`;
                 });
                 container.innerHTML = html;
-            } catch (erro) {
-                container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>';
-            }
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>'; }
         }
 
-        // --- 5. SCRIPT DE INTENÇÕES ---
+        // --- 5. INTENÇÕES ---
         async function carregarIntencoes() {
             const container = document.getElementById('lista-intencoes');
             try {
                 const resposta = await fetch(`${URL_API}/intencoes`);
                 if (!resposta.ok) throw new Error('Erro na API');
                 const dados = await resposta.json();
-
-                if (dados.length === 0) {
-                    container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda. Seja o primeiro a deixar seu pedido!</p>';
-                    return;
-                }
-
+                if (dados.length === 0) { container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda.</p>'; return; }
                 let html = '';
                 dados.forEach(item => {
                     const nome = item.nome ? item.nome : 'Anônimo';
                     const data = new Date(item.criado_em).toLocaleDateString('pt-BR');
-                    html += `
-                        <div class="intencao-item">
-                            <p class="intencao-nome">${nome}</p>
-                            <p class="intencao-texto">${item.pedido}</p>
-                            <div class="intencao-footer">
-                                <span>${data}</span>
-                                <button class="btn-rezar" onclick="rezar(${item.id})"><i class="fas fa-praying-hands"></i> Rezei (${item.rezadas})</button>
-                            </div>
-                        </div>
-                    `;
+                    html += `<div class="intencao-item"><p class="intencao-nome">${nome}</p><p class="intencao-texto">${item.pedido}</p><div class="intencao-footer"><span>${data}</span><button class="btn-rezar" onclick="rezar(${item.id})"><i class="fas fa-praying-hands"></i> Rezei (${item.rezadas})</button></div></div>`;
                 });
                 container.innerHTML = html;
-            } catch (erro) {
-                container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções agora.</p>';
-            }
+            } catch (erro) { container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções.</p>'; }
         }
 
-        // Enviar nova intenção
+        // Enviar intenção
         document.getElementById('form-intencao').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-enviar-intencao');
@@ -429,58 +400,27 @@
             const nome = document.getElementById('nome').value;
             const pedido = document.getElementById('pedido').value;
             const privada = document.getElementById('privada').checked;
-
-            btn.disabled = true;
-            btn.innerText = 'Enviando...';
-            msgDiv.style.display = 'none';
-
+            btn.disabled = true; btn.innerText = 'Enviando...'; msgDiv.style.display = 'none';
             try {
                 const resposta = await fetch(`${URL_API}/intencoes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nome: nome,
-                        pedido: pedido,
-                        visibilidade: privada ? 'privada' : 'publica'
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: nome, pedido: pedido, visibilidade: privada ? 'privada' : 'publica' })
                 });
-
                 if (!resposta.ok) throw new Error('Erro ao enviar');
-
-                msgDiv.className = 'msg-alerta msg-sucesso';
-                msgDiv.innerText = 'Sua intenção foi enviada com sucesso!';
-                msgDiv.style.display = 'block';
-                
+                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada com sucesso!'; msgDiv.style.display = 'block';
                 document.getElementById('form-intencao').reset();
                 carregarIntencoes();
-                
                 setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
-
             } catch (erro) {
-                msgDiv.className = 'msg-alerta msg-erro';
-                msgDiv.innerText = 'Erro ao enviar. Tente novamente.';
-                msgDiv.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Enviar Intenção';
-            }
+                msgDiv.className = 'msg-alerta msg-erro'; msgDiv.innerText = 'Erro ao enviar. Tente novamente.'; msgDiv.style.display = 'block';
+            } finally { btn.disabled = false; btn.innerText = 'Enviar Intenção'; }
         });
 
-        // Rezar
         async function rezar(id) {
             try {
-                const resposta = await fetch(`${URL_API}/rezar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
-                });
-
-                if (resposta.ok) {
-                    carregarIntencoes();
-                }
-            } catch (e) {
-                console.error(e);
-            }
+                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
+                if (resposta.ok) carregarIntencoes();
+            } catch (e) { console.error(e); }
         }
 
         // Inicialização
