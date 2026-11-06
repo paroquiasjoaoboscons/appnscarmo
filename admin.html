@@ -6,38 +6,43 @@
     <title>Painel do Padre</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; max-width: 600px; margin: 0 auto; color: #333; }
-        h1 { color: #5a3e7a; text-align: center; }
+        h1 { color: #5a3e7a; text-align: center; margin-bottom: 30px; }
+        
+        /* Estilos dos Cards */
         .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .sigiloso { border-left: 4px solid #d9534f; background: #fff5f5; }
-        .publico { border-left: 4px solid #8a2be2; }
-        .nome { font-weight: bold; color: #5a3e7a; margin-bottom: 5px; }
-        .pedido { font-size: 1em; margin: 10px 0; }
-        .info { font-size: 0.8em; color: #888; display: flex; justify-content: space-between; }
-        .loading { text-align: center; color: #777; }
-        .erro { color: #d9534f; text-align: center; font-weight: bold; }
+        .publico { border-left: 4px solid #8a2be2; background: #fafafa; }
+        .nome { font-weight: bold; color: #5a3e7a; margin-bottom: 5px; font-size: 1.05em; }
+        .pedido { font-size: 1em; margin: 10px 0; line-height: 1.4; }
+        .info { font-size: 0.8em; color: #888; display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; }
+        
+        /* Títulos das Seções */
+        .titulo-secao { font-size: 1.1em; color: #5a3e7a; border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         
         /* Tela de Login */
         #login-screen { text-align: center; margin-top: 50px; display: block; }
         #conteudo-screen { display: none; }
-        input { padding: 10px; width: 80%; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
-        button { padding: 10px 20px; background: #5a3e7a; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        input { padding: 12px; width: 80%; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 1em; }
+        button { padding: 12px 25px; background: #5a3e7a; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; }
+        .loading { text-align: center; color: #777; padding: 20px; }
+        .erro { color: #d9534f; text-align: center; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE LOGIN (Aparece primeiro) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <h1>Área Restrita</h1>
         <p>Digite a senha para ver as intenções.</p>
-        <input type="password" id="senha" placeholder="Senha">
+        <input type="password" id="senha" placeholder="Senha de acesso">
         <br>
         <button onclick="fazerLogin()">Entrar</button>
-        <p id="msg-login" style="color: red; margin-top: 10px;"></p>
+        <p id="msg-login" class="erro"></p>
     </div>
 
-    <!-- TELA DE CONTEÚDO (Aparece após o login) -->
+    <!-- TELA DE CONTEÚDO -->
     <div id="conteudo-screen">
-        <h1>Intenções</h1>
+        <h1>Intenções Recebidas</h1>
         <div id="lista-intencoes" class="loading">Carregando...</div>
     </div>
 
@@ -53,26 +58,18 @@
             
             if (!senhaInput) { msg.innerText = "Digite a senha."; return; }
             
-            // Tenta buscar os dados com a senha digitada
             try {
-                // Transforma "padre:senha" em Base64 (padrão do Basic Auth)
                 const auth = btoa('padre:' + senhaInput);
                 
                 const resposta = await fetch(`${URL_API}/admin/intencoes`, {
                     headers: { 'Authorization': 'Basic ' + auth }
                 });
 
-                if (resposta.status === 401) {
-                    throw new Error("Senha incorreta");
-                }
-
-                if (!resposta.ok) {
-                    throw new Error("Erro no servidor");
-                }
+                if (resposta.status === 401) throw new Error("Senha incorreta");
+                if (!resposta.ok) throw new Error("Erro no servidor");
 
                 const dados = await resposta.json();
                 
-                // Se deu certo, guarda a senha e mostra a tela
                 senhaSalva = senhaInput;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('conteudo-screen').style.display = 'block';
@@ -84,7 +81,7 @@
             }
         }
 
-        // Função que desenha os cards na tela
+        // Função que desenha os cards separados
         function renderizarLista(dados) {
             const container = document.getElementById('lista-intencoes');
             
@@ -93,24 +90,46 @@
                 return;
             }
 
-            let html = '';
-            dados.forEach(item => {
-                // Define a cor baseada no sigilo
-                const classe = item.visibilidade === 'privada' ? 'card sigiloso' : 'card publico';
-                const badge = item.visibilidade === 'privada' ? '🔒 Sigilosa' : '🌐 Pública';
-                const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
+            // 1. Separar os dados
+            const sigilosas = dados.filter(item => item.visibilidade === 'privada');
+            const publicas = dados.filter(item => item.visibilidade !== 'privada');
 
-                html += `
-                    <div class="${classe}">
-                        <div class="nome">${item.nome || 'Anônimo'} - <span style="font-weight:normal; font-size:0.8em;">${badge}</span></div>
-                        <div class="pedido">${item.pedido}</div>
-                        <div class="info">
-                            <span>Enviado em: ${dataFormatada}</span>
-                        </div>
-                    </div>
-                `;
-            });
+            let html = '';
+
+            // 2. Desenhar Sigilosas (se houver)
+            if (sigilosas.length > 0) {
+                html += `<div class="titulo-secao">🔒 Intenções Sigilosas (${sigilosas.length})</div>`;
+                sigilosas.forEach(item => {
+                    html += criarCard(item);
+                });
+            }
+
+            // 3. Desenhar Públicas (se houver)
+            if (publicas.length > 0) {
+                html += `<div class="titulo-secao">🌐 Intenções Públicas (${publicas.length})</div>`;
+                publicas.forEach(item => {
+                    html += criarCard(item);
+                });
+            }
+
             container.innerHTML = html;
+        }
+
+        // Função auxiliar para criar o HTML de um card
+        function criarCard(item) {
+            const classe = item.visibilidade === 'privada' ? 'card sigiloso' : 'card publico';
+            const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
+            
+            return `
+                <div class="${classe}">
+                    <div class="nome">${item.nome || 'Anônimo'}</div>
+                    <div class="pedido">${item.pedido}</div>
+                    <div class="info">
+                        <span>Enviado em: ${dataFormatada}</span>
+                        <span>Rezadas: ${item.rezadas}</span>
+                    </div>
+                </div>
+            `;
         }
     </script>
 </body>
