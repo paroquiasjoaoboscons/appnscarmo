@@ -3,136 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Paróquia</title>
+    <title>Painel do Padre</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; max-width: 800px; margin: 0 auto; }
-        h1 { color: #5a3e7a; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { color: #5a3e7a; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #5a3e7a; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 15px; cursor: pointer; }
-        button:hover { background: #8a2be2; }
-        .item { background: #fafafa; border-left: 4px solid #8a2be2; padding: 10px; margin-bottom: 10px; }
-        .item-privado { border-left-color: #d9534f; background: #fff5f5; }
-        .msg { padding: 10px; margin-top: 10px; border-radius: 5px; display: none; }
-        .sucesso { background: #d4edda; color: #155724; }
-        .erro { background: #f8d7da; color: #721c24; }
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; max-width: 600px; margin: 0 auto; color: #333; }
+        h1 { color: #5a3e7a; text-align: center; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .sigiloso { border-left: 4px solid #d9534f; background: #fff5f5; }
+        .publico { border-left: 4px solid #8a2be2; }
+        .nome { font-weight: bold; color: #5a3e7a; margin-bottom: 5px; }
+        .pedido { font-size: 1em; margin: 10px 0; }
+        .info { font-size: 0.8em; color: #888; display: flex; justify-content: space-between; }
+        .loading { text-align: center; color: #777; }
+        .erro { color: #d9534f; text-align: center; font-weight: bold; }
+        
+        /* Tela de Login */
+        #login-screen { text-align: center; margin-top: 50px; display: block; }
+        #conteudo-screen { display: none; }
+        input { padding: 10px; width: 80%; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #5a3e7a; color: white; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>Painel Administrativo</h1>
-    <p><a href="index.html">← Voltar para o App</a></p>
 
-    <!-- SEÇÃO: INTENÇÕES (TODAS, INCLUSIVE PRIVADAS) -->
-    <div class="card">
-        <h2>📩 Intenções de Oração (Todas)</h2>
-        <div id="lista-intencoes-admin"><p>Carregando...</p></div>
+    <!-- TELA DE LOGIN (Aparece primeiro) -->
+    <div id="login-screen">
+        <h1>Área Restrita</h1>
+        <p>Digite a senha para ver as intenções.</p>
+        <input type="password" id="senha" placeholder="Senha">
+        <br>
+        <button onclick="fazerLogin()">Entrar</button>
+        <p id="msg-login" style="color: red; margin-top: 10px;"></p>
     </div>
 
-    <!-- SEÇÃO: NOVO AVISO -->
-    <div class="card">
-        <h2>📢 Cadastrar Novo Aviso</h2>
-        <div id="msg-aviso" class="msg"></div>
-        <form id="form-aviso">
-            <label>Título</label>
-            <input type="text" id="aviso-titulo" required>
-            <label>Data (ex: 15/07 ou Aviso Urgente)</label>
-            <input type="text" id="aviso-data" required>
-            <label>Texto do Aviso</label>
-            <textarea id="aviso-texto" rows="3" required></textarea>
-            <button type="submit">Salvar Aviso</button>
-        </form>
-    </div>
-
-    <!-- SEÇÃO: NOVO HORÁRIO -->
-    <div class="card">
-        <h2>🕒 Cadastrar Novo Horário</h2>
-        <div id="msg-horario" class="msg"></div>
-        <form id="form-horario">
-            <label>Tipo (Missa / Confissão)</label>
-            <input type="text" id="horario-tipo" required>
-            <label>Dia da Semana</label>
-            <input type="text" id="horario-dia" required>
-            <label>Horário</label>
-            <input type="text" id="horario-hora" required>
-            <label>Local</label>
-            <input type="text" id="horario-local" required>
-            <button type="submit">Salvar Horário</button>
-        </form>
+    <!-- TELA DE CONTEÚDO (Aparece após o login) -->
+    <div id="conteudo-screen">
+        <h1>Intenções</h1>
+        <div id="lista-intencoes" class="loading">Carregando...</div>
     </div>
 
     <script>
         // ⚠️ COLOQUE O LINK DO SEU WORKER AQUI
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
+        let senhaSalva = '';
 
-        // 1. Carregar TODAS as intenções (Admin)
-        async function carregarIntencoesAdmin() {
-            const container = document.getElementById('lista-intencoes-admin');
+        // Função de Login
+        async function fazerLogin() {
+            const senhaInput = document.getElementById('senha').value;
+            const msg = document.getElementById('msg-login');
+            
+            if (!senhaInput) { msg.innerText = "Digite a senha."; return; }
+            
+            // Tenta buscar os dados com a senha digitada
             try {
-                const resp = await fetch(`${URL_API}/admin/intencoes`);
-                const dados = await resp.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhuma intenção.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    const classe = item.visibilidade === 'privada' ? 'item-privado' : 'item';
-                    const badge = item.visibilidade === 'privada' ? '🔒 SIGILOSA' : '🌐 Pública';
-                    html += `
-                        <div class="${classe}">
-                            <strong>${item.nome || 'Anônimo'}</strong> <small>(${badge})</small>
-                            <p>${item.pedido}</p>
-                            <small>Rezadas: ${item.rezadas} | ${new Date(item.criado_em).toLocaleDateString('pt-BR')}</small>
-                        </div>
-                    `;
+                // Transforma "padre:senha" em Base64 (padrão do Basic Auth)
+                const auth = btoa('padre:' + senhaInput);
+                
+                const resposta = await fetch(`${URL_API}/admin/intencoes`, {
+                    headers: { 'Authorization': 'Basic ' + auth }
                 });
-                container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<p>Erro ao carregar.</p>'; }
+
+                if (resposta.status === 401) {
+                    throw new Error("Senha incorreta");
+                }
+
+                if (!resposta.ok) {
+                    throw new Error("Erro no servidor");
+                }
+
+                const dados = await resposta.json();
+                
+                // Se deu certo, guarda a senha e mostra a tela
+                senhaSalva = senhaInput;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('conteudo-screen').style.display = 'block';
+                
+                renderizarLista(dados);
+
+            } catch (erro) {
+                msg.innerText = erro.message;
+            }
         }
 
-        // 2. Enviar Aviso
-        document.getElementById('form-aviso').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const msg = document.getElementById('msg-aviso');
-            msg.style.display = 'none';
-            try {
-                const resp = await fetch(`${URL_API}/admin/avisos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        titulo: document.getElementById('aviso-titulo').value,
-                        data: document.getElementById('aviso-data').value,
-                        texto: document.getElementById('aviso-texto').value
-                    })
-                });
-                if (!resp.ok) throw new Error();
-                msg.className = 'msg sucesso'; msg.innerText = 'Aviso salvo com sucesso!'; msg.style.display = 'block';
-                document.getElementById('form-aviso').reset();
-            } catch (e) { msg.className = 'msg erro'; msg.innerText = 'Erro ao salvar.'; msg.style.display = 'block'; }
-        });
+        // Função que desenha os cards na tela
+        function renderizarLista(dados) {
+            const container = document.getElementById('lista-intencoes');
+            
+            if (dados.length === 0) {
+                container.innerHTML = '<p style="text-align:center;">Nenhuma intenção cadastrada.</p>';
+                return;
+            }
 
-        // 3. Enviar Horário
-        document.getElementById('form-horario').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const msg = document.getElementById('msg-horario');
-            msg.style.display = 'none';
-            try {
-                const resp = await fetch(`${URL_API}/admin/horarios`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        tipo: document.getElementById('horario-tipo').value,
-                        dia: document.getElementById('horario-dia').value,
-                        horario: document.getElementById('horario-hora').value,
-                        local: document.getElementById('horario-local').value
-                    })
-                });
-                if (!resp.ok) throw new Error();
-                msg.className = 'msg sucesso'; msg.innerText = 'Horário salvo com sucesso!'; msg.style.display = 'block';
-                document.getElementById('form-horario').reset();
-            } catch (e) { msg.className = 'msg erro'; msg.innerText = 'Erro ao salvar.'; msg.style.display = 'block'; }
-        });
+            let html = '';
+            dados.forEach(item => {
+                // Define a cor baseada no sigilo
+                const classe = item.visibilidade === 'privada' ? 'card sigiloso' : 'card publico';
+                const badge = item.visibilidade === 'privada' ? '🔒 Sigilosa' : '🌐 Pública';
+                const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
 
-        carregarIntencoesAdmin();
+                html += `
+                    <div class="${classe}">
+                        <div class="nome">${item.nome || 'Anônimo'} - <span style="font-weight:normal; font-size:0.8em;">${badge}</span></div>
+                        <div class="pedido">${item.pedido}</div>
+                        <div class="info">
+                            <span>Enviado em: ${dataFormatada}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
     </script>
 </body>
 </html>
