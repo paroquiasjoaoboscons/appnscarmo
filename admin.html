@@ -3,37 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Padre</title>
+    <title>Painel Administrativo - Paróquia São João Bosco</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; max-width: 600px; margin: 0 auto; color: #333; }
-        h1 { color: #5a3e7a; text-align: center; margin-bottom: 30px; }
+        /* --- VARIÁVEIS DE CORES (Identidade Visual) --- */
+        :root {
+            --cor-primaria: #5a3e7a; /* Roxo escuro */
+            --cor-secundaria: #8a2be2; /* Roxo claro */
+            --cor-fundo: #f4f4f9;
+            --cor-texto: #333;
+            --cor-branca: #ffffff;
+            --cor-perigo: #d9534f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: var(--cor-fundo); 
+            color: var(--cor-texto); 
+            padding-bottom: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            background: var(--cor-primaria);
+            color: var(--cor-branca);
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        header h1 { font-size: 1.2em; }
+        header p { font-size: 0.8em; opacity: 0.9; margin-top: 5px; }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen { text-align: center; margin-top: 50px; display: block; padding: 0 20px; }
+        #login-screen h2 { color: var(--cor-primaria); margin-bottom: 20px; }
+        input { padding: 12px; width: 100%; max-width: 300px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; font-size: 1em; }
+        button { padding: 12px 25px; background: var(--cor-primaria); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: bold; width: 100%; max-width: 300px; transition: 0.2s; }
+        button:hover { background: var(--cor-secundaria); }
+        .erro { color: var(--cor-perigo); text-align: center; font-weight: bold; margin-top: 15px; font-size: 0.9em; }
+
+        /* --- TELA DE CONTEÚDO (Após Login) --- */
+        #conteudo-screen { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
         
-        /* Estilos dos Cards */
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .sigiloso { border-left: 4px solid #d9534f; background: #fff5f5; }
-        .publico { border-left: 4px solid #8a2be2; background: #fafafa; }
-        .nome { font-weight: bold; color: #5a3e7a; margin-bottom: 5px; font-size: 1.05em; }
-        .pedido { font-size: 1em; margin: 10px 0; line-height: 1.4; }
+        /* Área de Boas Vindas */
+        .boas-vindas {
+            background: var(--cor-branca);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--cor-secundaria);
+        }
+        .boas-vindas h2 { font-size: 1.2em; color: var(--cor-primaria); }
+        .btn-sair { background: none; border: 1px solid var(--cor-perigo); color: var(--cor-perigo); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: bold; width: auto; }
+        .btn-sair:hover { background: var(--cor-perigo); color: white; }
+
+        /* Abas (Tabs) */
+        .abas-container {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .aba-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            font-size: 1em;
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: 0.2s;
+            width: auto;
+        }
+        .aba-btn.ativa {
+            color: var(--cor-primaria);
+            border-bottom: 3px solid var(--cor-primaria);
+        }
+        .aba-btn:hover { background: #f0f0f0; }
+
+        /* Conteúdo das Abas */
+        .aba-conteudo { display: none; }
+        .aba-conteudo.ativa { display: block; }
+
+        /* Cards de Intenções */
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .sigiloso { border-left: 4px solid var(--cor-perigo); background: #fff5f5; }
+        .publico { border-left: 4px solid var(--cor-secundaria); background: #fafafa; }
+        .nome { font-weight: bold; color: var(--cor-primaria); margin-bottom: 5px; font-size: 1.05em; display: flex; justify-content: space-between; }
+        .pedido { font-size: 1em; margin: 10px 0; line-height: 1.4; white-space: pre-line; }
         .info { font-size: 0.8em; color: #888; display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; }
         
-        /* Títulos das Seções */
-        .titulo-secao { font-size: 1.1em; color: #5a3e7a; border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        
-        /* Tela de Login */
-        #login-screen { text-align: center; margin-top: 50px; display: block; }
-        #conteudo-screen { display: none; }
-        input { padding: 12px; width: 80%; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 1em; }
-        button { padding: 12px 25px; background: #5a3e7a; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; }
+        /* Botão Atualizar */
+        .btn-atualizar { background: #eee; color: #555; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85em; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; width: auto; }
+        .btn-atualizar:hover { background: #ddd; }
+
         .loading { text-align: center; color: #777; padding: 20px; }
-        .erro { color: #d9534f; text-align: center; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
 
+    <!-- CABEÇALHO GERAL -->
+    <header>
+        <h1>Paróquia São João Bosco</h1>
+        <p>Painel de Intenções</p>
+    </header>
+
     <!-- TELA DE LOGIN -->
     <div id="login-screen">
-        <h1>Área Restrita</h1>
-        <p>Digite a senha para ver as intenções.</p>
+        <h2>Área Restrita</h2>
+        <p style="margin-bottom: 15px;">Digite a senha para acessar.</p>
         <input type="password" id="senha" placeholder="Senha de acesso">
         <br>
         <button onclick="fazerLogin()">Entrar</button>
@@ -42,8 +126,32 @@
 
     <!-- TELA DE CONTEÚDO -->
     <div id="conteudo-screen">
-        <h1>Intenções Recebidas</h1>
-        <div id="lista-intencoes" class="loading">Carregando...</div>
+        <!-- Boas Vindas -->
+        <div class="boas-vindas">
+            <div>
+                <h2>Seja bem-vindo, Padre Gedler!</h2>
+                <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Que Deus abençoe seu ministério hoje.</p>
+            </div>
+            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        </div>
+
+        <button class="btn-atualizar" onclick="carregarDados()">🔄 Atualizar Intenções</button>
+
+        <!-- Abas -->
+        <div class="abas-container">
+            <button class="aba-btn ativa" onclick="mudarAba('sigilosas', this)" id="btn-aba-sigilosas">🔒 Sigilosas (0)</button>
+            <button class="aba-btn" onclick="mudarAba('publicas', this)" id="btn-aba-publicas">🌐 Públicas (0)</button>
+        </div>
+
+        <!-- Conteúdo Aba Sigilosas -->
+        <div id="aba-sigilosas" class="aba-conteudo ativa">
+            <div id="lista-sigilosas" class="loading">Carregando...</div>
+        </div>
+
+        <!-- Conteúdo Aba Públicas -->
+        <div id="aba-publicas" class="aba-conteudo">
+            <div id="lista-publicas" class="loading">Carregando...</div>
+        </div>
     </div>
 
     <script>
@@ -61,6 +169,7 @@
             try {
                 const auth = btoa('padre:' + senhaInput);
                 
+                // Testa a senha buscando os dados
                 const resposta = await fetch(`${URL_API}/admin/intencoes`, {
                     headers: { 'Authorization': 'Basic ' + auth }
                 });
@@ -70,66 +179,103 @@
 
                 const dados = await resposta.json();
                 
+                // Se deu certo, salva a senha e mostra a tela
                 senhaSalva = senhaInput;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('conteudo-screen').style.display = 'block';
                 
-                renderizarLista(dados);
+                // Preenche a tela
+                processarDados(dados);
 
             } catch (erro) {
                 msg.innerText = erro.message;
             }
         }
 
-        // Função que desenha os cards separados
-        function renderizarLista(dados) {
-            const container = document.getElementById('lista-intencoes');
-            
-            if (dados.length === 0) {
-                container.innerHTML = '<p style="text-align:center;">Nenhuma intenção cadastrada.</p>';
-                return;
-            }
+        // Função de Logout
+        function fazerLogout() {
+            senhaSalva = '';
+            document.getElementById('senha').value = '';
+            document.getElementById('conteudo-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+        }
 
-            // 1. Separar os dados
+        // Função para atualizar os dados sem recarregar a página
+        async function carregarDados() {
+            if (!senhaSalva) return;
+            
+            // Mostra loading
+            document.getElementById('lista-sigilosas').innerHTML = '<p class="loading">Atualizando...</p>';
+            document.getElementById('lista-publicas').innerHTML = '<p class="loading">Atualizando...</p>';
+
+            try {
+                const auth = btoa('padre:' + senhaSalva);
+                const resposta = await fetch(`${URL_API}/admin/intencoes`, {
+                    headers: { 'Authorization': 'Basic ' + auth }
+                });
+
+                if (resposta.ok) {
+                    const dados = await resposta.json();
+                    processarDados(dados);
+                }
+            } catch (e) {
+                alert("Erro ao atualizar. Verifique a conexão.");
+            }
+        }
+
+        // Função que separa os dados e desenha nas abas
+        function processarDados(dados) {
+            // 1. Separar
             const sigilosas = dados.filter(item => item.visibilidade === 'privada');
             const publicas = dados.filter(item => item.visibilidade !== 'privada');
 
-            let html = '';
+            // 2. Atualizar os contadores nos botões das abas
+            document.getElementById('btn-aba-sigilosas').innerText = `🔒 Sigilosas (${sigilosas.length})`;
+            document.getElementById('btn-aba-publicas').innerText = `🌐 Públicas (${publicas.length})`;
 
-            // 2. Desenhar Sigilosas (se houver)
-            if (sigilosas.length > 0) {
-                html += `<div class="titulo-secao">🔒 Intenções Sigilosas (${sigilosas.length})</div>`;
-                sigilosas.forEach(item => {
-                    html += criarCard(item);
-                });
-            }
-
-            // 3. Desenhar Públicas (se houver)
-            if (publicas.length > 0) {
-                html += `<div class="titulo-secao">🌐 Intenções Públicas (${publicas.length})</div>`;
-                publicas.forEach(item => {
-                    html += criarCard(item);
-                });
-            }
-
-            container.innerHTML = html;
+            // 3. Desenhar as listas
+            document.getElementById('lista-sigilosas').innerHTML = gerarHTMLLista(sigilosas, 'sigiloso', 'Nenhuma intenção sigilosa no momento.');
+            document.getElementById('lista-publicas').innerHTML = gerarHTMLLista(publicas, 'publico', 'Nenhuma intenção pública no momento.');
         }
 
-        // Função auxiliar para criar o HTML de um card
-        function criarCard(item) {
-            const classe = item.visibilidade === 'privada' ? 'card sigiloso' : 'card publico';
-            const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
-            
-            return `
-                <div class="${classe}">
-                    <div class="nome">${item.nome || 'Anônimo'}</div>
-                    <div class="pedido">${item.pedido}</div>
-                    <div class="info">
-                        <span>Enviado em: ${dataFormatada}</span>
-                        <span>Rezadas: ${item.rezadas}</span>
+        // Função auxiliar que cria o HTML dos cards
+        function gerarHTMLLista(arrayDados, classeCor, mensagemVazia) {
+            if (arrayDados.length === 0) {
+                return `<p style="text-align:center; color: #888; margin-top: 20px;">${mensagemVazia}</p>`;
+            }
+
+            let html = '';
+            arrayDados.forEach(item => {
+                const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                html += `
+                    <div class="card ${classeCor}">
+                        <div class="nome">
+                            <span>${item.nome || 'Anônimo'}</span>
+                        </div>
+                        <div class="pedido">${item.pedido}</div>
+                        <div class="info">
+                            <span>📅 ${dataFormatada}</span>
+                            <span>🙏 ${item.rezadas} orações</span>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            });
+            return html;
+        }
+
+        // Função para alternar entre as abas
+        function mudarAba(nomeAba, btnClicado) {
+            // Esconde todas as abas
+            document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
+            // Tira o destaque de todos os botões
+            document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('ativa'));
+            
+            // Ativa a aba e o botão clicados
+            document.getElementById('aba-' + nomeAba).classList.add('ativa');
+            btnClicado.classList.add('ativa');
         }
     </script>
 </body>
