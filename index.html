@@ -268,15 +268,26 @@
             }
         });
 
-        // Função do botão "Rezei"
+                // Função do botão "Rezei"
         async function rezar(id) {
             try {
-                // Aqui precisamos de uma rota PATCH no Worker para somar 1. 
-                // Como não criamos ainda, vamos apenas avisar o usuário por enquanto.
-                alert("Obrigado por rezar! (Em breve o contador será atualizado)");
-                // A lógica real de incremento virá no próximo passo.
+                // Faz a chamada para a nova rota no Worker
+                const resposta = await fetch(`${URL_API}/rezar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+
+                if (resposta.ok) {
+                    // Se deu certo, recarrega a lista para atualizar o número na tela
+                    carregarIntencoes();
+                    alert("Obrigado por rezar! Sua oração foi registrada.");
+                } else {
+                    alert("Não foi possível registrar sua oração agora.");
+                }
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                alert("Erro de conexão ao tentar registrar a oração.");
             }
         }
 
