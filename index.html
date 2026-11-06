@@ -82,9 +82,11 @@
         .horario-item:last-child { border-bottom: none; }
         .horario-dia { font-weight: bold; color: var(--cor-primaria); }
 
-        /* Avisos */
+        /* Avisos e Aniversariantes */
         .aviso-item { border-left: 4px solid var(--cor-secundaria); padding-left: 10px; margin-bottom: 15px; }
         .aviso-data { font-size: 0.8em; color: #999; text-transform: uppercase; font-weight: bold; }
+        .aniversariante-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .aniversariante-data { background: var(--cor-primaria); color: white; border-radius: 5px; padding: 3px 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }
 
         /* Intenções */
         .form-group { margin-bottom: 10px; }
@@ -159,11 +161,16 @@
         </div>
     </div>
 
-    <!-- ABA 3: AVISOS -->
+    <!-- ABA 3: AVISOS E ANIVERSARIANTES -->
     <div id="aba-avisos" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-bullhorn"></i> Mural de Avisos</h2>
             <div id="avisos-conteudo"><p>Carregando avisos...</p></div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-birthday-cake"></i> Aniversariantes Dizimistas</h2>
+            <div id="aniversariantes-conteudo"><p>Carregando aniversariantes...</p></div>
         </div>
     </div>
 
@@ -244,7 +251,7 @@
     </nav>
 
     <script>
-        // ⚠️ ATENÇÃO: SUBSTITUA O LINK ABAIXO PELO LINK DO SEU WORKER NA CLOUDFLARE
+        // ⚠️ ATENÇÃO: LINK DO SEU WORKER NA CLOUDFLARE
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev'; 
 
         // --- LÓGICA DAS ABAS ---
@@ -298,11 +305,11 @@
             }
         }
 
-        // --- 2. SCRIPT DE HORÁRIOS ---
+        // --- 2. SCRIPT DE HORÁRIOS (AGORA PUXA DO BANCO) ---
         async function carregarHorarios() {
             const container = document.getElementById('horarios-conteudo');
             try {
-                const resposta = await fetch('horarios.json');
+                const resposta = await fetch(`${URL_API}/horarios`);
                 const dados = await resposta.json();
 
                 if (dados.length === 0) {
@@ -325,11 +332,11 @@
             }
         }
 
-        // --- 3. SCRIPT DE AVISOS ---
+        // --- 3. SCRIPT DE AVISOS (AGORA PUXA DO BANCO) ---
         async function carregarAvisos() {
             const container = document.getElementById('avisos-conteudo');
             try {
-                const resposta = await fetch('avisos.json');
+                const resposta = await fetch(`${URL_API}/avisos`);
                 const dados = await resposta.json();
 
                 if (dados.length === 0) {
@@ -353,7 +360,34 @@
             }
         }
 
-        // --- 4. SCRIPT DE INTENÇÕES ---
+        // --- 4. SCRIPT DE ANIVERSARIANTES (NOVO) ---
+        async function carregarAniversariantes() {
+            const container = document.getElementById('aniversariantes-conteudo');
+            try {
+                const resposta = await fetch(`${URL_API}/aniversariantes`);
+                const dados = await resposta.json();
+
+                if (dados.length === 0) {
+                    container.innerHTML = '<p>Nenhum aniversariante cadastrado neste mês.</p>';
+                    return;
+                }
+
+                let html = '';
+                dados.forEach(item => {
+                    html += `
+                        <div class="aniversariante-item">
+                            <span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span>
+                            <span>${item.nome}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>';
+            }
+        }
+
+        // --- 5. SCRIPT DE INTENÇÕES ---
         async function carregarIntencoes() {
             const container = document.getElementById('lista-intencoes');
             try {
@@ -453,6 +487,7 @@
         carregarLiturgia();
         carregarHorarios();
         carregarAvisos();
+        carregarAniversariantes();
         carregarIntencoes();
     </script>
 </body>
