@@ -2,60 +2,148 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4b2d6e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Central de Acessos - Paróquia</title>
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO DO CSS                                                -->
+    <!-- ============================================================ -->
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f9; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        h1 { color: #5a3e7a; text-align: center; margin-bottom: 30px; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        p { text-align: center; color: #666; margin-bottom: 25px; font-size: 0.95em; }
-        
-        .btn-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 1.1em;
-            box-sizing: border-box;
-            transition: 0.2s;
+        :root {
+            --roxo: #4b2d6e;
+            --roxo-2: #6d4a96;
+            --roxo-claro: #efe8f7;
+            --dourado: #c9a24b;
+            --dourado-escuro: #a07f2c;
+            --creme: #faf6ee;
+            --texto: #2e2339;
+            --cinza: #7a6f85;
         }
-        .btn-app { background: #5a3e7a; }
-        .btn-padre { background: #8a2be2; }
-        .btn-secretaria { background: #2b8a8a; }
-        .btn-link:hover { opacity: 0.9; transform: scale(0.98); }
-        
-        .icone { font-size: 1.2em; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+            color: var(--texto);
+            min-height: 100vh; min-height: 100dvh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 70px 18px 28px;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(201,162,75,.35), transparent 55%),
+                linear-gradient(160deg, #3a2056 0%, #4b2d6e 45%, #6d4a96 100%);
+            position: relative; overflow-x: hidden;
+        }
+        body::before, body::after {
+            content: ''; position: fixed; border-radius: 50%;
+            border: 1px solid rgba(201,162,75,.25); pointer-events: none;
+        }
+        body::before { width: 520px; height: 520px; top: -200px; right: -220px; }
+        body::after  { width: 380px; height: 380px; bottom: -160px; left: -160px; }
+        h1, h2 { font-family: Georgia, 'Times New Roman', serif; }
+        svg { display: block; }
+
+        .central-card {
+            position: relative; z-index: 1;
+            width: 100%; max-width: 420px;
+            background: var(--creme);
+            border-radius: 24px;
+            padding: 0 24px 26px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,.35);
+            border-top: 5px solid var(--dourado);
+        }
+        .cruz-logo {
+            width: 76px; height: 76px; margin: -38px auto 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--roxo), var(--roxo-2));
+            border: 4px solid var(--dourado);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,.3);
+        }
+        .cruz-logo svg { width: 36px; height: 36px; fill: var(--dourado); }
+        h1 { font-size: 1.5rem; color: var(--roxo); line-height: 1.2; }
+        h2 { font-size: .98rem; color: var(--dourado-escuro); font-weight: 700; margin-top: 8px; }
+        .divisor { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; }
+        .divisor::before, .divisor::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--dourado), transparent); }
+        .divisor svg { width: 14px; height: 14px; fill: var(--dourado); }
+        .saudacao { font-family: Georgia, serif; font-style: italic; color: var(--cinza); font-size: .95rem; }
+        .instrucao { color: var(--cinza); font-size: .9rem; margin: 14px 0 18px; }
+
+        /* ---------- Botões de acesso ---------- */
+        .acessos { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+        .btn-acesso {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; border-radius: 16px; text-decoration: none; color: #fff;
+            box-shadow: 0 4px 12px rgba(75,45,110,.25);
+            transition: transform .1s, box-shadow .2s;
+        }
+        .btn-acesso:active { transform: scale(.98); }
+        .btn-acesso:hover { box-shadow: 0 6px 16px rgba(75,45,110,.35); }
+        .btn-app       { background: linear-gradient(135deg, var(--roxo), var(--roxo-2)); }
+        .btn-padre     { background: linear-gradient(135deg, #3a2056, var(--roxo)); }
+        .btn-secretaria{ background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); box-shadow: 0 4px 12px rgba(160,127,44,.3); }
+        .ico {
+            flex: none; width: 46px; height: 46px; border-radius: 50%;
+            background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.55);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ico svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .btn-acesso .txt { flex: 1; min-width: 0; }
+        .btn-acesso strong { display: block; font-size: 1.02rem; letter-spacing: .2px; }
+        .btn-acesso small { display: block; font-size: .78rem; opacity: .88; margin-top: 2px; }
+        .seta { flex: none; font-size: 1.5rem; opacity: .8; line-height: 1; }
+
+        .rodape { margin-top: 20px; font-size: .75rem; color: var(--cinza); }
     </style>
+    <!-- ============================================================ -->
+    <!-- FIM DO CSS                                                   -->
+    <!-- ============================================================ -->
 </head>
 <body>
 
-    <div class="card">
+    <!-- ============================================================ -->
+    <!-- INÍCIO: CENTRAL DE ACESSOS                                   -->
+    <!-- ============================================================ -->
+    <div class="central-card">
+        <div class="cruz-logo">
+            <svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg>
+        </div>
         <h1>Central de Acessos</h1>
-            <h2>Paróquia São João Bosco-N.S.</h2>
-        <p>Selecione a área que deseja acessar.</p>
+        <h2>Paróquia São João Bosco-N.S.</h2>
+        <div class="divisor"><svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg></div>
+        <p class="saudacao">Louvado seja Nosso Senhor Jesus Cristo!</p>
+        <p class="instrucao">Selecione a área que deseja acessar.</p>
 
-        <!-- Link para o App dos Fiéis -->
-        <a href="index.html" class="btn-link btn-app">
-            <span class="icone">⛪</span> App da Comunidade
-        </a>
+        <nav class="acessos">
+            <!-- Link para o App dos Fiéis -->
+            <a href="index.html" class="btn-acesso btn-app">
+                <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6M12 5V2M10.5 3.5h3"/></svg></span>
+                <span class="txt"><strong>App da Comunidade</strong><small>Liturgia, horários, avisos e orações</small></span>
+                <span class="seta">&#8250;</span>
+            </a>
 
-        <!-- Link para o Painel do Padre -->
-        <a href="admin.html" class="btn-link btn-padre">
-            <span class="icone">🔒</span> Painel do Padre
-        </a>
+            <!-- Link para o Painel do Padre -->
+            <a href="admin.html" class="btn-acesso btn-padre">
+                <span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <span class="txt"><strong>Painel do Padre</strong><small>Área restrita ao pároco</small></span>
+                <span class="seta">&#8250;</span>
+            </a>
 
-        <!-- Link para o Painel da Secretaria -->
-        <a href="secretaria.html" class="btn-link btn-secretaria">
-            <span class="icone">📋</span> Painel da Secretaria
-        </a>
+            <!-- Link para o Painel da Secretaria -->
+            <a href="secretaria.html" class="btn-acesso btn-secretaria">
+                <span class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h6"/></svg></span>
+                <span class="txt"><strong>Painel da Secretaria</strong><small>Avisos, horários, aniversários e Pascom</small></span>
+                <span class="seta">&#8250;</span>
+            </a>
+        </nav>
+
+        <p class="rodape">Acesso restrito aos responsáveis pelos painéis</p>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: CENTRAL DE ACESSOS                                      -->
+    <!-- ============================================================ -->
 
 </body>
 </html>
