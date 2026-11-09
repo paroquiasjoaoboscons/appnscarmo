@@ -106,7 +106,7 @@
         .btn-expandir:hover { background: var(--cor-secundaria); color: white; }
         .liturgia-extra { display: none; }
 
-        /* --- GALERIA DE FOTOS (CORRIGIDO) --- */
+        /* --- GALERIA DE FOTOS --- */
         .galeria-container {
             display: flex;
             overflow-x: auto;
@@ -126,6 +126,54 @@
             scroll-snap-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: block;
+            cursor: pointer; /* Muda o cursor para indicar que é clicável */
+        }
+
+        /* --- PASCOM (Galeria de Fotos da Semana) --- */
+        .pascom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .pascom-grid img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* --- LIGHTBOX (TELA CHEIA) --- */
+        .lightbox {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .lightbox.ativo { display: flex; }
+        .lightbox img {
+            max-width: 95%;
+            max-height: 85vh;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .lightbox .fechar {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .lightbox .legenda {
+            color: white;
+            margin-top: 15px;
+            font-size: 1em;
         }
 
         /* Horários */
@@ -165,7 +213,7 @@
             background: var(--cor-branca); box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000;
         }
-        .menu-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75em; padding: 5px 15px; cursor: pointer; transition: 0.2s; }
+        .menu-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75em; padding: 5px 10px; cursor: pointer; transition: 0.2s; }
         .menu-item i { font-size: 1.4em; margin-bottom: 4px; }
         .menu-item.ativo { color: var(--cor-primaria); font-weight: bold; }
         .menu-item.ativo i { color: var(--cor-primaria); }
@@ -181,10 +229,9 @@
         </div>
     </header>
 
-    <!-- ABA 1: LITURGIA (TELA INICIAL REFORMULADA) -->
+    <!-- ABA 1: LITURGIA (TELA INICIAL) -->
     <div id="aba-liturgia" class="aba-conteudo ativa">
         
-        <!-- CARD DO PÁROCO COM FOTO -->
         <div class="card card-padre">
             <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="this.style.display='none'">
             <div class="info-padre">
@@ -193,7 +240,6 @@
             </div>
         </div>
 
-        <!-- CARD DA LITURGIA -->
         <div class="card">
             <h2><i class="fas fa-bible"></i> Liturgia Diária</h2>
             <div id="liturgia-conteudo">
@@ -201,7 +247,6 @@
             </div>
         </div>
 
-        <!-- CARD DA BÍBLIA ONLINE -->
         <div class="card">
             <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
             <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Acesse a Palavra de Deus na tradução de sua preferência.</p>
@@ -213,19 +258,18 @@
                     <i class="fas fa-book"></i> Bíblia Ave Maria
                 </a>
             </div>
-            <p style="font-size: 0.75em; color: #999; margin-top: 10px; text-align: center;">*O link abre o portal Bíblia Católica Online, onde você pode selecionar a tradução.</p>
         </div>
 
-        <!-- GALERIA DE FOTOS -->
+        <!-- GALERIA DE FOTOS COM CLIQUE -->
         <div class="card">
             <h2><i class="fas fa-images"></i> Nossa Igreja</h2>
             <div class="galeria-container">
-                <img src="igreja.jpg" alt="Fachada da Igreja" class="foto-galeria">
-                <img src="foto1.jpg" alt="Interior da Igreja" class="foto-galeria">
-                <img src="foto2.jpg" alt="Altar-Mor" class="foto-galeria">
-                <img src="foto3.jpg" alt="Comunidade" class="foto-galeria">
+                <img src="igreja.jpg" alt="Fachada da Igreja" class="foto-galeria" onclick="abrirLightbox('igreja.jpg', 'Fachada da Igreja')">
+                <img src="foto1.jpg" alt="Interior da Igreja" class="foto-galeria" onclick="abrirLightbox('foto1.jpg', 'Interior da Igreja')">
+                <img src="foto2.jpg" alt="Altar-Mor" class="foto-galeria" onclick="abrirLightbox('foto2.jpg', 'Altar-Mor')">
+                <img src="foto3.jpg" alt="Comunidade" class="foto-galeria" onclick="abrirLightbox('foto3.jpg', 'Comunidade')">
             </div>
-            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Arraste para o lado para ver mais fotos</p>
+            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar</p>
         </div>
 
     </div>
@@ -278,7 +322,24 @@
         </div>
     </div>
 
-    <!-- ABA 5: INSTITUCIONAL -->
+    <!-- ABA 5: PASCOM (NOVA) -->
+    <div id="aba-pascom" class="aba-conteudo">
+        <div class="card">
+            <h2><i class="fas fa-camera"></i> Pascom - Fotos da Semana</h2>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Momentos especiais registrados pela Pastoral da Comunicação.</p>
+            
+            <div class="pascom-grid">
+                <!-- Substitua pelos nomes das fotos que a Pascom enviar -->
+                <img src="pascom1.jpg" alt="Evento 1" onclick="abrirLightbox('pascom1.jpg', 'Evento da Semana')">
+                <img src="pascom2.jpg" alt="Evento 2" onclick="abrirLightbox('pascom2.jpg', 'Evento da Semana')">
+                <img src="pascom3.jpg" alt="Evento 3" onclick="abrirLightbox('pascom3.jpg', 'Evento da Semana')">
+                <img src="pascom4.jpg" alt="Evento 4" onclick="abrirLightbox('pascom4.jpg', 'Evento da Semana')">
+            </div>
+            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar</p>
+        </div>
+    </div>
+
+    <!-- ABA 6: INSTITUCIONAL -->
     <div id="aba-institucional" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-church"></i> Nossa História</h2>
@@ -308,10 +369,20 @@
         <a class="menu-item" onclick="mudarAba('intencoes', this)">
             <i class="fas fa-praying-hands"></i><span>Intenções</span>
         </a>
+        <a class="menu-item" onclick="mudarAba('pascom', this)">
+            <i class="fas fa-camera"></i><span>Pascom</span>
+        </a>
         <a class="menu-item" onclick="mudarAba('institucional', this)">
             <i class="fas fa-church"></i><span>História</span>
         </a>
     </nav>
+
+    <!-- LIGHTBOX (TELA CHEIA) -->
+    <div id="lightbox" class="lightbox" onclick="fecharLightbox(event)">
+        <span class="fechar" onclick="fecharLightbox(event)">&times;</span>
+        <img id="lightbox-img" src="" alt="Foto ampliada">
+        <p id="lightbox-legenda" class="legenda"></p>
+    </div>
 
     <script>
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev'; 
@@ -322,6 +393,20 @@
             document.getElementById('aba-' + nomeAba).classList.add('ativa');
             elementoMenu.classList.add('ativo');
             window.scrollTo(0, 0);
+        }
+
+        // --- LIGHTBOX (ABRIR E FECHAR) ---
+        function abrirLightbox(caminho, legenda) {
+            document.getElementById('lightbox-img').src = caminho;
+            document.getElementById('lightbox-legenda').innerText = legenda;
+            document.getElementById('lightbox').classList.add('ativo');
+        }
+
+        function fecharLightbox(event) {
+            // Fecha apenas se clicar no fundo escuro ou no botão X
+            if (event.target.id === 'lightbox' || event.target.classList.contains('fechar')) {
+                document.getElementById('lightbox').classList.remove('ativo');
+            }
         }
 
         // --- LITURGIA COM EXPANSÃO ---
@@ -343,7 +428,6 @@
                 if (!resposta.ok) throw new Error('API fora do ar');
                 const dados = await resposta.json();
 
-                // MÁGICA DA COR LITÚRGICA
                 if (dados.cor) {
                     const corTexto = dados.cor.toLowerCase();
                     const root = document.documentElement;
@@ -378,13 +462,11 @@
                 const l = dados.leituras;
                 if (l) {
                     html += bloco('Primeira Leitura', l.primeiraLeitura);
-                    
                     html += `<div class="liturgia-extra" id="liturgia-extra">`;
                     html += bloco('Salmo Responsorial', l.salmo);
                     html += bloco('Segunda Leitura', l.segundaLeitura);
                     html += bloco('Evangelho', l.evangelho);
                     html += `</div>`;
-                    
                     html += `<button class="btn-expandir" onclick="toggleLiturgia(this)">Ver Liturgia Completa <i class="fas fa-chevron-down"></i></button>`;
                 } else {
                     html += '<p>A liturgia não está disponível agora.</p>';
@@ -462,49 +544,4 @@
                 let html = '';
                 dados.forEach(item => {
                     const nome = item.nome ? item.nome : 'Anônimo';
-                    const data = new Date(item.criado_em).toLocaleDateString('pt-BR');
-                    html += `<div class="intencao-item"><p class="intencao-nome">${nome}</p><p class="intencao-texto">${item.pedido}</p><div class="intencao-footer"><span>${data}</span><button class="btn-rezar" onclick="rezar(${item.id})"><i class="fas fa-praying-hands"></i> Rezei (${item.rezadas})</button></div></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções.</p>'; }
-        }
-
-        document.getElementById('form-intencao').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-enviar-intencao');
-            const msgDiv = document.getElementById('mensagem-intencao');
-            const nome = document.getElementById('nome').value;
-            const pedido = document.getElementById('pedido').value;
-            const privada = document.getElementById('privada').checked;
-            btn.disabled = true; btn.innerText = 'Enviando...'; msgDiv.style.display = 'none';
-            try {
-                const resposta = await fetch(`${URL_API}/intencoes`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome, pedido: pedido, visibilidade: privada ? 'privada' : 'publica' })
-                });
-                if (!resposta.ok) throw new Error('Erro ao enviar');
-                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada com sucesso!'; msgDiv.style.display = 'block';
-                document.getElementById('form-intencao').reset();
-                carregarIntencoes();
-                setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
-            } catch (erro) {
-                msgDiv.className = 'msg-alerta msg-erro'; msgDiv.innerText = 'Erro ao enviar. Tente novamente.'; msgDiv.style.display = 'block';
-            } finally { btn.disabled = false; btn.innerText = 'Enviar Intenção'; }
-        });
-
-        async function rezar(id) {
-            try {
-                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
-                if (resposta.ok) carregarIntencoes();
-            } catch (e) { console.error(e); }
-        }
-
-        // Inicialização
-        carregarLiturgia();
-        carregarHorarios();
-        carregarAvisos();
-        carregarAniversariantes();
-        carregarIntencoes();
-    </script>
-</body>
-</html>
+                    const data = new Date(item
