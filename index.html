@@ -106,7 +106,7 @@
         .btn-expandir:hover { background: var(--cor-secundaria); color: white; }
         .liturgia-extra { display: none; }
 
-        /* --- GALERIA DE FOTOS --- */
+        /* --- GALERIA DE FOTOS PRINCIPAL --- */
         .galeria-container {
             display: flex;
             overflow-x: auto;
@@ -126,26 +126,42 @@
             scroll-snap-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: block;
-            cursor: pointer; /* Muda o cursor para indicar que é clicável */
+            cursor: pointer;
         }
 
-        /* --- PASCOM (Galeria de Fotos da Semana) --- */
+        /* --- PASCOM (Grade de Fotos e Vídeos) --- */
         .pascom-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
-        .pascom-grid img {
+        .midia-card {
+            position: relative;
             width: 100%;
             height: 120px;
-            object-fit: cover;
             border-radius: 8px;
+            overflow: hidden;
             cursor: pointer;
+            background: #000;
+        }
+        .midia-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+        .midia-card .icone-play {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
         /* --- LIGHTBOX (TELA CHEIA) --- */
         .lightbox {
-            display: none; /* Escondido por padrão */
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9);
@@ -169,6 +185,7 @@
             font-size: 2.5em;
             cursor: pointer;
             font-weight: bold;
+            z-index: 2001;
         }
         .lightbox .legenda {
             color: white;
@@ -260,7 +277,7 @@
             </div>
         </div>
 
-        <!-- GALERIA DE FOTOS COM CLIQUE -->
+        <!-- GALERIA DE FOTOS PRINCIPAL -->
         <div class="card">
             <h2><i class="fas fa-images"></i> Nossa Igreja</h2>
             <div class="galeria-container">
@@ -268,8 +285,13 @@
                 <img src="foto1.jpg" alt="Interior da Igreja" class="foto-galeria" onclick="abrirLightbox('foto1.jpg', 'Interior da Igreja')">
                 <img src="foto2.jpg" alt="Altar-Mor" class="foto-galeria" onclick="abrirLightbox('foto2.jpg', 'Altar-Mor')">
                 <img src="foto3.jpg" alt="Comunidade" class="foto-galeria" onclick="abrirLightbox('foto3.jpg', 'Comunidade')">
+                <img src="foto4.jpg" alt="Foto 4" class="foto-galeria" onclick="abrirLightbox('foto4.jpg', 'Foto da Comunidade')">
+                <img src="foto5.jpg" alt="Foto 5" class="foto-galeria" onclick="abrirLightbox('foto5.jpg', 'Foto da Comunidade')">
+                <img src="foto6.jpg" alt="Foto 6" class="foto-galeria" onclick="abrirLightbox('foto6.jpg', 'Foto da Comunidade')">
+                <img src="foto7.jpg" alt="Foto 7" class="foto-galeria" onclick="abrirLightbox('foto7.jpg', 'Foto da Comunidade')">
+                <img src="foto8.jpg" alt="Foto 8" class="foto-galeria" onclick="abrirLightbox('foto8.jpg', 'Foto da Comunidade')">
             </div>
-            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar</p>
+            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Arraste para o lado e toque para ampliar</p>
         </div>
 
     </div>
@@ -322,20 +344,35 @@
         </div>
     </div>
 
-    <!-- ABA 5: PASCOM (NOVA) -->
+    <!-- ABA 5: PASCOM -->
     <div id="aba-pascom" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-camera"></i> Pascom - Fotos da Semana</h2>
             <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Momentos especiais registrados pela Pastoral da Comunicação.</p>
             
             <div class="pascom-grid">
-                <!-- Substitua pelos nomes das fotos que a Pascom enviar -->
-                <img src="pascom1.jpg" alt="Evento 1" onclick="abrirLightbox('pascom1.jpg', 'Evento da Semana')">
-                <img src="pascom2.jpg" alt="Evento 2" onclick="abrirLightbox('pascom2.jpg', 'Evento da Semana')">
-                <img src="pascom3.jpg" alt="Evento 3" onclick="abrirLightbox('pascom3.jpg', 'Evento da Semana')">
-                <img src="pascom4.jpg" alt="Evento 4" onclick="abrirLightbox('pascom4.jpg', 'Evento da Semana')">
+                <!-- 8 FOTOS -->
+                <img src="foto1.jpg" alt="Foto 1" onclick="abrirLightbox('foto1.jpg', 'Momento da Semana')">
+                <img src="foto2.jpg" alt="Foto 2" onclick="abrirLightbox('foto2.jpg', 'Momento da Semana')">
+                <img src="foto3.jpg" alt="Foto 3" onclick="abrirLightbox('foto3.jpg', 'Momento da Semana')">
+                <img src="foto4.jpg" alt="Foto 4" onclick="abrirLightbox('foto4.jpg', 'Momento da Semana')">
+                <img src="foto5.jpg" alt="Foto 5" onclick="abrirLightbox('foto5.jpg', 'Momento da Semana')">
+                <img src="foto6.jpg" alt="Foto 6" onclick="abrirLightbox('foto6.jpg', 'Momento da Semana')">
+                <img src="foto7.jpg" alt="Foto 7" onclick="abrirLightbox('foto7.jpg', 'Momento da Semana')">
+                <img src="foto8.jpg" alt="Foto 8" onclick="abrirLightbox('foto8.jpg', 'Momento da Semana')">
+
+                <!-- 2 VÍDEOS -->
+                <!-- Troque 'video1.mp4' pelo link real do vídeo se estiver no YouTube -->
+                <div class="midia-card" onclick="window.open('video1.mp4', '_blank')">
+                    <img src="foto1.jpg" alt="Vídeo 1">
+                    <i class="fas fa-play-circle icone-play"></i>
+                </div>
+                <div class="midia-card" onclick="window.open('video2.mp4', '_blank')">
+                    <img src="foto2.jpg" alt="Vídeo 2">
+                    <i class="fas fa-play-circle icone-play"></i>
+                </div>
             </div>
-            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar</p>
+            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar ou no vídeo para assistir</p>
         </div>
     </div>
 
@@ -403,7 +440,6 @@
         }
 
         function fecharLightbox(event) {
-            // Fecha apenas se clicar no fundo escuro ou no botão X
             if (event.target.id === 'lightbox' || event.target.classList.contains('fechar')) {
                 document.getElementById('lightbox').classList.remove('ativo');
             }
@@ -497,51 +533,4 @@
                 if (dados.length === 0) { container.innerHTML = '<p>Nenhum horário cadastrado.</p>'; return; }
                 let html = '';
                 dados.forEach(item => {
-                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>'; }
-        }
-
-        // --- AVISOS ---
-        async function carregarAvisos() {
-            const container = document.getElementById('avisos-conteudo');
-            try {
-                const resposta = await fetch(`${URL_API}/avisos`);
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aviso no momento.</p>'; return; }
-                let html = '';
-                dados.forEach(aviso => {
-                    html += `<div class="aviso-item"><span class="aviso-data">${aviso.data}</span><h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3><p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>'; }
-        }
-
-        // --- ANIVERSARIANTES ---
-        async function carregarAniversariantes() {
-            const container = document.getElementById('aniversariantes-conteudo');
-            try {
-                const resposta = await fetch(`${URL_API}/aniversariantes`);
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aniversariante cadastrado.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    html += `<div class="aniversariante-item"><span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span><span>${item.nome}</span></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>'; }
-        }
-
-        // --- INTENÇÕES ---
-        async function carregarIntencoes() {
-            const container = document.getElementById('lista-intencoes');
-            try {
-                const resposta = await fetch(`${URL_API}/intencoes`);
-                if (!resposta.ok) throw new Error('Erro na API');
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    const nome = item.nome ? item.nome : 'Anônimo';
-                    const data = new Date(item
+                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></
