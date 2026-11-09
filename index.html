@@ -2,7 +2,12 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4b2d6e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="N. Sra. do Carmo">
     <title>Comunidade Nossa Senhora do Carmo</title>
     <link rel="manifest" href="manifest.json">
     <script>
@@ -11,250 +16,310 @@
       }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO DO CSS                                                -->
+    <!-- ============================================================ -->
     <style>
         :root {
-            --cor-primaria: #5a3e7a;
-            --cor-secundaria: #8a2be2;
-            --cor-fundo: #f4f4f9;
-            --cor-texto: #333;
-            --cor-branca: #ffffff;
-            --cor-hero-overlay: rgba(90, 62, 122, 0.7);
+            /* As duas cores abaixo mudam sozinhas conforme a cor litúrgica do dia */
+            --primaria: #4b2d6e;
+            --secundaria: #6d4a96;
+            --tinta: #efe8f7;
+            --dourado: #c9a24b;
+            --dourado-escuro: #a07f2c;
+            --creme: #faf6ee;
+            --texto: #2e2339;
+            --cinza: #7a6f85;
+            --borda: #e8e0f0;
+            --nav-h: 64px;
+            --safe-b: env(safe-area-inset-bottom, 0px);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: var(--cor-fundo); 
-            color: var(--cor-texto); 
-            padding-bottom: 70px;
-            -webkit-tap-highlight-color: transparent;
+        @supports (color: color-mix(in srgb, red 10%, white)) {
+            :root { --tinta: color-mix(in srgb, var(--primaria) 9%, #fff); }
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        [hidden] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+            background: var(--creme); color: var(--texto);
+            padding-bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
+        }
+        body.sem-scroll { overflow: hidden; }
+        h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; }
+        button { font-family: inherit; }
 
-        /* --- HERO (Topo com Foto) --- */
+        /* ---------- HERO ---------- */
         .hero {
-            position: relative;
-            height: 200px;
-            background-image: url('igreja.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: relative; min-height: 235px;
+            background: url('igreja.jpg') center / cover no-repeat, var(--primaria);
+            display: flex; align-items: flex-end; justify-content: center; text-align: center; color: #fff;
+            border-radius: 0 0 28px 28px; border-bottom: 3px solid var(--dourado);
+            overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.2);
         }
         .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--cor-hero-overlay);
+            content: ''; position: absolute; inset: 0;
+            background: rgba(75, 45, 110, .72);
         }
-        .hero-content { position: relative; z-index: 1; padding: 0 20px; }
-        .hero h1 { font-size: 1.3em; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-        .hero p { font-size: 0.85em; opacity: 0.9; margin-top: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-
-        /* --- CONTEÚDO DAS ABAS --- */
-        .aba-conteudo {
-            display: none;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            animation: fadeIn 0.3s ease-in-out;
+        @supports (color: color-mix(in srgb, red 10%, white)) {
+            .hero::before {
+                background: linear-gradient(180deg,
+                    color-mix(in srgb, var(--primaria) 55%, transparent) 0%,
+                    color-mix(in srgb, var(--primaria) 90%, transparent) 100%);
+            }
         }
-        .aba-conteudo.ativa { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-content { position: relative; z-index: 1; padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 22px; width: 100%; }
+        .hero-cruz {
+            width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 50%;
+            border: 2px solid var(--dourado); background: rgba(255,255,255,.14);
+            display: flex; align-items: center; justify-content: center; color: var(--dourado); font-size: 1.15rem;
+        }
+        .hero h1 { font-size: 1.4rem; line-height: 1.2; text-shadow: 0 2px 6px rgba(0,0,0,.45); }
+        .hero p { font-size: .88rem; opacity: .92; margin-top: 6px; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+        .chip-cor {
+            display: inline-flex; align-items: center; gap: 7px; margin-top: 12px;
+            background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4);
+            border-radius: 20px; padding: 5px 13px; font-size: .78rem; font-weight: 700;
+        }
+        .chip-cor i { width: 10px; height: 10px; border-radius: 50%; background: var(--dourado); border: 1px solid #fff; display: inline-block; }
 
-        /* --- ESTILOS DOS CARDS --- */
-        .card { background: var(--cor-branca); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .card h2 { color: var(--cor-primaria); font-size: 1.1em; margin-bottom: 15px; border-bottom: 2px solid var(--cor-fundo); padding-bottom: 10px; }
-        
-        .titulo { color: var(--cor-secundaria); margin-bottom: 5px; font-weight: bold; }
-        .info { font-weight: bold; color: #666; font-size: 0.9em; }
-        .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+        /* ---------- ABAS ---------- */
+        .aba-conteudo { display: none; padding: 18px 16px 0; max-width: 640px; margin: 0 auto; }
+        .aba-conteudo.ativa { display: block; animation: surgir .28s ease; }
+        @keyframes surgir { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
-        /* --- CARD DO PÁROCO (COM FOTO) --- */
+        .card {
+            background: #fff; border-radius: 18px; padding: 20px 18px 22px; margin-bottom: 18px;
+            box-shadow: 0 3px 14px rgba(75,45,110,.09); border-top: 4px solid var(--dourado);
+        }
+        .card h2 {
+            color: var(--primaria); font-size: 1.15rem; margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--borda); display: flex; align-items: center; gap: 10px;
+        }
+        .card h2 i { color: var(--dourado-escuro); font-size: 1.05rem; }
+        .sub-texto { font-size: .88rem; color: var(--cinza); line-height: 1.45; margin-bottom: 14px; }
+        .btn-link { background: none; border: none; color: var(--secundaria); font-weight: 700; text-decoration: underline; cursor: pointer; font-size: inherit; }
+        .erro-msg { color: #b3392f; font-size: .9rem; }
+        .vazio { color: var(--cinza); font-size: .92rem; text-align: center; padding: 14px 0; }
+
+        .skel {
+            height: 14px; border-radius: 7px; margin: 10px 0;
+            background: linear-gradient(90deg, #eee 25%, #f8f8f8 50%, #eee 75%); background-size: 200% 100%;
+            animation: brilho 1.2s infinite;
+        }
+        @keyframes brilho { to { background-position: -200% 0; } }
+
+        /* ---------- Próxima missa + atalhos ---------- */
+        .proxima {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff;
+            border-radius: 16px; padding: 16px 18px; border-left: 5px solid var(--dourado);
+            box-shadow: 0 4px 14px rgba(0,0,0,.18);
+        }
+        .proxima > i { font-size: 1.6rem; color: var(--dourado); }
+        .proxima small { display: block; font-size: .72rem; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+        .proxima strong { font-size: 1rem; line-height: 1.3; display: block; margin-top: 2px; }
+        .atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+        .atalho {
+            background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 12px 4px;
+            display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+            color: var(--primaria); font-size: .72rem; font-weight: 700; box-shadow: 0 2px 8px rgba(75,45,110,.07);
+        }
+        .atalho i {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--tinta); color: var(--primaria);
+            display: flex; align-items: center; justify-content: center; font-size: 1.05rem; border: 1.5px solid var(--dourado);
+        }
+        .atalho:active { transform: scale(.96); }
+
+        /* ---------- Pároco ---------- */
         .card-padre { display: flex; align-items: center; gap: 15px; }
         .foto-padre {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--cor-primaria);
-            background: #ddd;
-            flex-shrink: 0;
+            width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            border: 3px solid var(--dourado); background: var(--tinta);
         }
-        .info-padre h3 { margin: 0; color: #333; font-size: 1.05em; }
-        .info-padre p { margin: 2px 0 0; font-size: 0.85em; color: #666; }
+        .foto-padre.fallback { display: flex; align-items: center; justify-content: center; color: var(--primaria); font-size: 1.5rem; }
+        .info-padre h3 { font-size: 1.02rem; color: var(--primaria); line-height: 1.25; }
+        .info-padre p { font-size: .85rem; color: var(--cinza); margin-top: 3px; }
 
-        /* --- BOTÕES DA BÍBLIA --- */
-        .botoes-biblia { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .btn-biblia {
-            text-decoration: none; text-align: center; background: #f0f0f0; color: var(--cor-primaria);
-            padding: 15px; border-radius: 8px; font-weight: bold; border: 1px solid #ddd;
-            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1em;
-        }
-        .btn-biblia:hover { background: #e0e0e0; }
-
-        /* --- LITURGIA EXPANSÍVEL --- */
-        .btn-expandir {
-            background: none; border: 1px solid var(--cor-secundaria); color: var(--cor-secundaria);
-            width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            margin-top: 15px; transition: 0.2s; font-size: 0.95em;
-        }
-        .btn-expandir:hover { background: var(--cor-secundaria); color: white; }
+        /* ---------- Liturgia ---------- */
+        .info { font-weight: 700; color: var(--cinza); font-size: .88rem; margin-bottom: 3px; }
+        .leitura { margin-top: 16px; border-top: 1px solid var(--borda); padding-top: 12px; }
+        .leitura .titulo { color: var(--secundaria); font-weight: 700; font-family: Georgia, serif; font-size: 1.02rem; margin-bottom: 3px; }
+        .leitura .texto { font-size: .95rem; line-height: 1.6; white-space: pre-line; margin-top: 8px; }
         .liturgia-extra { display: none; }
-
-        /* --- GALERIA DE FOTOS PRINCIPAL --- */
-        .galeria-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 10px;
-            padding-bottom: 10px;
-            -webkit-overflow-scrolling: touch;
+        .btn-expandir {
+            width: 100%; margin-top: 16px; padding: 13px; border-radius: 12px; cursor: pointer;
+            background: #fff; border: 1.5px solid var(--primaria); color: var(--primaria); font-weight: 700; font-size: .95rem;
         }
-        .galeria-container::-webkit-scrollbar { display: none; }
-        .foto-galeria {
-            flex: 0 0 85%;
-            width: 100%;
-            max-width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            scroll-snap-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: block;
-            cursor: pointer;
+        .btn-expandir:active { background: var(--tinta); }
+
+        .btn-biblia {
+            display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+            background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); color: #fff;
+            padding: 14px; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(160,127,44,.3);
         }
 
-        /* --- PASCOM (Grade de Fotos e Vídeos) --- */
-        .pascom-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+        /* ---------- Carrossel "Momentos da Semana" ---------- */
+        .carrossel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+        .carrossel::-webkit-scrollbar { display: none; }
+        .carrossel img {
+            flex: 0 0 80%; height: 210px; object-fit: cover; border-radius: 14px; scroll-snap-align: center;
+            cursor: pointer; background: var(--tinta); box-shadow: 0 2px 8px rgba(0,0,0,.14);
         }
-        .midia-card {
-            position: relative;
-            width: 100%;
-            height: 120px;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            background: #000;
-        }
-        
-        /* CORREÇÃO AQUI: Força o tamanho da imagem dentro do card */
-        .midia-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.8;
-            display: block;
-        }
-        
-        .midia-card .icone-play {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 2em;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-        }
+        .dica-mini { font-size: .78rem; color: var(--cinza); text-align: center; margin-top: 8px; }
 
-        /* --- LIGHTBOX (TELA CHEIA) --- */
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .lightbox.ativo { display: flex; }
-        .lightbox img {
-            max-width: 95%;
-            max-height: 85vh;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
-        .lightbox .fechar {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 2.5em;
-            cursor: pointer;
-            font-weight: bold;
-            z-index: 2001;
-        }
-        .lightbox .legenda {
-            color: white;
-            margin-top: 15px;
-            font-size: 1em;
-        }
+        /* ---------- Horários ---------- */
+        .grupo-horario h3 { font-size: .85rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--dourado-escuro); margin: 18px 0 4px; }
+        .grupo-horario:first-child h3 { margin-top: 0; }
+        .horario-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--borda); }
+        .grupo-horario .horario-item:last-child { border-bottom: none; }
+        .horario-dia { font-weight: 700; color: var(--primaria); font-size: .95rem; }
+        .horario-hora { text-align: right; font-weight: 700; font-size: .95rem; }
+        .horario-hora small { display: block; font-weight: 400; color: var(--cinza); font-size: .78rem; }
 
-        /* Horários */
-        .horario-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 10px 0; font-size: 0.95em; }
-        .horario-item:last-child { border-bottom: none; }
-        .horario-dia { font-weight: bold; color: var(--cor-primaria); }
+        /* ---------- Avisos / aniversariantes ---------- */
+        .aviso-item { border-left: 4px solid var(--dourado); background: var(--tinta); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 12px; }
+        .aviso-data { font-size: .72rem; color: var(--dourado-escuro); text-transform: uppercase; font-weight: 700; letter-spacing: .8px; }
+        .aviso-item h3 { font-size: 1.02rem; margin: 4px 0; color: var(--primaria); }
+        .aviso-item p { font-size: .92rem; line-height: 1.5; white-space: pre-line; }
+        .btn-compartilhar { margin-top: 8px; background: none; border: none; color: var(--secundaria); font-weight: 700; font-size: .82rem; cursor: pointer; padding: 4px 0; }
+        .aniversariante-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--borda); font-size: .93rem; }
+        .aniversariante-item:last-child { border-bottom: none; }
+        .aniversariante-data { min-width: 62px; text-align: center; background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff; border-radius: 8px; padding: 4px 8px; font-size: .8rem; font-weight: 700; }
+        .aniversariante-item.hoje .aniversariante-data { background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); }
+        .badge-hoje { margin-left: auto; font-size: .72rem; font-weight: 700; color: var(--dourado-escuro); }
 
-        /* Avisos e Aniversariantes */
-        .aviso-item { border-left: 4px solid var(--cor-secundaria); padding-left: 10px; margin-bottom: 15px; }
-        .aviso-data { font-size: 0.8em; color: #999; text-transform: uppercase; font-weight: bold; }
-        .aniversariante-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9em; }
-        .aniversariante-data { background: var(--cor-primaria); color: white; border-radius: 5px; padding: 3px 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }
+        /* ---------- Intenções ---------- */
+        .caixa-form { background: var(--tinta); border-radius: 14px; padding: 16px; margin-bottom: 22px; border: 1px solid var(--borda); }
+        .caixa-form h3 { font-size: 1rem; color: var(--primaria); margin-bottom: 8px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: .85rem; margin-bottom: 6px; font-weight: 700; color: var(--primaria); }
+        .form-group input[type="text"], .form-group textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--borda); border-radius: 12px;
+            font-family: inherit; font-size: 16px; background: #fff; outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--secundaria); box-shadow: 0 0 0 3px rgba(109,74,150,.15); }
+        .form-group textarea { height: 96px; resize: vertical; }
+        .contador { text-align: right; font-size: .75rem; color: var(--cinza); margin-top: 3px; }
+        .linha-check { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
+        .linha-check input { width: 20px; height: 20px; accent-color: var(--primaria); flex: none; }
+        .linha-check label { margin: 0; font-weight: 400; font-size: .85rem; color: var(--texto); }
+        .btn-enviar {
+            width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff;
+            font-size: 1rem; font-weight: 700; box-shadow: 0 4px 12px rgba(75,45,110,.28);
+        }
+        .btn-enviar:disabled { opacity: .6; }
+        .msg-alerta { padding: 11px 14px; border-radius: 10px; margin-bottom: 14px; font-size: .9rem; font-weight: 700; display: none; }
+        .msg-sucesso { background: #e1f3e8; color: #1f6b3f; }
+        .msg-erro { background: #fbe4e1; color: #a02b22; }
+        .intencao-item { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+        .intencao-nome { font-weight: 700; color: var(--primaria); font-size: .9rem; }
+        .intencao-texto { margin: 6px 0; font-size: .95rem; line-height: 1.5; white-space: pre-line; }
+        .intencao-footer { display: flex; justify-content: space-between; align-items: center; font-size: .78rem; color: var(--cinza); margin-top: 8px; }
+        .btn-rezar {
+            display: flex; align-items: center; gap: 6px; background: none; cursor: pointer;
+            border: 1.5px solid var(--secundaria); color: var(--secundaria); border-radius: 20px; padding: 6px 14px; font-size: .82rem; font-weight: 700;
+        }
+        .btn-rezar.feito { background: var(--primaria); border-color: var(--primaria); color: #fff; cursor: default; }
 
-        /* Intenções */
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 0.9em; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; background: #fafafa; }
-        .form-group textarea { height: 80px; resize: vertical; }
-        .btn-enviar { background-color: var(--cor-primaria); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1em; width: 100%; font-weight: bold; transition: 0.2s; }
-        .btn-enviar:hover { background-color: var(--cor-secundaria); }
-        .btn-enviar:disabled { background-color: #ccc; }
-        
-        .intencao-item { background: #f9f9f9; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
-        .intencao-nome { font-weight: bold; color: var(--cor-primaria); font-size: 0.9em; }
-        .intencao-texto { margin: 5px 0; font-size: 0.95em; }
-        .intencao-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8em; color: #888; margin-top: 10px; }
-        .btn-rezar { background: none; border: 1px solid var(--cor-secundaria); color: var(--cor-secundaria); border-radius: 20px; padding: 5px 12px; cursor: pointer; font-size: 0.85em; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .btn-rezar:hover { background: var(--cor-secundaria); color: white; }
-        
-        .msg-alerta { padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; display: none; }
-        .msg-sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .msg-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        /* ---------- Pascom ---------- */
+        .segmento { display: flex; background: var(--tinta); border-radius: 12px; padding: 4px; margin-bottom: 14px; }
+        .seg { flex: 1; border: none; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--primaria); font-size: .92rem; cursor: pointer; }
+        .seg.ativo { background: #fff; box-shadow: 0 2px 6px rgba(75,45,110,.18); }
+        .grade { display: grid; gap: 6px; }
+        .grade-foto { grid-template-columns: repeat(3, 1fr); }
+        .grade-video { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .tile {
+            position: relative; overflow: hidden; cursor: pointer; border: none; padding: 0; border-radius: 10px;
+            aspect-ratio: 1; background: linear-gradient(90deg, #eee 25%, #f8f8f8 50%, #eee 75%); background-size: 200% 100%;
+            animation: brilho 1.2s infinite;
+        }
+        .tile.ok { animation: none; background: #000; }
+        .grade-video .tile { aspect-ratio: 16 / 9; }
+        .tile img, .tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .tile .play {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(0,0,0,.55); color: #fff; display: flex; align-items: center; justify-content: center; padding-left: 3px; font-size: .9rem;
+        }
+        .tile .dur { position: absolute; right: 6px; bottom: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: .7rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
 
-        /* --- MENU INFERIOR (ABAS) --- */
+        /* ---------- História ---------- */
+        .historia p { font-size: .96rem; line-height: 1.7; margin-bottom: 15px; }
+        .historia strong { color: var(--primaria); }
+
+        /* ---------- Menu inferior ---------- */
         .menu-inferior {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--cor-branca); box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000;
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000;
+            height: calc(var(--nav-h) + var(--safe-b)); padding-bottom: var(--safe-b);
+            background: #fff; border-top: 1px solid var(--borda); box-shadow: 0 -4px 16px rgba(75,45,110,.1); display: flex;
         }
-        .menu-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75em; padding: 5px 10px; cursor: pointer; transition: 0.2s; }
-        .menu-item i { font-size: 1.4em; margin-bottom: 4px; }
-        .menu-item.ativo { color: var(--cor-primaria); font-weight: bold; }
-        .menu-item.ativo i { color: var(--cor-primaria); }
+        .menu-item {
+            flex: 1; min-width: 0; background: none; border: none; cursor: pointer; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            color: var(--cinza); font-size: .66rem; font-weight: 700;
+        }
+        .menu-item i { font-size: 1.25rem; }
+        .menu-item.ativo { color: var(--primaria); }
+        .menu-item.ativo::before { content: ''; position: absolute; top: 0; left: 26%; right: 26%; height: 3px; background: var(--dourado); border-radius: 0 0 4px 4px; }
+
+        /* ---------- Lightbox (fotos e vídeos) ---------- */
+        .lightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(15,8,25,.97); display: none; flex-direction: column; }
+        .lightbox.ativo { display: flex; }
+        .lb-topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 10px; color: #fff; }
+        .lb-topo .lb-info { min-width: 0; }
+        .lb-topo .lb-info b { display: block; font-family: Georgia, serif; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lb-topo .lb-info span { font-size: .78rem; opacity: .75; }
+        .lb-btn { background: rgba(255,255,255,.15); color: #fff; border: none; width: 42px; height: 42px; border-radius: 50%; font-size: 1rem; cursor: pointer; flex: none; }
+        .lb-acoes { display: flex; gap: 8px; }
+        .lb-palco { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; padding: 0 6px calc(14px + var(--safe-b)); }
+        .lb-palco img, .lb-palco video { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; }
+        .lb-seta { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,.18); color: #fff; font-size: 1.5rem; cursor: pointer; }
+        #lb-ant { left: 8px; } #lb-prox { right: 8px; }
     </style>
+    <!-- ============================================================ -->
+    <!-- FIM DO CSS                                                   -->
+    <!-- ============================================================ -->
 </head>
 <body>
 
-    <!-- HERO -->
+    <!-- ============================================================ -->
+    <!-- INÍCIO: HERO (TOPO)                                          -->
+    <!-- ============================================================ -->
     <header class="hero">
         <div class="hero-content">
+            <div class="hero-cruz"><i class="fas fa-cross"></i></div>
             <h1>Comunidade Nossa Senhora do Carmo</h1>
             <p>Boa Vista de Minas - Nova Serrana/MG</p>
+            <span class="chip-cor" id="chip-cor" hidden><i></i><span id="chip-cor-txt"></span></span>
         </div>
     </header>
+    <!-- ============================================================ -->
+    <!-- FIM: HERO                                                    -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 1: LITURGIA (TELA INICIAL) -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA INÍCIO                                           -->
+    <!-- ============================================================ -->
     <div id="aba-liturgia" class="aba-conteudo ativa">
-        
+
+        <!-- Próxima missa (calculada a partir dos horários cadastrados na secretaria) -->
+        <div class="proxima" id="proxima-missa" hidden>
+            <i class="fas fa-church"></i>
+            <div><small>Próxima Missa</small><strong id="proxima-txt"></strong></div>
+        </div>
+
+        <div class="atalhos">
+            <button class="atalho" type="button" data-aba="horarios"><i class="fas fa-clock"></i>Horários</button>
+            <button class="atalho" type="button" data-aba="avisos"><i class="fas fa-bullhorn"></i>Avisos</button>
+            <button class="atalho" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i>Orações</button>
+            <button class="atalho" type="button" data-aba="pascom"><i class="fas fa-camera"></i>Pascom</button>
+        </div>
+
         <div class="card card-padre">
-            <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="this.style.display='none'">
+            <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="semFotoPadre(this)">
             <div class="info-padre">
                 <h3>Padre Gedler Henriques Breves Pereira</h3>
                 <p>Pároco da Paróquia São João Bosco</p>
@@ -264,240 +329,439 @@
         <div class="card">
             <h2><i class="fas fa-bible"></i> Liturgia Diária</h2>
             <div id="liturgia-conteudo">
-                <p>Carregando a liturgia de hoje...</p>
+                <div class="skel"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:85%"></div>
             </div>
+        </div>
+
+        <!-- Momentos da Semana: pega as primeiras fotos que a Pascom enviou pela secretaria -->
+        <div class="card" id="card-momentos">
+            <h2><i class="fas fa-images"></i> Momentos da Semana</h2>
+            <div class="carrossel" id="carrossel-home"></div>
+            <p class="dica-mini">Arraste para o lado e toque para ampliar</p>
+            <button type="button" class="btn-expandir" data-aba="pascom">Ver todas as fotos e vídeos</button>
         </div>
 
         <div class="card">
             <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
-            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Acesse a Palavra de Deus na tradução de sua preferência.</p>
-            <div class="botoes-biblia">
-                <a href="https://www.bibliacatolica.com.br/" target="_blank" class="btn-biblia">
-                    <i class="fas fa-book"></i> Bíblia Sagrada 
-                </a>
-                <a href="https://www.bibliacatolica.com.br/" target="_blank" class="btn-biblia">
-                    <i class="fas fa-book"></i> Bíblia Ave Maria
-                </a>
-            </div>
-        </div>
-
-        <!-- GALERIA DE FOTOS PRINCIPAL -->
-        <div class="card">
-            <h2><i class="fas fa-images"></i> Nossa Igreja</h2>
-            <div class="galeria-container">
-                <img src="igreja.jpg" alt="Fachada da Igreja" class="foto-galeria" onclick="abrirLightbox('igreja.jpg', 'Fachada da Igreja')">
-                <img src="foto1.jpg" alt="Interior da Igreja" class="foto-galeria" onclick="abrirLightbox('foto1.jpg', 'Interior da Igreja')">
-                <img src="foto2.jpg" alt="Altar-Mor" class="foto-galeria" onclick="abrirLightbox('foto2.jpg', 'Altar-Mor')">
-                <img src="foto3.jpg" alt="Comunidade" class="foto-galeria" onclick="abrirLightbox('foto3.jpg', 'Comunidade')">
-                <img src="foto4.jpg" alt="Foto 4" class="foto-galeria" onclick="abrirLightbox('foto4.jpg', 'Foto da Comunidade')">
-                <img src="foto5.jpg" alt="Foto 5" class="foto-galeria" onclick="abrirLightbox('foto5.jpg', 'Foto da Comunidade')">
-                <img src="foto6.jpg" alt="Foto 6" class="foto-galeria" onclick="abrirLightbox('foto6.jpg', 'Foto da Comunidade')">
-                <img src="foto7.jpg" alt="Foto 7" class="foto-galeria" onclick="abrirLightbox('foto7.jpg', 'Foto da Comunidade')">
-                <img src="foto8.jpg" alt="Foto 8" class="foto-galeria" onclick="abrirLightbox('foto8.jpg', 'Foto da Comunidade')">
-            </div>
-            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Arraste para o lado e toque para ampliar</p>
+            <p class="sub-texto">Acesse a Palavra de Deus na tradução Ave Maria.</p>
+            <a href="https://www.bibliacatolica.com.br/" target="_blank" rel="noopener" class="btn-biblia">
+                <i class="fas fa-book"></i> Abrir Bíblia Católica
+            </a>
         </div>
 
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA INÍCIO                                              -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 2: HORÁRIOS -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA HORÁRIOS                                         -->
+    <!-- ============================================================ -->
     <div id="aba-horarios" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-clock"></i> Horários e Confissões</h2>
-            <div id="horarios-conteudo"><p>Carregando horários...</p></div>
+            <div id="horarios-conteudo"><div class="skel"></div><div class="skel" style="width:75%"></div></div>
         </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA HORÁRIOS                                            -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 3: AVISOS E ANIVERSARIANTES -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA AVISOS E ANIVERSARIANTES                         -->
+    <!-- ============================================================ -->
     <div id="aba-avisos" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-bullhorn"></i> Mural de Avisos</h2>
-            <div id="avisos-conteudo"><p>Carregando avisos...</p></div>
+            <div id="avisos-conteudo"><div class="skel"></div><div class="skel" style="width:75%"></div></div>
         </div>
         <div class="card">
             <h2><i class="fas fa-birthday-cake"></i> Aniversariantes Dizimistas</h2>
-            <div id="aniversariantes-conteudo"><p>Carregando aniversariantes...</p></div>
+            <div id="aniversariantes-conteudo"><div class="skel"></div><div class="skel" style="width:60%"></div></div>
         </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA AVISOS E ANIVERSARIANTES                            -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 4: INTENÇÕES -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA INTENÇÕES                                        -->
+    <!-- ============================================================ -->
     <div id="aba-intencoes" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-praying-hands"></i> Intenções de Oração</h2>
             <div id="mensagem-intencao" class="msg-alerta"></div>
-            <div style="background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee;">
-                <h3 style="margin-top: 0; font-size: 1em; color: #555; margin-bottom: 10px;">Deixe seu pedido</h3>
+            <div class="caixa-form">
+                <h3>Deixe seu pedido</h3>
                 <form id="form-intencao">
                     <div class="form-group">
                         <label for="nome">Seu nome (opcional)</label>
-                        <input type="text" id="nome" placeholder="Ex: Maria">
+                        <input type="text" id="nome" maxlength="60" placeholder="Ex: Maria">
                     </div>
                     <div class="form-group">
                         <label for="pedido">Seu pedido de oração *</label>
-                        <textarea id="pedido" placeholder="Escreva aqui..." required></textarea>
+                        <textarea id="pedido" maxlength="500" placeholder="Escreva aqui..." required></textarea>
+                        <div class="contador"><span id="cont-pedido">0</span>/500</div>
                     </div>
-                    <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-                        <input type="checkbox" id="privada" style="width: auto;">
-                        <label for="privada" style="margin-bottom: 0; font-weight: normal; font-size: 0.85em;">Manter em sigilo (apenas o padre verá)</label>
+                    <div class="linha-check">
+                        <input type="checkbox" id="privada">
+                        <label for="privada">Manter em sigilo (apenas o padre verá)</label>
                     </div>
-                    <button type="submit" class="btn-enviar" id="btn-enviar-intencao" style="margin-top: 15px;">Enviar Intenção</button>
+                    <button type="submit" class="btn-enviar" id="btn-enviar-intencao">Enviar Intenção</button>
                 </form>
             </div>
-            <h3 style="margin-top: 0; font-size: 1em; color: #555; margin-bottom: 15px;">Intenções da Comunidade</h3>
-            <div id="lista-intencoes"><p>Carregando intenções...</p></div>
+            <h3 style="font-size:1rem;color:var(--primaria);margin-bottom:12px">Intenções da Comunidade</h3>
+            <div id="lista-intencoes"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
         </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA INTENÇÕES                                           -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 5: PASCOM -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA PASCOM                                           -->
+    <!-- ============================================================ -->
     <div id="aba-pascom" class="aba-conteudo">
         <div class="card">
-            <h2><i class="fas fa-camera"></i> Pascom - Fotos da Semana</h2>
-            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Momentos especiais registrados pela Pastoral da Comunicação.</p>
-            
-            <div class="pascom-grid">
-                <!-- 8 FOTOS -->
-                <img src="foto1.jpg" alt="Foto 1" onclick="abrirLightbox('foto1.jpg', 'Momento da Semana')">
-                <img src="foto2.jpg" alt="Foto 2" onclick="abrirLightbox('foto2.jpg', 'Momento da Semana')">
-                <img src="foto3.jpg" alt="Foto 3" onclick="abrirLightbox('foto3.jpg', 'Momento da Semana')">
-                <img src="foto4.jpg" alt="Foto 4" onclick="abrirLightbox('foto4.jpg', 'Momento da Semana')">
-                <img src="foto5.jpg" alt="Foto 5" onclick="abrirLightbox('foto5.jpg', 'Momento da Semana')">
-                <img src="foto6.jpg" alt="Foto 6" onclick="abrirLightbox('foto6.jpg', 'Momento da Semana')">
-                <img src="foto7.jpg" alt="Foto 7" onclick="abrirLightbox('foto7.jpg', 'Momento da Semana')">
-                <img src="foto8.jpg" alt="Foto 8" onclick="abrirLightbox('foto8.jpg', 'Momento da Semana')">
+            <h2><i class="fas fa-camera"></i> Pascom</h2>
+            <p class="sub-texto">Momentos especiais registrados pela Pastoral da Comunicação. Toque para ampliar ou assistir.</p>
 
-                <!-- 2 VÍDEOS -->
-                <!-- Troque 'video1.mp4' pelo link real do vídeo se estiver no YouTube -->
-                <div class="midia-card" onclick="window.open('video1.mp4', '_blank')">
-                    <img src="foto1.jpg" alt="Vídeo 1">
-                    <i class="fas fa-play-circle icone-play"></i>
-                </div>
-                <div class="midia-card" onclick="window.open('video2.mp4', '_blank')">
-                    <img src="foto2.jpg" alt="Vídeo 2">
-                    <i class="fas fa-play-circle icone-play"></i>
-                </div>
+            <div class="segmento">
+                <button type="button" class="seg ativo" data-seg="foto">Fotos</button>
+                <button type="button" class="seg" data-seg="video">Vídeos</button>
             </div>
-            <p style="font-size: 0.8em; color: #999; text-align: center; margin-top: 10px;">Toque na foto para ampliar ou no vídeo para assistir</p>
+
+            <div id="grade-foto" class="grade grade-foto"></div>
+            <div id="grade-video" class="grade grade-video" hidden></div>
+            <p id="pascom-vazio" class="vazio" hidden>Ainda não há fotos publicadas.</p>
         </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA PASCOM                                              -->
+    <!-- ============================================================ -->
 
-    <!-- ABA 6: INSTITUCIONAL -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: ABA HISTÓRIA (INSTITUCIONAL)                         -->
+    <!-- ============================================================ -->
     <div id="aba-institucional" class="aba-conteudo">
-        <div class="card">
+        <div class="card historia">
             <h2><i class="fas fa-church"></i> Nossa História</h2>
-            <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
+            <p>
               A Capela de Nossa Senhora do Carmo, no distrito de Boa Vista de Minas, é um marco de fé que atravessa gerações. Segundo a Prefeitura de Nova Serrana, a capela foi <strong>construída pelas mãos de pessoas escravizadas, há mais de 100 anos, a pedido de um fazendeiro da região</strong>. O templo é reconhecido como patrimônio cultural do município.
             </p>
-            <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
+            <p>
                <strong>O Altar-Mor:</strong> Um dos maiores tesouros da capela é seu altar esculpido em madeira. A tradição local, preservada pela comunidade e registrada pela Prefeitura, associa a obra ao mestre <strong>Aleijadinho</strong> ou à sua escola. O estilo rococó, com detalhes em branco e dourado, encanta fiéis e visitantes.
             </p>
-            <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
+            <p>
                <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região.
             </p>
         </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: ABA HISTÓRIA                                            -->
+    <!-- ============================================================ -->
 
-    <!-- MENU INFERIOR -->
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: MENU INFERIOR                                        -->
+    <!-- ============================================================ -->
     <nav class="menu-inferior">
-        <a class="menu-item ativo" onclick="mudarAba('liturgia', this)">
-            <i class="fas fa-book-open"></i><span>Início</span>
-        </a>
-        <a class="menu-item" onclick="mudarAba('horarios', this)">
-            <i class="fas fa-clock"></i><span>Horários</span>
-        </a>
-        <a class="menu-item" onclick="mudarAba('avisos', this)">
-            <i class="fas fa-bullhorn"></i><span>Avisos</span>
-        </a>
-        <a class="menu-item" onclick="mudarAba('intencoes', this)">
-            <i class="fas fa-praying-hands"></i><span>Intenções</span>
-        </a>
-        <a class="menu-item" onclick="mudarAba('pascom', this)">
-            <i class="fas fa-camera"></i><span>Pascom</span>
-        </a>
-        <a class="menu-item" onclick="mudarAba('institucional', this)">
-            <i class="fas fa-church"></i><span>História</span>
-        </a>
+        <button class="menu-item ativo" type="button" data-aba="liturgia"><i class="fas fa-book-open"></i><span>Início</span></button>
+        <button class="menu-item" type="button" data-aba="horarios"><i class="fas fa-clock"></i><span>Horários</span></button>
+        <button class="menu-item" type="button" data-aba="avisos"><i class="fas fa-bullhorn"></i><span>Avisos</span></button>
+        <button class="menu-item" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i><span>Intenções</span></button>
+        <button class="menu-item" type="button" data-aba="pascom"><i class="fas fa-camera"></i><span>Pascom</span></button>
+        <button class="menu-item" type="button" data-aba="institucional"><i class="fas fa-church"></i><span>História</span></button>
     </nav>
+    <!-- ============================================================ -->
+    <!-- FIM: MENU INFERIOR                                           -->
+    <!-- ============================================================ -->
 
-    <!-- LIGHTBOX (TELA CHEIA) -->
-    <div id="lightbox" class="lightbox" onclick="fecharLightbox(event)">
-        <span class="fechar" onclick="fecharLightbox(event)">&times;</span>
-        <img id="lightbox-img" src="" alt="Foto ampliada">
-        <p id="lightbox-legenda" class="legenda"></p>
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: LIGHTBOX (FOTOS E VÍDEOS EM TELA CHEIA)              -->
+    <!-- ============================================================ -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+        <div class="lb-topo">
+            <div class="lb-info"><b id="lb-titulo"></b><span id="lb-contador"></span></div>
+            <div class="lb-acoes">
+                <button type="button" class="lb-btn" id="lb-compartilhar" aria-label="Compartilhar"><i class="fas fa-share-nodes"></i></button>
+                <button type="button" class="lb-btn" id="lb-fechar" aria-label="Fechar"><i class="fas fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="lb-palco" id="lb-palco">
+            <button type="button" class="lb-seta" id="lb-ant" aria-label="Anterior">&#8249;</button>
+            <button type="button" class="lb-seta" id="lb-prox" aria-label="Próximo">&#8250;</button>
+        </div>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: LIGHTBOX                                                -->
+    <!-- ============================================================ -->
 
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO DO JAVASCRIPT                                         -->
+    <!-- ============================================================ -->
     <script>
-        const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev'; 
+        /* ---------- CONFIGURAÇÃO ---------- */
+        const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
+        // De onde vêm as fotos/vídeos da Pascom enviados pela secretaria (foto1.jpg ... foto20.jpg, video1.mp4 ... video5.mp4).
+        // '' = mesma pasta deste site (como funcionava antes). IMPORTANTE: use o MESMO endereço em URL_MIDIA do painel da secretaria.
+        const URL_MIDIA = '';
+        const MAX_FOTOS = 20, MAX_VIDEOS = 5;
+        const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
 
-        function mudarAba(nomeAba, elementoMenu) {
-            document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
-            document.getElementById('aba-' + nomeAba).classList.add('ativa');
-            elementoMenu.classList.add('ativo');
+        /* ---------- UTILITÁRIOS ---------- */
+        const $ = (id) => document.getElementById(id);
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+        async function getJSON(caminho) {
+            const r = await fetch(URL_API + caminho);
+            if (!r.ok) throw new Error('http ' + r.status);
+            return r.json();
+        }
+        const erroHTML = (fn) => `<p class="erro-msg">Não foi possível carregar. <button type="button" class="btn-link" onclick="${fn}()">Tentar novamente</button></p>`;
+
+        // Datas do banco (D1) vêm como "2026-11-09 18:30:00" (UTC); o Safari não lê esse formato direto
+        function lerData(s) {
+            if (!s) return null;
+            let t = String(s);
+            if (/^\d{4}-\d{2}-\d{2} \d/.test(t)) t = t.replace(' ', 'T') + 'Z';
+            const d = new Date(t);
+            return isNaN(d) ? null : d;
+        }
+
+        function semFotoPadre(img) {
+            const d = document.createElement('div');
+            d.className = 'foto-padre fallback';
+            d.innerHTML = '<i class="fas fa-cross"></i>';
+            img.replaceWith(d);
+        }
+
+        /* ---------- NAVEGAÇÃO ---------- */
+        let pascomMontado = false, videosMontados = false;
+        function irParaAba(nome) {
+            document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.remove('ativa'));
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('ativo', b.dataset.aba === nome));
+            $('aba-' + nome).classList.add('ativa');
             window.scrollTo(0, 0);
+            if (nome === 'pascom' && !pascomMontado) { pascomMontado = true; montarFotos(); }
+        }
+        document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
+
+        /* ---------- LIGHTBOX ---------- */
+        let lbLista = [], lbIdx = 0, xInicio = 0, yInicio = 0;
+
+        function renderLB() {
+            const it = lbLista[lbIdx];
+            const palco = $('lb-palco');
+            palco.querySelectorAll('img, video').forEach(e => { if (e.tagName === 'VIDEO') e.pause(); e.remove(); });
+            let el;
+            if (it.tipo === 'foto') { el = new Image(); el.src = it.url; el.alt = it.leg; }
+            else {
+                el = document.createElement('video');
+                el.src = it.url; el.controls = true; el.autoplay = true; el.preload = 'metadata';
+                el.playsInline = true; el.setAttribute('playsinline', '');
+            }
+            palco.insertBefore(el, palco.firstChild);
+            $('lb-titulo').textContent = it.leg;
+            $('lb-contador').textContent = `${lbIdx + 1} de ${lbLista.length}`;
+            $('lb-ant').hidden = $('lb-prox').hidden = lbLista.length < 2;
+            if (it.tipo === 'foto' && lbLista.length > 1) { new Image().src = lbLista[(lbIdx + 1) % lbLista.length].url; }
+        }
+        function abrirLB(lista, indice) {
+            if (!lista.length) return;
+            lbLista = lista; lbIdx = indice;
+            renderLB();
+            $('lightbox').classList.add('ativo');
+            document.body.classList.add('sem-scroll');
+            history.pushState({ lb: 1 }, '');   // o botão "voltar" do celular fecha a foto
+        }
+        function limparLB() {
+            if (!$('lightbox').classList.contains('ativo')) return;
+            $('lb-palco').querySelectorAll('video').forEach(v => v.pause());
+            $('lb-palco').querySelectorAll('img, video').forEach(e => e.remove());
+            $('lightbox').classList.remove('ativo');
+            document.body.classList.remove('sem-scroll');
+        }
+        function fecharLB() {
+            limparLB();
+            if (history.state && history.state.lb) history.back();
+        }
+        function navegarLB(p) {
+            if (lbLista.length < 2) return;
+            lbIdx = (lbIdx + p + lbLista.length) % lbLista.length;
+            renderLB();
+        }
+        async function compartilharMidia() {
+            const it = lbLista[lbIdx]; if (!it) return;
+            const url = new URL(it.url, location.href).href.split('?')[0].split('#')[0];
+            if (navigator.share) { try { await navigator.share({ title: 'Comunidade Nossa Senhora do Carmo', url }); } catch (_) {} }
+            else window.open('https://wa.me/?text=' + encodeURIComponent(url), '_blank');
+        }
+        $('lb-fechar').addEventListener('click', fecharLB);
+        $('lb-ant').addEventListener('click', () => navegarLB(-1));
+        $('lb-prox').addEventListener('click', () => navegarLB(1));
+        $('lb-compartilhar').addEventListener('click', compartilharMidia);
+        $('lb-palco').addEventListener('click', (e) => { if (e.target === $('lb-palco')) fecharLB(); });
+        window.addEventListener('popstate', limparLB);
+        document.addEventListener('keydown', (e) => {
+            if (!$('lightbox').classList.contains('ativo')) return;
+            if (e.key === 'Escape') fecharLB();
+            if (e.key === 'ArrowLeft') navegarLB(-1);
+            if (e.key === 'ArrowRight') navegarLB(1);
+        });
+        $('lightbox').addEventListener('touchstart', (e) => { xInicio = e.changedTouches[0].clientX; yInicio = e.changedTouches[0].clientY; }, { passive: true });
+        $('lightbox').addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - xInicio, dy = e.changedTouches[0].clientY - yInicio;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) navegarLB(dx < 0 ? 1 : -1);
+        }, { passive: true });
+
+        /* ---------- PASCOM: URLs e montagem das grades ---------- */
+        const urlFoto = (n) => `${URL_MIDIA}foto${n}.jpg?v=${VERSAO_CACHE}`;
+        const urlVideo = (n, ext) => `${URL_MIDIA}video${n}.${ext}?v=${VERSAO_CACHE}#t=0.1`;
+
+        function atualizarVazioPascom() {
+            const aba = document.querySelector('.seg.ativo').dataset.seg;
+            const grade = $('grade-' + aba);
+            const vazio = grade.children.length === 0;
+            $('pascom-vazio').hidden = !vazio;
+            $('pascom-vazio').textContent = aba === 'foto' ? 'Ainda não há fotos publicadas.' : 'Ainda não há vídeos publicados.';
         }
 
-        // --- LIGHTBOX (ABRIR E FECHAR) ---
-        function abrirLightbox(caminho, legenda) {
-            document.getElementById('lightbox-img').src = caminho;
-            document.getElementById('lightbox-legenda').innerText = legenda;
-            document.getElementById('lightbox').classList.add('ativo');
-        }
-
-        function fecharLightbox(event) {
-            if (event.target.id === 'lightbox' || event.target.classList.contains('fechar')) {
-                document.getElementById('lightbox').classList.remove('ativo');
+        // Fotos: as 20 posições são criadas com carregamento "preguiçoso" (só baixa o que aparece na tela);
+        // as posições vazias (sem foto enviada pela secretaria) somem sozinhas.
+        function montarFotos() {
+            const g = $('grade-foto');
+            g.innerHTML = '';
+            for (let n = 1; n <= MAX_FOTOS; n++) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Foto ' + n);
+                const img = new Image();
+                img.loading = 'lazy'; img.decoding = 'async'; img.alt = 'Foto ' + n;
+                img.onload = () => b.classList.add('ok');
+                img.onerror = () => { b.remove(); atualizarVazioPascom(); };
+                b.appendChild(img);
+                b.addEventListener('click', () => {
+                    const tiles = [...g.querySelectorAll('.tile')];
+                    const lista = tiles.map(t => ({ tipo: 'foto', url: t.querySelector('img').src, leg: t.querySelector('img').alt }));
+                    abrirLB(lista, tiles.indexOf(b));
+                });
+                g.appendChild(b);
+                img.src = urlFoto(n);
             }
         }
 
-        // --- LITURGIA COM EXPANSÃO ---
-        async function carregarLiturgia() {
-            const container = document.getElementById('liturgia-conteudo');
-            const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
-            
-            const bloco = (tituloPadrao, itens) =>
-                lista(itens).map(i => `
-                    <div class="leitura">
-                        <p class="titulo">${i.titulo || tituloPadrao}</p>
-                        ${i.referencia ? `<p class="info">${i.referencia}</p>` : ''}
-                        ${i.refrao ? `<p><em>${i.refrao}</em></p>` : ''}
-                        <p style="font-size: 0.9em; white-space: pre-line;">${i.texto || ''}</p>
-                    </div>`).join('');
+        // Vídeos: só carrega os metadados (poucos KB) para mostrar o quadro inicial e a duração.
+        function montarVideos() {
+            const g = $('grade-video');
+            g.innerHTML = '';
+            for (let n = 1; n <= MAX_VIDEOS; n++) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Vídeo ' + n);
+                b.dataset.leg = 'Vídeo ' + n;
+                const v = document.createElement('video');
+                v.muted = true; v.preload = 'metadata'; v.playsInline = true; v.setAttribute('playsinline', '');
+                let ext = 'mp4';
+                v.onerror = () => {
+                    if (ext === 'mp4') { ext = 'webm'; v.src = urlVideo(n, 'webm'); }
+                    else { b.remove(); atualizarVazioPascom(); }
+                };
+                v.onloadedmetadata = () => {
+                    b.classList.add('ok');
+                    if (isFinite(v.duration)) {
+                        const m = Math.floor(v.duration / 60), s = Math.floor(v.duration % 60);
+                        const d = document.createElement('span'); d.className = 'dur'; d.textContent = `${m}:${String(s).padStart(2, '0')}`;
+                        b.appendChild(d);
+                    }
+                };
+                const play = document.createElement('span'); play.className = 'play'; play.innerHTML = '<i class="fas fa-play"></i>';
+                b.appendChild(v); b.appendChild(play);
+                b.addEventListener('click', () => {
+                    const tiles = [...g.querySelectorAll('.tile')];
+                    const lista = tiles.map(t => ({ tipo: 'video', url: t.querySelector('video').currentSrc.split('#')[0], leg: t.dataset.leg }));
+                    abrirLB(lista, tiles.indexOf(b));
+                });
+                g.appendChild(b);
+                v.src = urlVideo(n, 'mp4');
+            }
+        }
 
+        document.querySelectorAll('.seg').forEach(s => s.addEventListener('click', () => {
+            document.querySelectorAll('.seg').forEach(x => x.classList.remove('ativo'));
+            s.classList.add('ativo');
+            $('grade-foto').hidden = s.dataset.seg !== 'foto';
+            $('grade-video').hidden = s.dataset.seg !== 'video';
+            if (s.dataset.seg === 'video' && !videosMontados) { videosMontados = true; montarVideos(); }
+            atualizarVazioPascom();
+        }));
+
+        // Carrossel da página inicial: primeiras 5 fotos existentes
+        function montarCarrosselHome() {
+            const c = $('carrossel-home');
+            c.innerHTML = '';
+            for (let n = 1; n <= 5; n++) {
+                const img = new Image();
+                img.loading = 'lazy'; img.decoding = 'async'; img.alt = 'Foto ' + n;
+                img.onerror = () => { img.remove(); if (!c.children.length) $('card-momentos').hidden = true; };
+                img.addEventListener('click', () => {
+                    const imgs = [...c.querySelectorAll('img')];
+                    abrirLB(imgs.map(i => ({ tipo: 'foto', url: i.src, leg: 'Momentos da Semana' })), imgs.indexOf(img));
+                });
+                c.appendChild(img);
+                img.src = urlFoto(n);
+            }
+        }
+
+        /* ---------- LITURGIA ---------- */
+        const TEMAS = [
+            { chave: 'verde',    p: '#2e6b3a', s: '#4f9a5a' },
+            { chave: 'roxo',     p: '#4b2d6e', s: '#6d4a96' },
+            { chave: 'branco',   p: '#a07f2c', s: '#c9a24b' },
+            { chave: 'dourado',  p: '#a07f2c', s: '#c9a24b' },
+            { chave: 'vermelho', p: '#a82a2a', s: '#d04545' },
+            { chave: 'rosa',     p: '#b0306a', s: '#d6568f' }
+        ];
+        function aplicarCorLiturgica(cor) {
+            const t = TEMAS.find(x => norm(cor).includes(x.chave));
+            if (!t) return;
+            const root = document.documentElement;
+            root.style.setProperty('--primaria', t.p);
+            root.style.setProperty('--secundaria', t.s);
+            document.querySelector('meta[name="theme-color"]').content = t.p;
+        }
+
+        async function carregarLiturgia() {
+            const container = $('liturgia-conteudo');
+            const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+            const bloco = (tituloPadrao, itens) => lista(itens).map(i => `
+                <div class="leitura">
+                    <p class="titulo">${esc(i.titulo || tituloPadrao)}</p>
+                    ${i.referencia ? `<p class="info">${esc(i.referencia)}</p>` : ''}
+                    ${i.refrao ? `<p><em>${esc(i.refrao)}</em></p>` : ''}
+                    <p class="texto">${esc(i.texto || '')}</p>
+                </div>`).join('');
             try {
                 const resposta = await fetch('https://liturgia.up.railway.app/v2/');
                 if (!resposta.ok) throw new Error('API fora do ar');
                 const dados = await resposta.json();
 
                 if (dados.cor) {
-                    const corTexto = dados.cor.toLowerCase();
-                    const root = document.documentElement;
-                    if (corTexto.includes('verde')) {
-                        root.style.setProperty('--cor-primaria', '#2e7d32');
-                        root.style.setProperty('--cor-secundaria', '#4caf50');
-                        root.style.setProperty('--cor-hero-overlay', 'rgba(46, 125, 50, 0.7)');
-                    } else if (corTexto.includes('roxo')) {
-                        root.style.setProperty('--cor-primaria', '#5a3e7a');
-                        root.style.setProperty('--cor-secundaria', '#8a2be2');
-                        root.style.setProperty('--cor-hero-overlay', 'rgba(90, 62, 122, 0.7)');
-                    } else if (corTexto.includes('branco') || corTexto.includes('dourado')) {
-                        root.style.setProperty('--cor-primaria', '#b8860b');
-                        root.style.setProperty('--cor-secundaria', '#daa520');
-                        root.style.setProperty('--cor-hero-overlay', 'rgba(184, 134, 11, 0.7)');
-                    } else if (corTexto.includes('vermelho')) {
-                        root.style.setProperty('--cor-primaria', '#c62828');
-                        root.style.setProperty('--cor-secundaria', '#e53935');
-                        root.style.setProperty('--cor-hero-overlay', 'rgba(198, 40, 40, 0.7)');
-                    } else if (corTexto.includes('rosa')) {
-                        root.style.setProperty('--cor-primaria', '#c2185b');
-                        root.style.setProperty('--cor-secundaria', '#e91e63');
-                        root.style.setProperty('--cor-hero-overlay', 'rgba(194, 24, 91, 0.7)');
-                    }
+                    aplicarCorLiturgica(dados.cor);
+                    $('chip-cor-txt').textContent = 'Cor litúrgica: ' + dados.cor;
+                    $('chip-cor').hidden = false;
                 }
 
                 let html = '';
-                if (dados.data) html += `<p class="info">Data: ${dados.data}</p>`;
-                if (dados.liturgia) html += `<p class="info">${dados.liturgia}</p>`;
-                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${dados.cor}</p>`;
+                if (dados.data) html += `<p class="info">Data: ${esc(dados.data)}</p>`;
+                if (dados.liturgia) html += `<p class="info">${esc(dados.liturgia)}</p>`;
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${esc(dados.cor)}</p>`;
 
                 const l = dados.leituras;
                 if (l) {
@@ -507,106 +771,182 @@
                     html += bloco('Segunda Leitura', l.segundaLeitura);
                     html += bloco('Evangelho', l.evangelho);
                     html += `</div>`;
-                    html += `<button class="btn-expandir" onclick="toggleLiturgia(this)">Ver Liturgia Completa <i class="fas fa-chevron-down"></i></button>`;
+                    html += `<button class="btn-expandir" type="button" onclick="toggleLiturgia(this)">Ver Liturgia Completa <i class="fas fa-chevron-down"></i></button>`;
                 } else {
-                    html += '<p>A liturgia não está disponível agora.</p>';
+                    html += '<p class="vazio">A liturgia não está disponível agora.</p>';
                 }
                 container.innerHTML = html;
             } catch (erro) {
-                container.innerHTML = `<p style="color: #d9534f;">Não foi possível carregar a liturgia.</p>`;
+                container.innerHTML = erroHTML('carregarLiturgia');
             }
         }
-
         function toggleLiturgia(botao) {
-            const extra = document.getElementById('liturgia-extra');
-            if (extra.style.display === 'block') {
-                extra.style.display = 'none';
-                botao.innerHTML = 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>';
-            } else {
-                extra.style.display = 'block';
-                botao.innerHTML = 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
-            }
+            const extra = $('liturgia-extra');
+            const aberto = extra.style.display === 'block';
+            extra.style.display = aberto ? 'none' : 'block';
+            botao.innerHTML = aberto ? 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>' : 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
         }
 
-        // --- HORÁRIOS ---
+        /* ---------- HORÁRIOS + PRÓXIMA MISSA ---------- */
+        const DIAS = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+        const NOMES_DIA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        const ORDEM_DIA = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+
+        function diasDaSemana(txt) {   // entende o que a secretaria cadastra: "Domingo", "Segunda a Sexta", "Todos os dias"
+            const t = norm(txt);
+            if (t.includes('todos')) return [0, 1, 2, 3, 4, 5, 6];
+            if (t.includes('segunda a sexta')) return [1, 2, 3, 4, 5];
+            const i = DIAS.findIndex(d => t.startsWith(d));
+            return i >= 0 ? [i] : [];
+        }
+        function minutosDoDia(txt) {   // "19h30" -> 1170 | "8h" -> 480
+            const m = String(txt || '').match(/(\d{1,2})\s*[h:]\s*(\d{2})?/i);
+            return m ? parseInt(m[1], 10) * 60 + parseInt(m[2] || '0', 10) : null;
+        }
+        function ordemDia(txt) {
+            const t = norm(txt);
+            if (t.includes('todos')) return 8;
+            if (t.includes('segunda a sexta')) return 7;
+            const i = ORDEM_DIA.findIndex(d => t.startsWith(d));
+            return i >= 0 ? i : 99;
+        }
+
+        function mostrarProximaMissa(lista) {
+            const agora = new Date();
+            let melhor = null;
+            lista.filter(i => norm(i.tipo).includes('missa')).forEach(i => {
+                const dias = diasDaSemana(i.dia), min = minutosDoDia(i.horario);
+                if (!dias.length || min === null) return;
+                for (let off = 0; off < 8; off++) {
+                    const d = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + off, Math.floor(min / 60), min % 60);
+                    if (d <= agora || !dias.includes(d.getDay())) continue;
+                    if (!melhor || d < melhor.d) melhor = { d, i, off };
+                    break;
+                }
+            });
+            if (!melhor) { $('proxima-missa').hidden = true; return; }
+            const quando = melhor.off === 0 ? 'Hoje' : melhor.off === 1 ? 'Amanhã' : NOMES_DIA[melhor.d.getDay()];
+            $('proxima-txt').textContent = `${quando} às ${melhor.i.horario} · ${melhor.i.local}`;
+            $('proxima-missa').hidden = false;
+        }
+
         async function carregarHorarios() {
-            const container = document.getElementById('horarios-conteudo');
+            const container = $('horarios-conteudo');
             try {
-                const resposta = await fetch(`${URL_API}/horarios`);
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhum horário cadastrado.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>'; }
+                const dados = await getJSON('/horarios');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhum horário cadastrado.</p>'; $('proxima-missa').hidden = true; return; }
+
+                const prioridade = (t) => { const n = norm(t); return n.includes('missa') ? 0 : n.includes('confiss') ? 1 : n.includes('adora') ? 2 : n.includes('terco') ? 3 : 4; };
+                const grupos = {};
+                dados.forEach(i => { (grupos[i.tipo] = grupos[i.tipo] || []).push(i); });
+                const tipos = Object.keys(grupos).sort((a, b) => prioridade(a) - prioridade(b) || a.localeCompare(b));
+
+                container.innerHTML = tipos.map(tp => {
+                    const itens = grupos[tp].sort((a, b) => ordemDia(a.dia) - ordemDia(b.dia) || (minutosDoDia(a.horario) ?? 0) - (minutosDoDia(b.horario) ?? 0));
+                    return `<div class="grupo-horario"><h3>${esc(tp)}</h3>${itens.map(i => `
+                        <div class="horario-item">
+                            <span class="horario-dia">${esc(i.dia)}</span>
+                            <span class="horario-hora">${esc(i.horario)}<small>${esc(i.local)}</small></span>
+                        </div>`).join('')}</div>`;
+                }).join('');
+
+                mostrarProximaMissa(dados);
+            } catch (erro) { container.innerHTML = erroHTML('carregarHorarios'); }
         }
 
-        // --- AVISOS ---
+        /* ---------- AVISOS ---------- */
+        let avisosCache = [];
         async function carregarAvisos() {
-            const container = document.getElementById('avisos-conteudo');
+            const container = $('avisos-conteudo');
             try {
-                const resposta = await fetch(`${URL_API}/avisos`);
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aviso no momento.</p>'; return; }
-                let html = '';
-                dados.forEach(aviso => {
-                    html += `<div class="aviso-item"><span class="aviso-data">${aviso.data}</span><h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3><p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>'; }
+                avisosCache = await getJSON('/avisos');
+                if (!avisosCache.length) { container.innerHTML = '<p class="vazio">Nenhum aviso no momento.</p>'; return; }
+                container.innerHTML = avisosCache.map((a, i) => `
+                    <div class="aviso-item">
+                        <span class="aviso-data">${esc(a.data)}</span>
+                        <h3>${esc(a.titulo)}</h3>
+                        <p>${esc(a.texto)}</p>
+                        <button type="button" class="btn-compartilhar" onclick="compartilharAviso(${i})"><i class="fas fa-share-nodes"></i> Compartilhar</button>
+                    </div>`).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarAvisos'); }
+        }
+        function compartilharAviso(i) {
+            const a = avisosCache[i]; if (!a) return;
+            const texto = `*${a.titulo}*\n${a.data}\n\n${a.texto}\n\nComunidade Nossa Senhora do Carmo`;
+            if (navigator.share) navigator.share({ text: texto }).catch(() => {});
+            else window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
         }
 
-        // --- ANIVERSARIANTES ---
+        /* ---------- ANIVERSARIANTES ---------- */
+        const MESES = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        function diasAteAniversario(dia, mes) {
+            const m = MESES.indexOf(norm(mes)), d = parseInt(dia, 10);
+            if (m < 0 || isNaN(d)) return 9999;
+            const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+            const alvo = new Date(hoje.getFullYear(), m, d);
+            if (alvo < hoje) alvo.setFullYear(alvo.getFullYear() + 1);
+            return Math.round((alvo - hoje) / 864e5);
+        }
         async function carregarAniversariantes() {
-            const container = document.getElementById('aniversariantes-conteudo');
+            const container = $('aniversariantes-conteudo');
             try {
-                const resposta = await fetch(`${URL_API}/aniversariantes`);
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aniversariante cadastrado.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    html += `<div class="aniversariante-item"><span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span><span>${item.nome}</span></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>'; }
+                const dados = await getJSON('/aniversariantes');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhum aniversariante cadastrado.</p>'; return; }
+                const lista = dados.map(i => ({ ...i, falta: diasAteAniversario(i.dia, i.mes) })).sort((a, b) => a.falta - b.falta);
+                container.innerHTML = lista.map(i => `
+                    <div class="aniversariante-item ${i.falta === 0 ? 'hoje' : ''}">
+                        <span class="aniversariante-data">${esc(i.dia)}/${esc(String(i.mes).substring(0, 3))}</span>
+                        <span>${esc(i.nome)}</span>
+                        ${i.falta === 0 ? '<span class="badge-hoje"><i class="fas fa-cake-candles"></i> Hoje!</span>' : ''}
+                    </div>`).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarAniversariantes'); }
         }
 
-        // --- INTENÇÕES ---
+        /* ---------- INTENÇÕES ---------- */
+        function rezadasLocal() { try { return JSON.parse(localStorage.getItem('rezadas') || '[]'); } catch (_) { return []; } }
+
         async function carregarIntencoes() {
-            const container = document.getElementById('lista-intencoes');
+            const container = $('lista-intencoes');
             try {
-                const resposta = await fetch(`${URL_API}/intencoes`);
-                if (!resposta.ok) throw new Error('Erro na API');
-                const dados = await resposta.json();
-                if (dados.length === 0) { container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda.</p>'; return; }
-                let html = '';
-                dados.forEach(item => {
-                    const nome = item.nome ? item.nome : 'Anônimo';
-                    const data = new Date(item.criado_em).toLocaleDateString('pt-BR');
-                    html += `<div class="intencao-item"><p class="intencao-nome">${nome}</p><p class="intencao-texto">${item.pedido}</p><div class="intencao-footer"><span>${data}</span><button class="btn-rezar" onclick="rezar(${item.id})"><i class="fas fa-praying-hands"></i> Rezei (${item.rezadas})</button></div></div>`;
-                });
-                container.innerHTML = html;
-            } catch (erro) { container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções.</p>'; }
+                const dados = await getJSON('/intencoes');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhuma intenção pública ainda.</p>'; return; }
+                const jaRezei = rezadasLocal();
+                container.innerHTML = dados.map(item => {
+                    const dt = lerData(item.criado_em);
+                    const feito = jaRezei.includes(item.id);
+                    return `
+                    <div class="intencao-item">
+                        <p class="intencao-nome">${esc(item.nome || 'Anônimo')}</p>
+                        <p class="intencao-texto">${esc(item.pedido)}</p>
+                        <div class="intencao-footer">
+                            <span>${dt ? dt.toLocaleDateString('pt-BR') : ''}</span>
+                            <button type="button" class="btn-rezar ${feito ? 'feito' : ''}" ${feito ? 'disabled' : ''} onclick="rezar(${Number(item.id)}, this)">
+                                <i class="fas fa-praying-hands"></i> Rezei (${Number(item.rezadas) || 0})
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarIntencoes'); }
         }
 
-        document.getElementById('form-intencao').addEventListener('submit', async function(e) {
+        $('pedido').addEventListener('input', (e) => { $('cont-pedido').textContent = e.target.value.length; });
+
+        $('form-intencao').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const btn = document.getElementById('btn-enviar-intencao');
-            const msgDiv = document.getElementById('mensagem-intencao');
-            const nome = document.getElementById('nome').value;
-            const pedido = document.getElementById('pedido').value;
-            const privada = document.getElementById('privada').checked;
+            const btn = $('btn-enviar-intencao'), msgDiv = $('mensagem-intencao');
             btn.disabled = true; btn.innerText = 'Enviando...'; msgDiv.style.display = 'none';
             try {
                 const resposta = await fetch(`${URL_API}/intencoes`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome, pedido: pedido, visibilidade: privada ? 'privada' : 'publica' })
+                    body: JSON.stringify({
+                        nome: $('nome').value.trim(),
+                        pedido: $('pedido').value.trim(),
+                        visibilidade: $('privada').checked ? 'privada' : 'publica'
+                    })
                 });
                 if (!resposta.ok) throw new Error('Erro ao enviar');
-                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada com sucesso!'; msgDiv.style.display = 'block';
-                document.getElementById('form-intencao').reset();
+                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada. Rezaremos por você!'; msgDiv.style.display = 'block';
+                $('form-intencao').reset(); $('cont-pedido').textContent = '0';
                 carregarIntencoes();
                 setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
             } catch (erro) {
@@ -614,19 +954,38 @@
             } finally { btn.disabled = false; btn.innerText = 'Enviar Intenção'; }
         });
 
-        async function rezar(id) {
+        async function rezar(id, btn) {
+            btn.disabled = true;
             try {
-                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
-                if (resposta.ok) carregarIntencoes();
-            } catch (e) { console.error(e); }
+                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+                if (!resposta.ok) throw new Error();
+                const lista = rezadasLocal(); lista.push(id);
+                try { localStorage.setItem('rezadas', JSON.stringify(lista)); } catch (_) {}
+                carregarIntencoes();
+            } catch (e) { btn.disabled = false; }
         }
 
-        // Inicialização
-        carregarLiturgia();
-        carregarHorarios();
-        carregarAvisos();
-        carregarAniversariantes();
-        carregarIntencoes();
+        /* ---------- INICIALIZAÇÃO ---------- */
+        let ultimaCarga = Date.now();
+        function carregarTudo() {
+            ultimaCarga = Date.now();
+            carregarLiturgia();
+            carregarHorarios();
+            carregarAvisos();
+            carregarAniversariantes();
+            carregarIntencoes();
+        }
+        carregarTudo();
+        montarCarrosselHome();
+
+        // Ao voltar para o app depois de um tempo, atualiza os dados sozinho
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && Date.now() - ultimaCarga > 5 * 60 * 1000) carregarTudo();
+        });
     </script>
+    <!-- ============================================================ -->
+    <!-- FIM DO JAVASCRIPT                                            -->
+    <!-- ============================================================ -->
+
 </body>
 </html>
