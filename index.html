@@ -13,14 +13,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- VARIÁVEIS DE CORES (Dinâmicas conforme a Liturgia) --- */
         :root {
-            --cor-primaria: #5a3e7a; /* Roxo padrão (Carmo) */
+            --cor-primaria: #5a3e7a;
             --cor-secundaria: #8a2be2;
             --cor-fundo: #f4f4f9;
             --cor-texto: #333;
             --cor-branca: #ffffff;
-            --cor-hero-overlay: rgba(90, 62, 122, 0.7); /* Sobreposição da foto */
+            --cor-hero-overlay: rgba(90, 62, 122, 0.7);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +34,7 @@
         /* --- HERO (Topo com Foto) --- */
         .hero {
             position: relative;
-            height: 220px;
+            height: 200px;
             background-image: url('igreja.jpg');
             background-size: cover;
             background-position: center;
@@ -53,13 +52,9 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: var(--cor-hero-overlay);
         }
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            padding: 0 20px;
-        }
-        .hero h1 { font-size: 1.4em; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-        .hero p { font-size: 0.9em; opacity: 0.9; margin-top: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .hero-content { position: relative; z-index: 1; padding: 0 20px; }
+        .hero h1 { font-size: 1.3em; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .hero p { font-size: 0.85em; opacity: 0.9; margin-top: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 
         /* --- CONTEÚDO DAS ABAS --- */
         .aba-conteudo {
@@ -69,9 +64,7 @@
             margin: 0 auto;
             animation: fadeIn 0.3s ease-in-out;
         }
-        .aba-conteudo.ativa {
-            display: block;
-        }
+        .aba-conteudo.ativa { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- ESTILOS DOS CARDS --- */
@@ -81,6 +74,37 @@
         .titulo { color: var(--cor-secundaria); margin-bottom: 5px; font-weight: bold; }
         .info { font-weight: bold; color: #666; font-size: 0.9em; }
         .leitura { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+
+        /* --- CARD DO PÁROCO (COM FOTO) --- */
+        .card-padre { display: flex; align-items: center; gap: 15px; }
+        .foto-padre {
+            width: 70px; height: 70px;
+            border-radius: 50%; /* Deixa a foto redonda */
+            object-fit: cover; /* Ajusta a foto sem distorcer */
+            border: 3px solid var(--cor-primaria); /* Borda na cor do tema */
+            background: #ddd; /* Fundo caso a foto não carregue */
+            flex-shrink: 0;
+        }
+        .info-padre h3 { margin: 0; color: #333; font-size: 1.05em; }
+        .info-padre p { margin: 2px 0 0; font-size: 0.85em; color: #666; }
+
+        /* --- BOTÕES DA BÍBLIA --- */
+        .botoes-biblia { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .btn-biblia {
+            text-decoration: none; text-align: center; background: #f0f0f0; color: var(--cor-primaria);
+            padding: 15px; border-radius: 8px; font-weight: bold; border: 1px solid #ddd;
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1em;
+        }
+        .btn-biblia:hover { background: #e0e0e0; }
+
+        /* --- LITURGIA EXPANSÍVEL --- */
+        .btn-expandir {
+            background: none; border: 1px solid var(--cor-secundaria); color: var(--cor-secundaria);
+            width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            margin-top: 15px; transition: 0.2s; font-size: 0.95em;
+        }
+        .btn-expandir:hover { background: var(--cor-secundaria); color: white; }
+        .liturgia-extra { display: none; }
 
         /* Horários */
         .horario-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 10px 0; font-size: 0.95em; }
@@ -115,28 +139,11 @@
 
         /* --- MENU INFERIOR (ABAS) --- */
         .menu-inferior {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--cor-branca);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--cor-branca); box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000;
         }
-        .menu-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #999;
-            text-decoration: none;
-            font-size: 0.75em;
-            padding: 5px 15px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .menu-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 0.75em; padding: 5px 15px; cursor: pointer; transition: 0.2s; }
         .menu-item i { font-size: 1.4em; margin-bottom: 4px; }
         .menu-item.ativo { color: var(--cor-primaria); font-weight: bold; }
         .menu-item.ativo i { color: var(--cor-primaria); }
@@ -144,7 +151,7 @@
 </head>
 <body>
 
-    <!-- HERO (Topo com Foto) -->
+    <!-- HERO -->
     <header class="hero">
         <div class="hero-content">
             <h1>Comunidade Nossa Senhora do Carmo</h1>
@@ -152,12 +159,51 @@
         </div>
     </header>
 
-    <!-- ABA 1: LITURGIA -->
+    <!-- ABA 1: LITURGIA (TELA INICIAL REFORMULADA) -->
     <div id="aba-liturgia" class="aba-conteudo ativa">
+        
+        <!-- CARD DO PÁROCO COM FOTO -->
+        <div class="card card-padre">
+            <!-- Certifique-se de que a foto 'padre.jpg' esteja no repositório -->
+            <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="this.style.display='none'">
+            <div class="info-padre">
+                <h3>Padre Gedler Henriques Breves Pereira</h3>
+                <p>Pároco da Paróquia São João Bosco</p>
+            </div>
+        </div>
+
+        <!-- CARD DA LITURGIA -->
         <div class="card">
             <h2><i class="fas fa-bible"></i> Liturgia Diária</h2>
-            <div id="liturgia-conteudo"><p>Carregando a liturgia de hoje...</p></div>
+            <div id="liturgia-conteudo">
+                <p>Carregando a liturgia de hoje...</p>
+            </div>
         </div>
+
+        <!-- CARD DA BÍBLIA ONLINE -->
+        <div class="card">
+            <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Acesse a Palavra de Deus na tradução de sua preferência.</p>
+            <div class="botoes-biblia">
+                <!-- Nome mais amigável em vez de CNBB -->
+                <a href="https://www.bibliacatolica.com.br/" target="_blank" class="btn-biblia">
+                    <i class="fas fa-book"></i> Bíblia Sagrada (CNBB)
+                </a>
+                <a href="https://www.bibliacatolica.com.br/" target="_blank" class="btn-biblia">
+                    <i class="fas fa-book"></i> Bíblia Ave Maria
+                </a>
+            </div>
+            <p style="font-size: 0.75em; color: #999; margin-top: 10px; text-align: center;">*O link abre o portal Bíblia Católica Online, onde você pode selecionar a tradução.</p>
+        </div>
+
+        <!-- ESPAÇO PARA GALERIA DE FOTOS (FUTURO) -->
+        <div class="card">
+            <h2><i class="fas fa-images"></i> Nossa Igreja</h2>
+            <p style="font-size: 0.9em; color: #777; text-align: center; padding: 20px 0;">
+                (Espaço reservado para as fotos da comunidade)
+            </p>
+        </div>
+
     </div>
 
     <!-- ABA 2: HORÁRIOS -->
@@ -213,50 +259,21 @@
         <div class="card">
             <h2><i class="fas fa-church"></i> Nossa História</h2>
             <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
-              A Capela de Nossa Senhora do Carmo, no distrito de Boa Vista de Minas, é um marco de fé que atravessa gerações. Segundo a Prefeitura de Nova Serrana, a capela foi <strong>construída pelas mãos de pessoas escravizadas, há mais de 100 anos, a pedido de um fazendeiro da região</strong> [citation:5]. O templo é reconhecido como patrimônio cultural do município [citation:1].
+              A Capela de Nossa Senhora do Carmo, no distrito de Boa Vista de Minas, é um marco de fé que atravessa gerações. Segundo a Prefeitura de Nova Serrana, a capela foi <strong>construída pelas mãos de pessoas escravizadas, há mais de 100 anos, a pedido de um fazendeiro da região</strong>. O templo é reconhecido como patrimônio cultural do município.
             </p>
             <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
-               <strong>O Altar-Mor:</strong> Um dos maiores tesouros da capela é seu altar esculpido em madeira. A tradição local, preservada pela comunidade e registrada pela Prefeitura, associa a obra ao mestre <strong>Aleijadinho</strong> ou à sua escola [citation:5]. O estilo rococó, com detalhes em branco e dourado, encanta fiéis e visitantes.
+               <strong>O Altar-Mor:</strong> Um dos maiores tesouros da capela é seu altar esculpido em madeira. A tradição local, preservada pela comunidade e registrada pela Prefeitura, associa a obra ao mestre <strong>Aleijadinho</strong> ou à sua escola. O estilo rococó, com detalhes em branco e dourado, encanta fiéis e visitantes.
             </p>
             <p style="font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
-               <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região [citation:4][citation:5].
+               <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região.
             </p>
-            <p style="font-size: 0.95em; line-height: 1.6;">
-               Atualmente, a Capela pertence à <strong>Paróquia São João Bosco</strong> e continua sendo um espaço de oração, encontros e celebrações para toda a comunidade [citation:5].
-            </p>
-                    <!-- NOVO CARD: PADRE E BÍBLIA -->
-        <div class="card">
-            <h2><i class="fas fa-user-tie"></i> Nosso Pároco</h2>
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="background: var(--cor-primaria); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5em;">
-                    <i class="fas fa-cross"></i>
-                </div>
-                <div>
-                    <h3 style="margin: 0; color: #333; font-size: 1.1em;">Padre Gedler Henriques Breves Pereira</h3>
-                    <p style="margin: 0; font-size: 0.85em; color: #666;">Pároco da Paróquia São João Bosco</p>
-                </div>
-            </div>
-            
-            <h2 style="margin-top: 25px;"><i class="fas fa-book-bible"></i> Bíblia Online</h2>
-            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Acesse a Palavra de Deus na tradução de sua preferência.</p>
-            
-            <div style="display: flex; gap: 10px;">
-                <a href="https://www.bibliacatolica.com.br/" target="_blank" style="flex: 1; text-decoration: none; text-align: center; background: #f0f0f0; color: var(--cor-primaria); padding: 12px; border-radius: 8px; font-weight: bold; border: 1px solid #ddd;">
-                    <i class="fas fa-book"></i> CNBB
-                </a>
-                <a href="https://www.bibliacatolica.com.br/" target="_blank" style="flex: 1; text-decoration: none; text-align: center; background: #f0f0f0; color: var(--cor-primaria); padding: 12px; border-radius: 8px; font-weight: bold; border: 1px solid #ddd;">
-                    <i class="fas fa-book"></i> Ave Maria
-                </a>
-            </div>
-            <p style="font-size: 0.75em; color: #999; margin-top: 10px; text-align: center;">*O link abre o portal Bíblia Católica Online, onde você pode selecionar a tradução desejada.</p>
-        </div>
         </div>
     </div>
 
     <!-- MENU INFERIOR -->
     <nav class="menu-inferior">
         <a class="menu-item ativo" onclick="mudarAba('liturgia', this)">
-            <i class="fas fa-book-open"></i><span>Liturgia</span>
+            <i class="fas fa-book-open"></i><span>Início</span>
         </a>
         <a class="menu-item" onclick="mudarAba('horarios', this)">
             <i class="fas fa-clock"></i><span>Horários</span>
@@ -268,14 +285,13 @@
             <i class="fas fa-praying-hands"></i><span>Intenções</span>
         </a>
         <a class="menu-item" onclick="mudarAba('institucional', this)">
-            <i class="fas fa-church"></i><span>Institucional</span>
+            <i class="fas fa-church"></i><span>História</span>
         </a>
     </nav>
 
     <script>
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev'; 
 
-        // --- LÓGICA DAS ABAS ---
         function mudarAba(nomeAba, elementoMenu) {
             document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
@@ -284,10 +300,11 @@
             window.scrollTo(0, 0);
         }
 
-        // --- 1. LITURGIA (COM CORES DINÂMICAS) ---
+        // --- LITURGIA COM EXPANSÃO ---
         async function carregarLiturgia() {
             const container = document.getElementById('liturgia-conteudo');
             const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+            
             const bloco = (tituloPadrao, itens) =>
                 lista(itens).map(i => `
                     <div class="leitura">
@@ -302,33 +319,27 @@
                 if (!resposta.ok) throw new Error('API fora do ar');
                 const dados = await resposta.json();
 
-                // --- MÁGICA DA COR LITÚRGICA ---
+                // MÁGICA DA COR LITÚRGICA
                 if (dados.cor) {
                     const corTexto = dados.cor.toLowerCase();
                     const root = document.documentElement;
-
                     if (corTexto.includes('verde')) {
-                        // Tempo Comum
                         root.style.setProperty('--cor-primaria', '#2e7d32');
                         root.style.setProperty('--cor-secundaria', '#4caf50');
                         root.style.setProperty('--cor-hero-overlay', 'rgba(46, 125, 50, 0.7)');
                     } else if (corTexto.includes('roxo')) {
-                        // Advento / Quaresma
                         root.style.setProperty('--cor-primaria', '#5a3e7a');
                         root.style.setProperty('--cor-secundaria', '#8a2be2');
                         root.style.setProperty('--cor-hero-overlay', 'rgba(90, 62, 122, 0.7)');
                     } else if (corTexto.includes('branco') || corTexto.includes('dourado')) {
-                        // Natal / Páscoa / Solenidades
                         root.style.setProperty('--cor-primaria', '#b8860b');
                         root.style.setProperty('--cor-secundaria', '#daa520');
                         root.style.setProperty('--cor-hero-overlay', 'rgba(184, 134, 11, 0.7)');
                     } else if (corTexto.includes('vermelho')) {
-                        // Pentecostes / Mártires
                         root.style.setProperty('--cor-primaria', '#c62828');
                         root.style.setProperty('--cor-secundaria', '#e53935');
                         root.style.setProperty('--cor-hero-overlay', 'rgba(198, 40, 40, 0.7)');
                     } else if (corTexto.includes('rosa')) {
-                        // Gaudete / Laetare
                         root.style.setProperty('--cor-primaria', '#c2185b');
                         root.style.setProperty('--cor-secundaria', '#e91e63');
                         root.style.setProperty('--cor-hero-overlay', 'rgba(194, 24, 91, 0.7)');
@@ -343,9 +354,14 @@
                 const l = dados.leituras;
                 if (l) {
                     html += bloco('Primeira Leitura', l.primeiraLeitura);
+                    
+                    html += `<div class="liturgia-extra" id="liturgia-extra">`;
                     html += bloco('Salmo Responsorial', l.salmo);
                     html += bloco('Segunda Leitura', l.segundaLeitura);
                     html += bloco('Evangelho', l.evangelho);
+                    html += `</div>`;
+                    
+                    html += `<button class="btn-expandir" onclick="toggleLiturgia(this)">Ver Liturgia Completa <i class="fas fa-chevron-down"></i></button>`;
                 } else {
                     html += '<p>A liturgia não está disponível agora.</p>';
                 }
@@ -355,7 +371,18 @@
             }
         }
 
-        // --- 2. HORÁRIOS ---
+        function toggleLiturgia(botao) {
+            const extra = document.getElementById('liturgia-extra');
+            if (extra.style.display === 'block') {
+                extra.style.display = 'none';
+                botao.innerHTML = 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>';
+            } else {
+                extra.style.display = 'block';
+                botao.innerHTML = 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
+            }
+        }
+
+        // --- HORÁRIOS ---
         async function carregarHorarios() {
             const container = document.getElementById('horarios-conteudo');
             try {
@@ -370,7 +397,7 @@
             } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>'; }
         }
 
-        // --- 3. AVISOS ---
+        // --- AVISOS ---
         async function carregarAvisos() {
             const container = document.getElementById('avisos-conteudo');
             try {
@@ -385,7 +412,7 @@
             } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>'; }
         }
 
-        // --- 4. ANIVERSARIANTES ---
+        // --- ANIVERSARIANTES ---
         async function carregarAniversariantes() {
             const container = document.getElementById('aniversariantes-conteudo');
             try {
@@ -400,7 +427,7 @@
             } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>'; }
         }
 
-        // --- 5. INTENÇÕES ---
+        // --- INTENÇÕES ---
         async function carregarIntencoes() {
             const container = document.getElementById('lista-intencoes');
             try {
@@ -418,7 +445,6 @@
             } catch (erro) { container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções.</p>'; }
         }
 
-        // Enviar intenção
         document.getElementById('form-intencao').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-enviar-intencao');
