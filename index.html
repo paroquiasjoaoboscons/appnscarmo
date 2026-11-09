@@ -79,10 +79,10 @@
         .card-padre { display: flex; align-items: center; gap: 15px; }
         .foto-padre {
             width: 70px; height: 70px;
-            border-radius: 50%; /* Deixa a foto redonda */
-            object-fit: cover; /* Ajusta a foto sem distorcer */
-            border: 3px solid var(--cor-primaria); /* Borda na cor do tema */
-            background: #ddd; /* Fundo caso a foto não carregue */
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--cor-primaria);
+            background: #ddd;
             flex-shrink: 0;
         }
         .info-padre h3 { margin: 0; color: #333; font-size: 1.05em; }
@@ -105,6 +105,28 @@
         }
         .btn-expandir:hover { background: var(--cor-secundaria); color: white; }
         .liturgia-extra { display: none; }
+
+        /* --- GALERIA DE FOTOS (CORRIGIDO) --- */
+        .galeria-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 10px;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .galeria-container::-webkit-scrollbar { display: none; }
+        .foto-galeria {
+            flex: 0 0 85%;
+            width: 100%;
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            scroll-snap-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: block;
+        }
 
         /* Horários */
         .horario-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 10px 0; font-size: 0.95em; }
@@ -164,7 +186,6 @@
         
         <!-- CARD DO PÁROCO COM FOTO -->
         <div class="card card-padre">
-            <!-- Certifique-se de que a foto 'padre.jpg' esteja no repositório -->
             <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="this.style.display='none'">
             <div class="info-padre">
                 <h3>Padre Gedler Henriques Breves Pereira</h3>
@@ -185,7 +206,6 @@
             <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
             <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Acesse a Palavra de Deus na tradução de sua preferência.</p>
             <div class="botoes-biblia">
-                <!-- Nome mais amigável em vez de CNBB -->
                 <a href="https://www.bibliacatolica.com.br/" target="_blank" class="btn-biblia">
                     <i class="fas fa-book"></i> Bíblia Sagrada 
                 </a>
@@ -196,13 +216,10 @@
             <p style="font-size: 0.75em; color: #999; margin-top: 10px; text-align: center;">*O link abre o portal Bíblia Católica Online, onde você pode selecionar a tradução.</p>
         </div>
 
-                <!-- GALERIA DE FOTOS -->
+        <!-- GALERIA DE FOTOS -->
         <div class="card">
             <h2><i class="fas fa-images"></i> Nossa Igreja</h2>
-            
-            <!-- Carrossel de Fotos -->
             <div class="galeria-container">
-                <!-- Substitua os 'src' pelos nomes reais das suas fotos -->
                 <img src="igreja.jpg" alt="Fachada da Igreja" class="foto-galeria">
                 <img src="foto1.jpg" alt="Interior da Igreja" class="foto-galeria">
                 <img src="foto2.jpg" alt="Altar-Mor" class="foto-galeria">
