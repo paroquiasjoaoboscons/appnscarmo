@@ -2,281 +2,391 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Paróquia São João Bosco</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4b2d6e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Painel do Padre - Paróquia São João Bosco</title>
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO DO CSS                                                -->
+    <!-- ============================================================ -->
     <style>
-        /* --- VARIÁVEIS DE CORES (Identidade Visual) --- */
         :root {
-            --cor-primaria: #5a3e7a; /* Roxo escuro */
-            --cor-secundaria: #8a2be2; /* Roxo claro */
-            --cor-fundo: #f4f4f9;
-            --cor-texto: #333;
-            --cor-branca: #ffffff;
-            --cor-perigo: #d9534f;
+            --roxo: #4b2d6e;
+            --roxo-2: #6d4a96;
+            --roxo-claro: #efe8f7;
+            --dourado: #c9a24b;
+            --dourado-escuro: #a07f2c;
+            --creme: #faf6ee;
+            --texto: #2e2339;
+            --cinza: #7a6f85;
+            --borda: #e4dcee;
+            --erro: #b3392f;
+            --safe-b: env(safe-area-inset-bottom, 0px);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: var(--cor-fundo); 
-            color: var(--cor-texto); 
-            padding-bottom: 20px;
-            -webkit-tap-highlight-color: transparent;
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        [hidden] { display: none !important; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+            background: var(--creme); color: var(--texto); min-height: 100vh;
         }
+        h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; }
+        svg { display: block; }
 
-        /* --- CABEÇALHO --- */
-        header {
-            background: var(--cor-primaria);
-            color: var(--cor-branca);
-            padding: 15px 20px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        .btn {
+            display: block; width: 100%; padding: 14px 20px;
+            background: linear-gradient(135deg, var(--roxo), var(--roxo-2)); color: #fff;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; letter-spacing: .3px; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(75,45,110,.28); transition: transform .08s, opacity .2s;
         }
-        header h1 { font-size: 1.2em; }
-        header p { font-size: 0.8em; opacity: 0.9; margin-top: 5px; }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .6; cursor: default; }
 
-        /* --- TELA DE LOGIN --- */
-        #login-screen { text-align: center; margin-top: 50px; display: block; padding: 0 20px; }
-        #login-screen h2 { color: var(--cor-primaria); margin-bottom: 20px; }
-        input { padding: 12px; width: 100%; max-width: 300px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; font-size: 1em; }
-        button { padding: 12px 25px; background: var(--cor-primaria); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: bold; width: 100%; max-width: 300px; transition: 0.2s; }
-        button:hover { background: var(--cor-secundaria); }
-        .erro { color: var(--cor-perigo); text-align: center; font-weight: bold; margin-top: 15px; font-size: 0.9em; }
+        label { display: block; margin: 16px 0 6px; font-weight: 700; font-size: .88rem; color: var(--roxo); }
+        input[type="password"], input[type="search"], input[type="text"] {
+            width: 100%; padding: 13px 14px; border: 1.5px solid var(--borda); border-radius: 12px;
+            background: #fff; color: var(--texto); font-size: 16px; font-family: inherit; outline: none;
+            appearance: none; -webkit-appearance: none; transition: border-color .2s, box-shadow .2s;
+        }
+        input:focus { border-color: var(--roxo-2); box-shadow: 0 0 0 3px rgba(109,74,150,.15); }
 
-        /* --- TELA DE CONTEÚDO (Após Login) --- */
-        #conteudo-screen { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-        
-        /* Área de Boas Vindas */
+        /* ============================================================ */
+        /* TELA 1 — LOGIN                                               */
+        /* ============================================================ */
+        #login-screen {
+            min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center;
+            padding: 24px 18px; position: relative; overflow: hidden;
+            background: radial-gradient(circle at 50% -10%, rgba(201,162,75,.35), transparent 55%),
+                        linear-gradient(160deg, #3a2056 0%, #4b2d6e 45%, #6d4a96 100%);
+        }
+        #login-screen::before, #login-screen::after { content: ''; position: absolute; border-radius: 50%; border: 1px solid rgba(201,162,75,.25); }
+        #login-screen::before { width: 520px; height: 520px; top: -200px; right: -220px; }
+        #login-screen::after  { width: 380px; height: 380px; bottom: -160px; left: -160px; }
+        .login-card {
+            position: relative; z-index: 1; width: 100%; max-width: 400px; background: var(--creme);
+            border-radius: 24px; padding: 36px 26px 30px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,.35); border-top: 5px solid var(--dourado);
+        }
+        .cruz-logo {
+            width: 76px; height: 76px; margin: -74px auto 14px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--roxo), var(--roxo-2)); border: 4px solid var(--dourado);
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,.3);
+        }
+        .cruz-logo svg { width: 36px; height: 36px; fill: var(--dourado); }
+        .login-card h1 { font-size: 1.45rem; color: var(--roxo); line-height: 1.2; }
+        .login-card .sub { color: var(--dourado-escuro); font-weight: 700; letter-spacing: 1.5px; font-size: .78rem; text-transform: uppercase; margin-top: 6px; }
+        .divisor { display: flex; align-items: center; gap: 10px; margin: 18px 0 14px; }
+        .divisor::before, .divisor::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--dourado), transparent); }
+        .divisor svg { width: 14px; height: 14px; fill: var(--dourado); }
+        .saudacao { font-family: Georgia, serif; font-style: italic; color: var(--cinza); font-size: .95rem; }
+        #form-login { text-align: left; margin-top: 8px; }
+        .campo-senha { position: relative; }
+        .campo-senha input { padding-right: 84px; }
+        #ver-senha { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--roxo-2); font-weight: 700; font-size: .82rem; padding: 8px 10px; cursor: pointer; }
+        #btn-entrar { margin-top: 20px; }
+        .erro-login { color: var(--erro); text-align: center; font-weight: 700; font-size: .9rem; min-height: 1.2em; margin-top: 14px; }
+        .rodape-login { margin-top: 18px; font-size: .75rem; color: var(--cinza); }
+
+        /* ============================================================ */
+        /* APP (após login)                                             */
+        /* ============================================================ */
+        #app { padding-bottom: calc(24px + var(--safe-b)); }
+        .topbar {
+            position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; color: #fff;
+            background: linear-gradient(135deg, var(--roxo), var(--roxo-2));
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
+            border-bottom: 3px solid var(--dourado); box-shadow: 0 3px 10px rgba(0,0,0,.18);
+        }
+        .topbar .logo { width: 42px; height: 42px; flex: none; border-radius: 50%; background: rgba(255,255,255,.12); border: 2px solid var(--dourado); display: flex; align-items: center; justify-content: center; }
+        .topbar .logo svg { width: 20px; height: 20px; fill: var(--dourado); }
+        .topbar .titulos { flex: 1; min-width: 0; }
+        .topbar h1 { font-size: 1.05rem; line-height: 1.2; }
+        .topbar p { font-size: .78rem; opacity: .85; margin-top: 2px; }
+        .btn-sair { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.4); border-radius: 20px; padding: 7px 14px; font-size: .8rem; font-weight: 700; cursor: pointer; }
+        main { max-width: 720px; margin: 0 auto; padding: 18px 16px 0; }
+
         .boas-vindas {
-            background: var(--cor-branca);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--cor-secundaria);
+            background: #fff; border-radius: 18px; padding: 18px; margin-bottom: 16px;
+            border-top: 4px solid var(--dourado); box-shadow: 0 3px 14px rgba(75,45,110,.1);
+            display: flex; align-items: center; gap: 14px;
         }
-        .boas-vindas h2 { font-size: 1.2em; color: var(--cor-primaria); }
-        .btn-sair { background: none; border: 1px solid var(--cor-perigo); color: var(--cor-perigo); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: bold; width: auto; }
-        .btn-sair:hover { background: var(--cor-perigo); color: white; }
+        .boas-vindas .ico { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--roxo-claro); border: 1.5px solid var(--dourado); display: flex; align-items: center; justify-content: center; }
+        .boas-vindas .ico svg { width: 22px; height: 22px; fill: var(--roxo); }
+        .boas-vindas h2 { font-size: 1.1rem; color: var(--roxo); line-height: 1.25; }
+        .boas-vindas p { font-size: .85rem; color: var(--cinza); margin-top: 4px; font-style: italic; }
 
-        /* Abas (Tabs) */
-        .abas-container {
-            display: flex;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 15px;
+        .barra-acoes { display: flex; gap: 10px; margin-bottom: 14px; }
+        .barra-acoes input { flex: 1; }
+        .btn-atualizar {
+            flex: none; display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 12px; cursor: pointer;
+            background: #fff; border: 1.5px solid var(--roxo); color: var(--roxo); font-weight: 700; font-size: .88rem;
         }
-        .aba-btn {
-            flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
-            font-size: 1em;
-            font-weight: bold;
-            color: #888;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: 0.2s;
-            width: auto;
+        .btn-atualizar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .btn-atualizar.girando svg { animation: girar .8s linear infinite; }
+        @keyframes girar { to { transform: rotate(360deg); } }
+
+        .segmento { display: flex; background: var(--roxo-claro); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+        .seg { flex: 1; border: none; background: none; padding: 11px 6px; border-radius: 9px; font-weight: 700; color: var(--roxo); font-size: .92rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .seg .qtd { background: var(--roxo); color: #fff; border-radius: 10px; padding: 1px 8px; font-size: .75rem; }
+        .seg.ativo { background: #fff; box-shadow: 0 2px 6px rgba(75,45,110,.18); }
+        .seg[data-aba="sigilosas"] .qtd { background: var(--erro); }
+
+        .lista { animation: surgir .25s ease; }
+        @keyframes surgir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        .card { background: #fff; border-radius: 16px; padding: 16px 16px 14px; margin-bottom: 12px; box-shadow: 0 3px 12px rgba(75,45,110,.09); border-left: 5px solid var(--roxo-2); }
+        .card.sigiloso { border-left-color: var(--erro); background: #fff8f7; }
+        .card .nome { font-family: Georgia, serif; font-weight: 700; color: var(--roxo); font-size: 1.05rem; }
+        .card .pedido { margin: 10px 0 12px; line-height: 1.55; font-size: .98rem; white-space: pre-line; word-wrap: break-word; }
+        .card .info { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--borda); padding-top: 10px; font-size: .8rem; color: var(--cinza); }
+        .card .info b { color: var(--dourado-escuro); }
+        .vazio { text-align: center; color: var(--cinza); padding: 34px 10px; font-size: .95rem; }
+        .skel { height: 14px; border-radius: 7px; margin: 12px 0; background: linear-gradient(90deg, #eee 25%, #f8f8f8 50%, #eee 75%); background-size: 200% 100%; animation: brilho 1.2s infinite; }
+        @keyframes brilho { to { background-position: -200% 0; } }
+
+        #toast {
+            position: fixed; left: 50%; top: calc(14px + env(safe-area-inset-top, 0px)); z-index: 200; transform: translate(-50%, -140%);
+            transition: transform .3s; padding: 12px 20px; border-radius: 12px; color: #fff; font-weight: 700; font-size: .92rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,.3); max-width: 92vw; text-align: center; background: var(--erro);
         }
-        .aba-btn.ativa {
-            color: var(--cor-primaria);
-            border-bottom: 3px solid var(--cor-primaria);
-        }
-        .aba-btn:hover { background: #f0f0f0; }
-
-        /* Conteúdo das Abas */
-        .aba-conteudo { display: none; }
-        .aba-conteudo.ativa { display: block; }
-
-        /* Cards de Intenções */
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .sigiloso { border-left: 4px solid var(--cor-perigo); background: #fff5f5; }
-        .publico { border-left: 4px solid var(--cor-secundaria); background: #fafafa; }
-        .nome { font-weight: bold; color: var(--cor-primaria); margin-bottom: 5px; font-size: 1.05em; display: flex; justify-content: space-between; }
-        .pedido { font-size: 1em; margin: 10px 0; line-height: 1.4; white-space: pre-line; }
-        .info { font-size: 0.8em; color: #888; display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; }
-        
-        /* Botão Atualizar */
-        .btn-atualizar { background: #eee; color: #555; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85em; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; width: auto; }
-        .btn-atualizar:hover { background: #ddd; }
-
-        .loading { text-align: center; color: #777; padding: 20px; }
+        #toast.mostrar { transform: translate(-50%, 0); }
     </style>
+    <!-- ============================================================ -->
+    <!-- FIM DO CSS                                                   -->
+    <!-- ============================================================ -->
 </head>
 <body>
 
-    <!-- CABEÇALHO GERAL -->
-    <header>
-        <h1>Paróquia São João Bosco</h1>
-        <p>Painel de Intenções</p>
-    </header>
-
-    <!-- TELA DE LOGIN -->
+    <!-- ============================================================ -->
+    <!-- INÍCIO: TELA 1 (LOGIN)                                       -->
+    <!-- ============================================================ -->
     <div id="login-screen">
-        <h2>Área Restrita</h2>
-        <p style="margin-bottom: 15px;">Digite a senha para acessar.</p>
-        <input type="password" id="senha" placeholder="Senha de acesso">
-        <br>
-        <button onclick="fazerLogin()">Entrar</button>
-        <p id="msg-login" class="erro"></p>
-    </div>
+        <div class="login-card">
+            <div class="cruz-logo"><svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg></div>
+            <h1>Paróquia São João Bosco</h1>
+            <p class="sub">Painel do Padre</p>
+            <div class="divisor"><svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg></div>
+            <p class="saudacao">Louvado seja Nosso Senhor Jesus Cristo!</p>
 
-    <!-- TELA DE CONTEÚDO -->
-    <div id="conteudo-screen">
-        <!-- Boas Vindas -->
-        <div class="boas-vindas">
-            <div>
-                <h2>Seja bem-vindo, Padre Gedler!</h2>
-                <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Que Deus abençoe seu ministério hoje.</p>
+            <!-- O <form> faz a tecla ENTER funcionar como "Entrar" -->
+            <form id="form-login" autocomplete="on">
+                <label for="senha">Senha de acesso</label>
+                <div class="campo-senha">
+                    <input type="password" id="senha" placeholder="Digite a senha" autocomplete="current-password" required>
+                    <button type="button" id="ver-senha">Mostrar</button>
+                </div>
+                <button type="submit" class="btn" id="btn-entrar">Entrar</button>
+                <p id="msg-login" class="erro-login" role="alert"></p>
+            </form>
+            <p class="rodape-login">Área restrita ao pároco</p>
+        </div>
+    </div>
+    <!-- ============================================================ -->
+    <!-- FIM: TELA 1                                                  -->
+    <!-- ============================================================ -->
+
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO: APP (TELAS APÓS O LOGIN)                             -->
+    <!-- ============================================================ -->
+    <div id="app" hidden>
+        <header class="topbar">
+            <div class="logo"><svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg></div>
+            <div class="titulos">
+                <h1>Painel do Padre</h1>
+                <p>Paróquia São João Bosco · Intenções</p>
             </div>
-            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
-        </div>
+            <button class="btn-sair" id="btn-sair" type="button">Sair</button>
+        </header>
 
-        <button class="btn-atualizar" onclick="carregarDados()">🔄 Atualizar Intenções</button>
+        <main>
+            <div class="boas-vindas">
+                <div class="ico"><svg viewBox="0 0 24 24"><path d="M10 2h4v6h6v4h-6v10h-4V12H4V8h6z"/></svg></div>
+                <div>
+                    <h2 id="saudacao-padre">Seja bem-vindo, Padre Gedler!</h2>
+                    <p>Que Deus abençoe seu ministério hoje.</p>
+                </div>
+            </div>
 
-        <!-- Abas -->
-        <div class="abas-container">
-            <button class="aba-btn ativa" onclick="mudarAba('sigilosas', this)" id="btn-aba-sigilosas">🔒 Sigilosas (0)</button>
-            <button class="aba-btn" onclick="mudarAba('publicas', this)" id="btn-aba-publicas">🌐 Públicas (0)</button>
-        </div>
+            <div class="barra-acoes">
+                <input type="search" id="busca" placeholder="Buscar por nome ou texto…" aria-label="Buscar intenções">
+                <button type="button" class="btn-atualizar" id="btn-atualizar">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                    Atualizar
+                </button>
+            </div>
 
-        <!-- Conteúdo Aba Sigilosas -->
-        <div id="aba-sigilosas" class="aba-conteudo ativa">
-            <div id="lista-sigilosas" class="loading">Carregando...</div>
-        </div>
+            <div class="segmento">
+                <button type="button" class="seg ativo" data-aba="sigilosas">Sigilosas <span class="qtd" id="qtd-sigilosas">0</span></button>
+                <button type="button" class="seg" data-aba="publicas">Públicas <span class="qtd" id="qtd-publicas">0</span></button>
+            </div>
 
-        <!-- Conteúdo Aba Públicas -->
-        <div id="aba-publicas" class="aba-conteudo">
-            <div id="lista-publicas" class="loading">Carregando...</div>
-        </div>
+            <!-- ===== INÍCIO: LISTA SIGILOSAS ===== -->
+            <div id="lista-sigilosas" class="lista"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+            <!-- ===== FIM: LISTA SIGILOSAS ===== -->
+
+            <!-- ===== INÍCIO: LISTA PÚBLICAS ===== -->
+            <div id="lista-publicas" class="lista" hidden></div>
+            <!-- ===== FIM: LISTA PÚBLICAS ===== -->
+        </main>
     </div>
+    <!-- ============================================================ -->
+    <!-- FIM: APP                                                     -->
+    <!-- ============================================================ -->
 
+    <div id="toast" role="status"></div>
+
+    <!-- ============================================================ -->
+    <!-- INÍCIO DO JAVASCRIPT                                         -->
+    <!-- ============================================================ -->
     <script>
-        // ⚠️ COLOQUE O LINK DO SEU WORKER AQUI
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
         let senhaSalva = '';
+        let intencoes = [];
+        let abaAtual = 'sigilosas';
 
-        // Função de Login
-        async function fazerLogin() {
-            const senhaInput = document.getElementById('senha').value;
-            const msg = document.getElementById('msg-login');
-            
-            if (!senhaInput) { msg.innerText = "Digite a senha."; return; }
-            
+        const $ = (id) => document.getElementById(id);
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+        let toastTimer;
+        function toast(txt) {
+            const t = $('toast'); t.textContent = txt; t.classList.add('mostrar');
+            clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('mostrar'), 3200);
+        }
+
+        // Datas do banco vêm como "2026-11-09 18:30:00" (UTC); o Safari não lê esse formato direto
+        function lerData(s) {
+            if (!s) return null;
+            let t = String(s);
+            if (/^\d{4}-\d{2}-\d{2} \d/.test(t)) t = t.replace(' ', 'T') + 'Z';
+            const d = new Date(t);
+            return isNaN(d) ? null : d;
+        }
+
+        async function buscarIntencoes() {
+            const resposta = await fetch(`${URL_API}/admin/intencoes`, {
+                headers: { 'Authorization': 'Basic ' + btoa('padre:' + senhaSalva) }
+            });
+            if (resposta.status === 401) throw new Error('401');
+            if (!resposta.ok) throw new Error('servidor');
+            return resposta.json();
+        }
+
+        /* ---------- LOGIN / LOGOUT ---------- */
+        $('ver-senha').addEventListener('click', () => {
+            const mostrar = $('senha').type === 'password';
+            $('senha').type = mostrar ? 'text' : 'password';
+            $('ver-senha').textContent = mostrar ? 'Ocultar' : 'Mostrar';
+        });
+
+        // O submit do <form> dispara no clique e também na tecla ENTER
+        $('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const senhaInput = $('senha').value, msg = $('msg-login'), btn = $('btn-entrar');
+            msg.textContent = '';
+            if (!senhaInput) { msg.textContent = 'Digite a senha.'; return; }
+            btn.disabled = true; btn.textContent = 'Entrando…';
             try {
-                const auth = btoa('padre:' + senhaInput);
-                
-                // Testa a senha buscando os dados
-                const resposta = await fetch(`${URL_API}/admin/intencoes`, {
-                    headers: { 'Authorization': 'Basic ' + auth }
-                });
-
-                if (resposta.status === 401) throw new Error("Senha incorreta");
-                if (!resposta.ok) throw new Error("Erro no servidor");
-
-                const dados = await resposta.json();
-                
-                // Se deu certo, salva a senha e mostra a tela
                 senhaSalva = senhaInput;
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('conteudo-screen').style.display = 'block';
-                
-                // Preenche a tela
-                processarDados(dados);
-
+                intencoes = await buscarIntencoes();
+                try { sessionStorage.setItem('padre_senha', senhaInput); } catch (_) {}
+                entrarNoApp();
             } catch (erro) {
-                msg.innerText = erro.message;
-            }
+                senhaSalva = '';
+                msg.textContent = erro.message === '401' ? 'Senha incorreta.' : 'Erro ao conectar. Verifique a internet.';
+            } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+        });
+
+        function entrarNoApp() {
+            $('login-screen').hidden = true;
+            $('app').hidden = false;
+            $('senha').value = '';
+            window.scrollTo(0, 0);
+            desenhar();
         }
 
-        // Função de Logout
-        function fazerLogout() {
-            senhaSalva = '';
-            document.getElementById('senha').value = '';
-            document.getElementById('conteudo-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'block';
+        function fazerLogout(aviso) {
+            senhaSalva = ''; intencoes = [];
+            try { sessionStorage.removeItem('padre_senha'); } catch (_) {}
+            $('app').hidden = true;
+            $('login-screen').hidden = false;
+            $('msg-login').textContent = aviso || '';
+            $('senha').focus();
         }
+        $('btn-sair').addEventListener('click', () => fazerLogout());
 
-        // Função para atualizar os dados sem recarregar a página
+        // Mantém a sessão ao atualizar a página (some ao fechar a aba)
+        (async function restaurarSessao() {
+            try {
+                const s = sessionStorage.getItem('padre_senha');
+                if (!s) return;
+                senhaSalva = s;
+                intencoes = await buscarIntencoes();
+                entrarNoApp();
+            } catch (_) { senhaSalva = ''; }
+        })();
+
+        /* ---------- ATUALIZAR ---------- */
         async function carregarDados() {
             if (!senhaSalva) return;
-            
-            // Mostra loading
-            document.getElementById('lista-sigilosas').innerHTML = '<p class="loading">Atualizando...</p>';
-            document.getElementById('lista-publicas').innerHTML = '<p class="loading">Atualizando...</p>';
-
+            const btn = $('btn-atualizar');
+            btn.classList.add('girando'); btn.disabled = true;
             try {
-                const auth = btoa('padre:' + senhaSalva);
-                const resposta = await fetch(`${URL_API}/admin/intencoes`, {
-                    headers: { 'Authorization': 'Basic ' + auth }
-                });
-
-                if (resposta.ok) {
-                    const dados = await resposta.json();
-                    processarDados(dados);
-                }
+                intencoes = await buscarIntencoes();
+                desenhar();
             } catch (e) {
-                alert("Erro ao atualizar. Verifique a conexão.");
-            }
+                if (e.message === '401') fazerLogout('Sessão expirada. Entre novamente.');
+                else toast('Erro ao atualizar. Verifique a conexão.');
+            } finally { btn.classList.remove('girando'); btn.disabled = false; }
+        }
+        $('btn-atualizar').addEventListener('click', carregarDados);
+
+        /* ---------- ABAS E BUSCA ---------- */
+        document.querySelectorAll('.seg').forEach(b => b.addEventListener('click', () => {
+            abaAtual = b.dataset.aba;
+            document.querySelectorAll('.seg').forEach(x => x.classList.toggle('ativo', x === b));
+            $('lista-sigilosas').hidden = abaAtual !== 'sigilosas';
+            $('lista-publicas').hidden = abaAtual !== 'publicas';
+        }));
+        $('busca').addEventListener('input', desenhar);
+
+        /* ---------- DESENHO DAS LISTAS ---------- */
+        function desenhar() {
+            const termo = norm($('busca').value.trim());
+            const filtrar = (i) => !termo || norm(i.nome).includes(termo) || norm(i.pedido).includes(termo);
+            const maisNovas = (a, b) => (lerData(b.criado_em) || 0) - (lerData(a.criado_em) || 0);
+
+            const sigilosas = intencoes.filter(i => i.visibilidade === 'privada');
+            const publicas  = intencoes.filter(i => i.visibilidade !== 'privada');
+            $('qtd-sigilosas').textContent = sigilosas.length;
+            $('qtd-publicas').textContent = publicas.length;
+
+            $('lista-sigilosas').innerHTML = gerarHTMLLista(sigilosas.filter(filtrar).sort(maisNovas), 'sigiloso', termo ? 'Nenhuma intenção sigilosa encontrada.' : 'Nenhuma intenção sigilosa no momento.');
+            $('lista-publicas').innerHTML  = gerarHTMLLista(publicas.filter(filtrar).sort(maisNovas), 'publico', termo ? 'Nenhuma intenção pública encontrada.' : 'Nenhuma intenção pública no momento.');
         }
 
-        // Função que separa os dados e desenha nas abas
-        function processarDados(dados) {
-            // 1. Separar
-            const sigilosas = dados.filter(item => item.visibilidade === 'privada');
-            const publicas = dados.filter(item => item.visibilidade !== 'privada');
-
-            // 2. Atualizar os contadores nos botões das abas
-            document.getElementById('btn-aba-sigilosas').innerText = `🔒 Sigilosas (${sigilosas.length})`;
-            document.getElementById('btn-aba-publicas').innerText = `🌐 Públicas (${publicas.length})`;
-
-            // 3. Desenhar as listas
-            document.getElementById('lista-sigilosas').innerHTML = gerarHTMLLista(sigilosas, 'sigiloso', 'Nenhuma intenção sigilosa no momento.');
-            document.getElementById('lista-publicas').innerHTML = gerarHTMLLista(publicas, 'publico', 'Nenhuma intenção pública no momento.');
-        }
-
-        // Função auxiliar que cria o HTML dos cards
-        function gerarHTMLLista(arrayDados, classeCor, mensagemVazia) {
-            if (arrayDados.length === 0) {
-                return `<p style="text-align:center; color: #888; margin-top: 20px;">${mensagemVazia}</p>`;
-            }
-
-            let html = '';
-            arrayDados.forEach(item => {
-                const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-
-                html += `
-                    <div class="card ${classeCor}">
-                        <div class="nome">
-                            <span>${item.nome || 'Anônimo'}</span>
-                        </div>
-                        <div class="pedido">${item.pedido}</div>
+        function gerarHTMLLista(lista, classe, vazio) {
+            if (!lista.length) return `<p class="vazio">${vazio}</p>`;
+            return lista.map(item => {
+                const d = lerData(item.criado_em);
+                const data = d ? d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                return `
+                    <div class="card ${classe}">
+                        <div class="nome">${esc(item.nome || 'Anônimo')}</div>
+                        <div class="pedido">${esc(item.pedido)}</div>
                         <div class="info">
-                            <span>📅 ${dataFormatada}</span>
-                            <span>🙏 ${item.rezadas} orações</span>
+                            <span>${esc(data)}</span>
+                            <span><b>${Number(item.rezadas) || 0}</b> orações</span>
                         </div>
-                    </div>
-                `;
-            });
-            return html;
-        }
-
-        // Função para alternar entre as abas
-        function mudarAba(nomeAba, btnClicado) {
-            // Esconde todas as abas
-            document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
-            // Tira o destaque de todos os botões
-            document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('ativa'));
-            
-            // Ativa a aba e o botão clicados
-            document.getElementById('aba-' + nomeAba).classList.add('ativa');
-            btnClicado.classList.add('ativa');
+                    </div>`;
+            }).join('');
         }
     </script>
+    <!-- ============================================================ -->
+    <!-- FIM DO JAVASCRIPT                                            -->
+    <!-- ============================================================ -->
+
 </body>
 </html>
