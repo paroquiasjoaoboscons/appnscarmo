@@ -533,4 +533,96 @@
                 if (dados.length === 0) { container.innerHTML = '<p>Nenhum horário cadastrado.</p>'; return; }
                 let html = '';
                 dados.forEach(item => {
-                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></
+                    html += `<div class="horario-item"><span class="horario-dia">${item.dia} (${item.tipo})</span><span>${item.horario} - ${item.local}</span></div>`;
+                });
+                container.innerHTML = html;
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar horários.</p>'; }
+        }
+
+        // --- AVISOS ---
+        async function carregarAvisos() {
+            const container = document.getElementById('avisos-conteudo');
+            try {
+                const resposta = await fetch(`${URL_API}/avisos`);
+                const dados = await resposta.json();
+                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aviso no momento.</p>'; return; }
+                let html = '';
+                dados.forEach(aviso => {
+                    html += `<div class="aviso-item"><span class="aviso-data">${aviso.data}</span><h3 style="margin: 5px 0; font-size: 1em; color: #333;">${aviso.titulo}</h3><p style="font-size: 0.9em; margin: 0;">${aviso.texto}</p></div>`;
+                });
+                container.innerHTML = html;
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar avisos.</p>'; }
+        }
+
+        // --- ANIVERSARIANTES ---
+        async function carregarAniversariantes() {
+            const container = document.getElementById('aniversariantes-conteudo');
+            try {
+                const resposta = await fetch(`${URL_API}/aniversariantes`);
+                const dados = await resposta.json();
+                if (dados.length === 0) { container.innerHTML = '<p>Nenhum aniversariante cadastrado.</p>'; return; }
+                let html = '';
+                dados.forEach(item => {
+                    html += `<div class="aniversariante-item"><span class="aniversariante-data">${item.dia}/${item.mes.substring(0,3)}</span><span>${item.nome}</span></div>`;
+                });
+                container.innerHTML = html;
+            } catch (erro) { container.innerHTML = '<p style="color: red;">Erro ao carregar aniversariantes.</p>'; }
+        }
+
+        // --- INTENÇÕES ---
+        async function carregarIntencoes() {
+            const container = document.getElementById('lista-intencoes');
+            try {
+                const resposta = await fetch(`${URL_API}/intencoes`);
+                if (!resposta.ok) throw new Error('Erro na API');
+                const dados = await resposta.json();
+                if (dados.length === 0) { container.innerHTML = '<p style="font-size: 0.9em; color: #777;">Nenhuma intenção pública ainda.</p>'; return; }
+                let html = '';
+                dados.forEach(item => {
+                    const nome = item.nome ? item.nome : 'Anônimo';
+                    const data = new Date(item.criado_em).toLocaleDateString('pt-BR');
+                    html += `<div class="intencao-item"><p class="intencao-nome">${nome}</p><p class="intencao-texto">${item.pedido}</p><div class="intencao-footer"><span>${data}</span><button class="btn-rezar" onclick="rezar(${item.id})"><i class="fas fa-praying-hands"></i> Rezei (${item.rezadas})</button></div></div>`;
+                });
+                container.innerHTML = html;
+            } catch (erro) { container.innerHTML = '<p style="color: #d9534f; font-size: 0.9em;">Não foi possível carregar as intenções.</p>'; }
+        }
+
+        document.getElementById('form-intencao').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-enviar-intencao');
+            const msgDiv = document.getElementById('mensagem-intencao');
+            const nome = document.getElementById('nome').value;
+            const pedido = document.getElementById('pedido').value;
+            const privada = document.getElementById('privada').checked;
+            btn.disabled = true; btn.innerText = 'Enviando...'; msgDiv.style.display = 'none';
+            try {
+                const resposta = await fetch(`${URL_API}/intencoes`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: nome, pedido: pedido, visibilidade: privada ? 'privada' : 'publica' })
+                });
+                if (!resposta.ok) throw new Error('Erro ao enviar');
+                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada com sucesso!'; msgDiv.style.display = 'block';
+                document.getElementById('form-intencao').reset();
+                carregarIntencoes();
+                setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
+            } catch (erro) {
+                msgDiv.className = 'msg-alerta msg-erro'; msgDiv.innerText = 'Erro ao enviar. Tente novamente.'; msgDiv.style.display = 'block';
+            } finally { btn.disabled = false; btn.innerText = 'Enviar Intenção'; }
+        });
+
+        async function rezar(id) {
+            try {
+                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
+                if (resposta.ok) carregarIntencoes();
+            } catch (e) { console.error(e); }
+        }
+
+        // Inicialização
+        carregarLiturgia();
+        carregarHorarios();
+        carregarAvisos();
+        carregarAniversariantes();
+        carregarIntencoes();
+    </script>
+</body>
+</html>
