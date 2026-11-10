@@ -249,6 +249,40 @@
         .historia p { font-size: .96rem; line-height: 1.7; margin-bottom: 15px; }
         .historia strong { color: var(--primaria); }
 
+        /* ---------- Dízimo e Ofertas (QR Code Pix) ---------- */
+        .btn-dizimo {
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px;
+            border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 700; color: #fff;
+            background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); box-shadow: 0 4px 12px rgba(160,127,44,.3);
+        }
+        .btn-dizimo:active { transform: scale(.98); }
+        .sheet { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; justify-content: center; }
+        .sheet-fundo { position: absolute; inset: 0; background: rgba(15,8,25,.7); }
+        .sheet-painel {
+            position: relative; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto;
+            background: var(--creme); border-radius: 24px 24px 0 0; border-top: 4px solid var(--dourado);
+            padding: 18px 18px calc(22px + var(--safe-b)); animation: subir .25s ease;
+        }
+        @keyframes subir { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .sheet-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .sheet-topo h3 { color: var(--primaria); font-size: 1.2rem; }
+        .sheet-fechar { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--tinta); color: var(--primaria); font-size: 1rem; cursor: pointer; }
+        .qr-box { background: #fff; border: 2px solid var(--dourado); border-radius: 18px; padding: 14px; max-width: 300px; margin: 8px auto 16px; box-shadow: 0 4px 14px rgba(75,45,110,.12); }
+        .qr-box img { width: 100%; height: auto; display: block; }
+        .dados-pix { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 2px 14px; margin-bottom: 14px; }
+        .dados-pix > div { padding: 10px 0; border-bottom: 1px dashed var(--borda); }
+        .dados-pix > div:last-child { border-bottom: none; }
+        .dados-pix dt { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--dourado-escuro); font-weight: 700; }
+        .dados-pix dd { font-size: .98rem; font-weight: 700; margin-top: 2px; word-break: break-all; }
+        .dz-botoes { display: flex; flex-direction: column; gap: 10px; }
+        .btn-dz {
+            display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border-radius: 12px;
+            font-size: .95rem; font-weight: 700; cursor: pointer; text-decoration: none;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff; border: none;
+        }
+        .btn-dz.claro { background: #fff; color: var(--primaria); border: 1.5px solid var(--primaria); }
+        .aviso-pix { font-size: .78rem; color: var(--cinza); text-align: center; margin-top: 14px; line-height: 1.5; }
+
         /* ---------- Galeria fixa da igreja (aba História) ---------- */
         .grade-igreja { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .grade-igreja .tile { aspect-ratio: 4 / 3; border-radius: 12px; }
@@ -322,6 +356,14 @@
             <button class="atalho" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i>Orações</button>
             <button class="atalho" type="button" data-aba="pascom"><i class="fas fa-camera"></i>Pascom</button>
         </div>
+
+        <!-- ===== INÍCIO: CARD DÍZIMO E OFERTAS (só aparece se houver QR Code ou chave configurada) ===== -->
+        <div class="card" id="card-dizimo" hidden>
+            <h2><i class="fas fa-hand-holding-heart"></i> Dízimo e Ofertas</h2>
+            <p class="sub-texto">Contribua com a nossa comunidade pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
+            <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
+        </div>
+        <!-- ===== FIM: CARD DÍZIMO E OFERTAS ===== -->
 
         <div class="card card-padre">
             <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="semFotoPadre(this)">
@@ -500,6 +542,23 @@
     <!-- ============================================================ -->
     <!-- INÍCIO: LIGHTBOX (FOTOS E VÍDEOS EM TELA CHEIA)              -->
     <!-- ============================================================ -->
+    <!-- ===== INÍCIO: JANELA DO QR CODE (DÍZIMO) ===== -->
+    <div id="dizimo-sheet" class="sheet" hidden>
+        <div class="sheet-fundo" id="dz-fundo"></div>
+        <div class="sheet-painel" role="dialog" aria-modal="true" aria-label="Dízimo e Ofertas">
+            <div class="sheet-topo">
+                <h3>Dízimo e Ofertas</h3>
+                <button type="button" class="sheet-fechar" id="dz-fechar" aria-label="Fechar"><i class="fas fa-xmark"></i></button>
+            </div>
+            <p class="sub-texto" id="dz-msg"></p>
+            <div class="qr-box" id="dz-qrbox"><img id="dz-qr" alt="QR Code Pix para dízimo e ofertas"></div>
+            <dl class="dados-pix" id="dz-dados"></dl>
+            <div class="dz-botoes" id="dz-botoes"></div>
+            <p class="aviso-pix">O pagamento é feito no aplicativo do seu banco. Este app não recebe nem processa pagamentos. Confira o nome do favorecido antes de confirmar.</p>
+        </div>
+    </div>
+    <!-- ===== FIM: JANELA DO QR CODE (DÍZIMO) ===== -->
+
     <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
         <div class="lb-topo">
             <div class="lb-info"><b id="lb-titulo"></b><span id="lb-contador"></span></div>
@@ -532,6 +591,21 @@
         // Não use "foto1.jpg" etc. aqui: esses nomes são da Pascom e seriam sobrescritos a cada envio.
         const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
         const VERSAO_IGREJA = Math.floor(Date.now() / 86400000); // renova 1x por dia
+
+        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
+        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
+        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
+        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
+        const DIZIMO = {
+            imagem: 'qrcode-dizimo.png',
+            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
+            banco: '',          // ex.: 'Banco do Brasil' (opcional)
+            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
+            chave: '',          // a chave Pix
+            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
+            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
+        };
+        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
         const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
 
         /* ---------- UTILITÁRIOS ---------- */
@@ -737,6 +811,91 @@
                 img.src = urlFoto(n);
             }
         }
+
+        // ===== INÍCIO: DÍZIMO (QR CODE PIX) — apenas exibe os dados, não processa pagamento =====
+        let dizimoTemQR = false;
+
+        function iniciarDizimo() {
+            const temTexto = !!(DIZIMO.chave || DIZIMO.copiaECola);
+            const img = new Image();
+            img.onload = () => { dizimoTemQR = true; $('card-dizimo').hidden = false; };
+            img.onerror = () => { if (temTexto) $('card-dizimo').hidden = false; };
+            img.src = `${DIZIMO.imagem}?v=${VERSAO_IGREJA}`;
+        }
+
+        function copiarTexto(texto, btn) {
+            const original = btn.innerHTML;
+            const ok = () => { btn.innerHTML = '<i class="fas fa-check"></i> Copiado!'; setTimeout(() => { btn.innerHTML = original; }, 2000); };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(ok).catch(() => copiarAntigo(texto, ok));
+            } else copiarAntigo(texto, ok);
+        }
+        function copiarAntigo(texto, ok) {
+            const t = document.createElement('textarea');
+            t.value = texto; t.style.position = 'fixed'; t.style.opacity = '0';
+            document.body.appendChild(t); t.select();
+            try { document.execCommand('copy'); ok(); } catch (_) {}
+            t.remove();
+        }
+
+        function abrirDizimo() {
+            $('dz-msg').textContent = DIZIMO.mensagem || '';
+            $('dz-msg').hidden = !DIZIMO.mensagem;
+
+            const qr = $('dz-qr');
+            $('dz-qrbox').hidden = !dizimoTemQR;
+            if (dizimoTemQR) qr.src = `${DIZIMO.imagem}?v=${VERSAO_IGREJA}`;
+
+            const dados = $('dz-dados'); dados.innerHTML = '';
+            const linha = (rotulo, valor) => {
+                if (!valor) return;
+                const d = document.createElement('div');
+                const dt = document.createElement('dt'); dt.textContent = rotulo;
+                const dd = document.createElement('dd'); dd.textContent = valor;
+                d.appendChild(dt); d.appendChild(dd); dados.appendChild(d);
+            };
+            linha('Favorecido', DIZIMO.favorecido);
+            linha('Banco', DIZIMO.banco);
+            linha(DIZIMO.tipoChave ? `Chave Pix (${DIZIMO.tipoChave})` : 'Chave Pix', DIZIMO.chave);
+            dados.hidden = !dados.children.length;
+
+            const botoes = $('dz-botoes'); botoes.innerHTML = '';
+            if (DIZIMO.chave) {
+                const b = document.createElement('button'); b.type = 'button'; b.className = 'btn-dz';
+                b.innerHTML = '<i class="fas fa-copy"></i> Copiar chave Pix';
+                b.addEventListener('click', () => copiarTexto(DIZIMO.chave, b)); botoes.appendChild(b);
+            }
+            if (DIZIMO.copiaECola) {
+                const b = document.createElement('button'); b.type = 'button'; b.className = 'btn-dz';
+                b.innerHTML = '<i class="fas fa-copy"></i> Copiar Pix Copia e Cola';
+                b.addEventListener('click', () => copiarTexto(DIZIMO.copiaECola, b)); botoes.appendChild(b);
+            }
+            if (dizimoTemQR) {
+                const a = document.createElement('a'); a.className = 'btn-dz claro';
+                a.href = DIZIMO.imagem; a.download = 'qrcode-dizimo.png';
+                a.innerHTML = '<i class="fas fa-download"></i> Salvar QR Code';
+                botoes.appendChild(a);
+            }
+
+            $('dizimo-sheet').hidden = false;
+            document.body.classList.add('sem-scroll');
+            history.pushState({ dz: 1 }, '');   // o botão "voltar" do celular fecha a janela
+        }
+        function limparDizimo() {
+            if ($('dizimo-sheet').hidden) return;
+            $('dizimo-sheet').hidden = true;
+            if ($('lightbox').classList.contains('ativo') === false) document.body.classList.remove('sem-scroll');
+        }
+        function fecharDizimo() {
+            limparDizimo();
+            if (history.state && history.state.dz) history.back();
+        }
+        $('btn-dizimo').addEventListener('click', abrirDizimo);
+        $('dz-fechar').addEventListener('click', fecharDizimo);
+        $('dz-fundo').addEventListener('click', fecharDizimo);
+        window.addEventListener('popstate', limparDizimo);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharDizimo(); });
+        // ===== FIM: DÍZIMO (QR CODE PIX) =====
 
         // Galeria fixa da igreja (aba História): a 1ª foto aparece grande, as demais em 2 colunas
         function montarIgreja() {
@@ -1017,6 +1176,7 @@
         }
         carregarTudo();
         montarCarrosselHome();
+        iniciarDizimo();
 
         // Ao voltar para o app depois de um tempo, atualiza os dados sozinho
         document.addEventListener('visibilitychange', () => {
