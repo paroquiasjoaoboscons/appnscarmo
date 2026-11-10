@@ -592,22 +592,6 @@
         const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
         const VERSAO_IGREJA = Math.floor(Date.now() / 86400000); // renova 1x por dia
 
-        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
-        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
-        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
-        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
-        const DIZIMO = {
-            imagem: 'qrcode-dizimo.png',
-            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
-            banco: '',          // ex.: 'Banco do Brasil' (opcional)
-            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
-            chave: '',          // a chave Pix
-            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
-            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
-        };
-        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
-        const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
-
         /* ---------- UTILITÁRIOS ---------- */
         const $ = (id) => document.getElementById(id);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -985,6 +969,22 @@
             extra.style.display = aberto ? 'none' : 'block';
             botao.innerHTML = aberto ? 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>' : 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
         }
+        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
+        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
+        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
+        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
+        const DIZIMO = {
+            imagem: 'qrcode-dizimo.png',
+            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
+            banco: '',          // ex.: 'Banco do Brasil' (opcional)
+            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
+            chave: '',          // a chave Pix
+            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
+            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
+        };
+        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
+        const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
+
 
         /* ---------- HORÁRIOS + PRÓXIMA MISSA ---------- */
         const DIAS = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
