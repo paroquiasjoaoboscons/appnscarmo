@@ -249,6 +249,11 @@
         .historia p { font-size: .96rem; line-height: 1.7; margin-bottom: 15px; }
         .historia strong { color: var(--primaria); }
 
+        /* ---------- Galeria fixa da igreja (aba História) ---------- */
+        .grade-igreja { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .grade-igreja .tile { aspect-ratio: 4 / 3; border-radius: 12px; }
+        .grade-igreja .tile:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+
         /* ---------- Menu inferior ---------- */
         .menu-inferior {
             position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000;
@@ -343,9 +348,9 @@
 
         <div class="card">
             <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
-            <p class="sub-texto">Acesse a Palavra de Deus.</p>
+            <p class="sub-texto">Acesse a Palavra de Deus na tradução Ave Maria.</p>
             <a href="https://www.bibliacatolica.com.br/" target="_blank" rel="noopener" class="btn-biblia">
-                <i class="fas fa-book"></i> Bíblia Católica
+                <i class="fas fa-book"></i> Abrir Bíblia Católica
             </a>
         </div>
 
@@ -461,6 +466,15 @@
                <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região.
             </p>
         </div>
+
+        <!-- ===== INÍCIO: GALERIA FIXA "CONHEÇA NOSSA IGREJA" ===== -->
+        <div class="card" id="card-igreja">
+            <h2><i class="fas fa-images"></i> Conheça Nossa Igreja</h2>
+            <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
+            <div id="grade-igreja" class="grade grade-igreja"></div>
+        </div>
+        <!-- ===== FIM: GALERIA FIXA "CONHEÇA NOSSA IGREJA" ===== -->
+
     </div>
     <!-- ============================================================ -->
     <!-- FIM: ABA HISTÓRIA                                            -->
@@ -514,6 +528,10 @@
         // '' = mesma pasta deste site (como funcionava antes). IMPORTANTE: use o MESMO endereço em URL_MIDIA do painel da secretaria.
         const URL_MIDIA = '';
         const MAX_FOTOS = 20, MAX_VIDEOS = 5;
+        // Fotos FIXAS da igreja (aba História): igreja1.jpg ... igreja9.jpg, na mesma pasta deste arquivo.
+        // Não use "foto1.jpg" etc. aqui: esses nomes são da Pascom e seriam sobrescritos a cada envio.
+        const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
+        const VERSAO_IGREJA = Math.floor(Date.now() / 86400000); // renova 1x por dia
         const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
 
         /* ---------- UTILITÁRIOS ---------- */
@@ -545,13 +563,14 @@
         }
 
         /* ---------- NAVEGAÇÃO ---------- */
-        let pascomMontado = false, videosMontados = false;
+        let pascomMontado = false, videosMontados = false, igrejaMontada = false;
         function irParaAba(nome) {
             document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.remove('ativa'));
             document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('ativo', b.dataset.aba === nome));
             $('aba-' + nome).classList.add('ativa');
             window.scrollTo(0, 0);
             if (nome === 'pascom' && !pascomMontado) { pascomMontado = true; montarFotos(); }
+            if (nome === 'institucional' && !igrejaMontada) { igrejaMontada = true; montarIgreja(); }
         }
         document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
 
@@ -716,6 +735,27 @@
                 });
                 c.appendChild(img);
                 img.src = urlFoto(n);
+            }
+        }
+
+        // Galeria fixa da igreja (aba História): a 1ª foto aparece grande, as demais em 2 colunas
+        function montarIgreja() {
+            const g = $('grade-igreja');
+            g.innerHTML = '';
+            for (let n = 1; n <= TOTAL_IGREJA; n++) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Nossa igreja, foto ' + n);
+                const img = new Image();
+                img.loading = 'lazy'; img.decoding = 'async'; img.alt = 'Nossa Igreja';
+                img.onload = () => b.classList.add('ok');
+                img.onerror = () => { b.remove(); if (!g.children.length) $('card-igreja').hidden = true; };
+                b.appendChild(img);
+                b.addEventListener('click', () => {
+                    const tiles = [...g.querySelectorAll('.tile')];
+                    abrirLB(tiles.map(t => ({ tipo: 'foto', url: t.querySelector('img').src, leg: 'Nossa Igreja' })), tiles.indexOf(b));
+                });
+                g.appendChild(b);
+                img.src = `${PREFIXO_IGREJA}${n}.jpg?v=${VERSAO_IGREJA}`;
             }
         }
 
