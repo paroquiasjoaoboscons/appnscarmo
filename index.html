@@ -357,14 +357,6 @@
             <button class="atalho" type="button" data-aba="pascom"><i class="fas fa-camera"></i>Pascom</button>
         </div>
 
-        <!-- ===== INÍCIO: CARD DÍZIMO E OFERTAS (só aparece se houver QR Code ou chave configurada) ===== -->
-        <div class="card" id="card-dizimo" hidden>
-            <h2><i class="fas fa-hand-holding-heart"></i> Dízimo e Ofertas</h2>
-            <p class="sub-texto">Contribua com a nossa comunidade pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
-            <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
-        </div>
-        <!-- ===== FIM: CARD DÍZIMO E OFERTAS ===== -->
-
         <div class="card card-padre">
             <img src="padre.jpg" alt="Padre Gedler" class="foto-padre" onerror="semFotoPadre(this)">
             <div class="info-padre">
@@ -379,6 +371,14 @@
                 <div class="skel"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:85%"></div>
             </div>
         </div>
+
+        <!-- ===== INÍCIO: CARD DÍZIMO E OFERTAS (só aparece se houver QR Code ou chave configurada) ===== -->
+        <div class="card" id="card-dizimo" hidden>
+            <h2><i class="fas fa-hand-holding-heart"></i> Dízimo e Ofertas</h2>
+            <p class="sub-texto">Contribua com a nossa comunidade pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
+            <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
+        </div>
+        <!-- ===== FIM: CARD DÍZIMO E OFERTAS ===== -->
 
         <!-- Momentos da Semana: pega as primeiras fotos que a Pascom enviou pela secretaria -->
         <div class="card" id="card-momentos">
@@ -591,6 +591,22 @@
         // Não use "foto1.jpg" etc. aqui: esses nomes são da Pascom e seriam sobrescritos a cada envio.
         const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
         const VERSAO_IGREJA = Math.floor(Date.now() / 86400000); // renova 1x por dia
+
+        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
+        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
+        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
+        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
+        const DIZIMO = {
+            imagem: 'qrcode-dizimo.png',
+            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
+            banco: '',          // ex.: 'Banco do Brasil' (opcional)
+            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
+            chave: '',          // a chave Pix
+            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
+            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
+        };
+        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
+        const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
 
         /* ---------- UTILITÁRIOS ---------- */
         const $ = (id) => document.getElementById(id);
@@ -969,22 +985,6 @@
             extra.style.display = aberto ? 'none' : 'block';
             botao.innerHTML = aberto ? 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>' : 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
         }
-        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
-        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
-        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
-        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
-        const DIZIMO = {
-            imagem: 'qrcode-dizimo.png',
-            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
-            banco: '',          // ex.: 'Banco do Brasil' (opcional)
-            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
-            chave: '',          // a chave Pix
-            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
-            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
-        };
-        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
-        const VERSAO_CACHE = Math.floor(Date.now() / 600000); // renova a foto a cada 10 min (quando a secretaria troca)
-
 
         /* ---------- HORÁRIOS + PRÓXIMA MISSA ---------- */
         const DIAS = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
