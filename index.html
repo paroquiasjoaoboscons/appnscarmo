@@ -22,7 +22,6 @@
     <!-- ============================================================ -->
     <style>
         :root {
-            /* As duas cores abaixo mudam sozinhas conforme a cor litúrgica do dia */
             --primaria: #4b2d6e;
             --secundaria: #6d4a96;
             --tinta: #efe8f7;
@@ -225,9 +224,8 @@
         .btn-rezar.feito { background: var(--primaria); border-color: var(--primaria); color: #fff; cursor: default; }
 
         /* ---------- Pascom ---------- */
-        .segmento { display: flex; background: var(--tinta); border-radius: 12px; padding: 4px; margin-bottom: 14px; }
-        .position: relative; z-index: 10; }
-        .seg { flex: 1; border: none; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--primaria); font-size: .92rem; cursor: pointer; }
+        .segmento { display: flex; background: var(--tinta); border-radius: 12px; padding: 4px; margin-bottom: 14px; position: relative; z-index: 10; }
+        .seg { flex: 1; border: none; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--primaria); font-size: .92rem; cursor: pointer; position: relative; z-index: 11; }
         .seg.ativo { background: #fff; box-shadow: 0 2px 6px rgba(75,45,110,.18); }
         .grade { display: grid; gap: 6px; }
         .grade-foto { grid-template-columns: repeat(3, 1fr); }
@@ -324,9 +322,6 @@
 </head>
 <body>
 
-    <!-- ============================================================ -->
-    <!-- INÍCIO: HERO (TOPO)                                          -->
-    <!-- ============================================================ -->
     <header class="hero">
         <div class="hero-content">
             <div class="hero-cruz"><i class="fas fa-cross"></i></div>
@@ -335,17 +330,8 @@
             <span class="chip-cor" id="chip-cor" hidden><i></i><span id="chip-cor-txt"></span></span>
         </div>
     </header>
-    <!-- ============================================================ -->
-    <!-- FIM: HERO                                                    -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA INÍCIO                                           -->
-    <!-- ============================================================ -->
     <div id="aba-liturgia" class="aba-conteudo ativa">
-
-        <!-- Próxima missa (calculada a partir dos horários cadastrados na secretaria) -->
         <div class="proxima" id="proxima-missa" hidden>
             <i class="fas fa-church"></i>
             <div><small>Próxima Missa</small><strong id="proxima-txt"></strong></div>
@@ -373,15 +359,12 @@
             </div>
         </div>
 
-        <!-- ===== INÍCIO: CARD DÍZIMO E OFERTAS (só aparece se houver QR Code ou chave configurada) ===== -->
         <div class="card" id="card-dizimo" hidden>
             <h2><i class="fas fa-hand-holding-heart"></i> Dízimo e Ofertas</h2>
             <p class="sub-texto">Contribua com a nossa comunidade pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
             <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
         </div>
-        <!-- ===== FIM: CARD DÍZIMO E OFERTAS ===== -->
 
-        <!-- Momentos da Semana: pega as primeiras fotos que a Pascom enviou pela secretaria -->
         <div class="card" id="card-momentos" hidden>
             <h2><i class="fas fa-images"></i> Momentos da Semana</h2>
             <div class="carrossel" id="carrossel-home"></div>
@@ -396,30 +379,15 @@
                 <i class="fas fa-book"></i> Abrir Bíblia Online
             </a>
         </div>
-
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA INÍCIO                                              -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA HORÁRIOS                                         -->
-    <!-- ============================================================ -->
     <div id="aba-horarios" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-clock"></i> Horários e Confissões</h2>
             <div id="horarios-conteudo"><div class="skel"></div><div class="skel" style="width:75%"></div></div>
         </div>
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA HORÁRIOS                                            -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA AVISOS E ANIVERSARIANTES                         -->
-    <!-- ============================================================ -->
     <div id="aba-avisos" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-bullhorn"></i> Mural de Avisos</h2>
@@ -430,14 +398,7 @@
             <div id="aniversariantes-conteudo"><div class="skel"></div><div class="skel" style="width:60%"></div></div>
         </div>
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA AVISOS E ANIVERSARIANTES                            -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA INTENÇÕES                                        -->
-    <!-- ============================================================ -->
     <div id="aba-intencoes" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-praying-hands"></i> Intenções de Oração</h2>
@@ -465,14 +426,7 @@
             <div id="lista-intencoes"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
         </div>
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA INTENÇÕES                                           -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA PASCOM                                           -->
-    <!-- ============================================================ -->
     <div id="aba-pascom" class="aba-conteudo">
         <div class="card">
             <h2><i class="fas fa-camera"></i> Pascom</h2>
@@ -488,14 +442,7 @@
             <p id="pascom-vazio" class="vazio" hidden>Ainda não há fotos publicadas.</p>
         </div>
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA PASCOM                                              -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: ABA HISTÓRIA (INSTITUCIONAL)                         -->
-    <!-- ============================================================ -->
     <div id="aba-institucional" class="aba-conteudo">
         <div class="card historia">
             <h2><i class="fas fa-church"></i> Nossa História</h2>
@@ -510,23 +457,13 @@
             </p>
         </div>
 
-        <!-- ===== INÍCIO: GALERIA FIXA "CONHEÇA NOSSA IGREJA" ===== -->
         <div class="card" id="card-igreja">
             <h2><i class="fas fa-images"></i> Conheça Nossa Igreja</h2>
             <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
             <div id="grade-igreja" class="grade grade-igreja"></div>
         </div>
-        <!-- ===== FIM: GALERIA FIXA "CONHEÇA NOSSA IGREJA" ===== -->
-
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: ABA HISTÓRIA                                            -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: MENU INFERIOR                                        -->
-    <!-- ============================================================ -->
     <nav class="menu-inferior">
         <button class="menu-item ativo" type="button" data-aba="liturgia"><i class="fas fa-book-open"></i><span>Início</span></button>
         <button class="menu-item" type="button" data-aba="horarios"><i class="fas fa-clock"></i><span>Horários</span></button>
@@ -535,15 +472,7 @@
         <button class="menu-item" type="button" data-aba="pascom"><i class="fas fa-camera"></i><span>Pascom</span></button>
         <button class="menu-item" type="button" data-aba="institucional"><i class="fas fa-church"></i><span>História</span></button>
     </nav>
-    <!-- ============================================================ -->
-    <!-- FIM: MENU INFERIOR                                           -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO: LIGHTBOX (FOTOS E VÍDEOS EM TELA CHEIA)              -->
-    <!-- ============================================================ -->
-    <!-- ===== INÍCIO: JANELA DO QR CODE (DÍZIMO) ===== -->
     <div id="dizimo-sheet" class="sheet" hidden>
         <div class="sheet-fundo" id="dz-fundo"></div>
         <div class="sheet-painel" role="dialog" aria-modal="true" aria-label="Dízimo e Ofertas">
@@ -558,7 +487,6 @@
             <p class="aviso-pix">O pagamento é feito no aplicativo do seu banco. Este app não recebe nem processa pagamentos. Confira o nome do favorecido antes de confirmar.</p>
         </div>
     </div>
-    <!-- ===== FIM: JANELA DO QR CODE (DÍZIMO) ===== -->
 
     <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
         <div class="lb-topo">
@@ -573,39 +501,22 @@
             <button type="button" class="lb-seta" id="lb-prox" aria-label="Próximo">&#8250;</button>
         </div>
     </div>
-    <!-- ============================================================ -->
-    <!-- FIM: LIGHTBOX                                                -->
-    <!-- ============================================================ -->
 
-
-    <!-- ============================================================ -->
-    <!-- INÍCIO DO JAVASCRIPT                                         -->
-    <!-- ============================================================ -->
     <script>
-        /* ---------- CONFIGURAÇÃO ---------- */
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
-        // As fotos e vídeos da Pascom vêm da API (rota GET /pascom): não é preciso configurar nada aqui.
-        // Fotos FIXAS da igreja (aba História): igreja1.jpg ... igreja9.jpg, na mesma pasta deste arquivo.
-        // Não use "foto1.jpg" etc. aqui: esses nomes são da Pascom e seriam sobrescritos a cada envio.
         const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
-        const VERSAO_IGREJA = Math.floor(Date.now() / 86400000); // renova 1x por dia
+        const VERSAO_IGREJA = Math.floor(Date.now() / 86400000);
 
-        // ===== INÍCIO: CONFIGURAÇÃO DO DÍZIMO (PIX) — PREENCHA AQUI =====
-        // 1) Coloque a imagem do QR Code na mesma pasta deste arquivo, com o nome abaixo (imagem).
-        // 2) Preencha os dados que quiser mostrar. O que ficar vazio ('') simplesmente não aparece.
-        // O card "Dízimo e Ofertas" só aparece no app quando existir a imagem ou uma chave/copia e cola.
         const DIZIMO = {
             imagem: 'qrcode-dizimo.png',
-            favorecido: '',     // ex.: 'Paróquia São João Bosco'  (o fiel confere este nome no banco)
-            banco: '',          // ex.: 'Banco do Brasil' (opcional)
-            tipoChave: '',      // ex.: 'CNPJ', 'E-mail', 'Telefone' ou 'Chave aleatória'
-            chave: '',          // a chave Pix
-            copiaECola: '',     // código "Pix Copia e Cola" (opcional)
+            favorecido: '',
+            banco: '',
+            tipoChave: '',
+            chave: '',
+            copiaECola: '',
             mensagem: 'Sua contribuição ajuda a manter as atividades da nossa comunidade. Que Deus abençoe você!'
         };
-        // ===== FIM: CONFIGURAÇÃO DO DÍZIMO (PIX) =====
 
-        /* ---------- UTILITÁRIOS ---------- */
         const $ = (id) => document.getElementById(id);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -617,7 +528,6 @@
         }
         const erroHTML = (fn) => `<p class="erro-msg">Não foi possível carregar. <button type="button" class="btn-link" onclick="${fn}()">Tentar novamente</button></p>`;
 
-        // Datas do banco (D1) vêm como "2026-11-09 18:30:00" (UTC); o Safari não lê esse formato direto
         function lerData(s) {
             if (!s) return null;
             let t = String(s);
@@ -633,19 +543,17 @@
             img.replaceWith(d);
         }
 
-        /* ---------- NAVEGAÇÃO ---------- */
         let igrejaMontada = false;
         function irParaAba(nome) {
             document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.remove('ativa'));
             document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('ativo', b.dataset.aba === nome));
             $('aba-' + nome).classList.add('ativa');
             window.scrollTo(0, 0);
-            if (nome === 'pascom' && Date.now() - pascomEm > 2 * 60 * 1000) carregarPascom();   // atualiza se faz mais de 2 min
+            if (nome === 'pascom' && Date.now() - pascomEm > 2 * 60 * 1000) carregarPascom();
             if (nome === 'institucional' && !igrejaMontada) { igrejaMontada = true; montarIgreja(); }
         }
         document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
 
-        /* ---------- LIGHTBOX ---------- */
         let lbLista = [], lbIdx = 0, xInicio = 0, yInicio = 0;
 
         function renderLB() {
@@ -671,7 +579,7 @@
             renderLB();
             $('lightbox').classList.add('ativo');
             document.body.classList.add('sem-scroll');
-            history.pushState({ lb: 1 }, '');   // o botão "voltar" do celular fecha a foto
+            history.pushState({ lb: 1 }, '');
         }
         function limparLB() {
             if (!$('lightbox').classList.contains('ativo')) return;
@@ -713,8 +621,6 @@
             if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) navegarLB(dx < 0 ? 1 : -1);
         }, { passive: true });
 
-        /* ---------- PASCOM: fotos e vídeos vêm da API (GET /pascom) ---------- */
-        // ===== INÍCIO: PASCOM (leitura pela API) =====
         const LIMITE_FOTOS = 20, LIMITE_VIDEOS = 5;
         let pascomFotos = [], pascomVideos = [];
         let pascomEm = 0, pascomPronto = false, pascomErro = false;
@@ -738,7 +644,7 @@
                 pascomVideos = itens.filter(i => i.tipo === 'video').slice(0, LIMITE_VIDEOS);
                 pascomErro = false;
             } catch (e) {
-                pascomErro = true;   // se já havia dados de antes, continuam na tela
+                pascomErro = true;
             }
             pascomPronto = true;
             desenharPascom();
@@ -771,7 +677,6 @@
             return b;
         }
 
-        // Vídeo: só baixa os metadados (poucos KB) para mostrar o 1º quadro e a duração; o vídeo inteiro só carrega ao tocar.
         function tileVideo(lista, i) {
             const b = document.createElement('button');
             b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Vídeo ' + (i + 1));
@@ -786,7 +691,7 @@
                 }
             };
             v.onerror = () => b.remove();
-            setTimeout(() => b.classList.add('ok'), 4000);   // iPhone às vezes não carrega o 1º quadro: mostra o botão mesmo assim
+            setTimeout(() => b.classList.add('ok'), 4000);
             v.src = lista[i].url + '#t=0.1';
             const play = document.createElement('span'); play.className = 'play'; play.innerHTML = '<i class="fas fa-play"></i>';
             b.appendChild(v); b.appendChild(play);
@@ -794,13 +699,12 @@
             return b;
         }
 
-                    function desenharPascom() {
+        function desenharPascom() {
             const gf = $('grade-foto'), gv = $('grade-video'), c = $('carrossel-home');
             gf.innerHTML = ''; gv.innerHTML = ''; c.innerHTML = '';
             pascomFotos.forEach((_, i) => gf.appendChild(tileFoto(pascomFotos, i)));
             pascomVideos.forEach((_, i) => gv.appendChild(tileVideo(pascomVideos, i)));
 
-            // Carrossel misturando fotos e vídeos
             const recentesFotos = pascomFotos.slice(0, 3);
             const recentesVideos = pascomVideos.slice(0, 2);
             const recentes = [
@@ -818,13 +722,11 @@
                     c.appendChild(img);
                 } else {
                     const wrap = document.createElement('div');
-                    // 👇 ADICIONADO pointer-events: auto; e z-index: 1;
                     wrap.style.cssText = 'position:relative;flex:0 0 80%;height:210px;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;scroll-snap-align:center;pointer-events:auto;z-index:1';
                     const v = document.createElement('video');
                     v.muted = true; v.preload = 'metadata'; v.playsInline = true;
                     v.setAttribute('playsinline', '');
                     v.src = midia.url + '#t=0.1';
-                    // 👇 pointer-events: none; no vídeo para o clique ir para o container (wrap)
                     v.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none';
                     const play = document.createElement('span');
                     play.innerHTML = '<i class="fas fa-play"></i>';
@@ -839,10 +741,16 @@
             document.querySelector('.seg[data-seg="foto"]').textContent = pascomFotos.length ? `Fotos (${pascomFotos.length})` : 'Fotos';
             document.querySelector('.seg[data-seg="video"]').textContent = pascomVideos.length ? `Vídeos (${pascomVideos.length})` : 'Vídeos';
             atualizarVazioPascom();
-        }    
-        // ===== FIM: PASCOM (leitura pela API) =====
+        }
 
-        // ===== INÍCIO: DÍZIMO (QR CODE PIX) — apenas exibe os dados, não processa pagamento =====
+        document.querySelectorAll('.seg').forEach(s => s.addEventListener('click', () => {
+            document.querySelectorAll('.seg').forEach(x => x.classList.remove('ativo'));
+            s.classList.add('ativo');
+            $('grade-foto').hidden = s.dataset.seg !== 'foto';
+            $('grade-video').hidden = s.dataset.seg !== 'video';
+            atualizarVazioPascom();
+        }));
+
         let dizimoTemQR = false;
 
         function iniciarDizimo() {
@@ -909,7 +817,7 @@
 
             $('dizimo-sheet').hidden = false;
             document.body.classList.add('sem-scroll');
-            history.pushState({ dz: 1 }, '');   // o botão "voltar" do celular fecha a janela
+            history.pushState({ dz: 1 }, '');
         }
         function limparDizimo() {
             if ($('dizimo-sheet').hidden) return;
@@ -925,9 +833,7 @@
         $('dz-fundo').addEventListener('click', fecharDizimo);
         window.addEventListener('popstate', limparDizimo);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharDizimo(); });
-        // ===== FIM: DÍZIMO (QR CODE PIX) =====
 
-        // Galeria fixa da igreja (aba História): a 1ª foto aparece grande, as demais em 2 colunas
         function montarIgreja() {
             const g = $('grade-igreja');
             g.innerHTML = '';
@@ -948,7 +854,6 @@
             }
         }
 
-        /* ---------- LITURGIA ---------- */
         const TEMAS = [
             { chave: 'verde',    p: '#2e6b3a', s: '#4f9a5a' },
             { chave: 'roxo',     p: '#4b2d6e', s: '#6d4a96' },
@@ -1016,19 +921,18 @@
             botao.innerHTML = aberto ? 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>' : 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
         }
 
-        /* ---------- HORÁRIOS + PRÓXIMA MISSA ---------- */
         const DIAS = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
         const NOMES_DIA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
         const ORDEM_DIA = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
 
-        function diasDaSemana(txt) {   // entende o que a secretaria cadastra: "Domingo", "Segunda a Sexta", "Todos os dias"
+        function diasDaSemana(txt) {
             const t = norm(txt);
             if (t.includes('todos')) return [0, 1, 2, 3, 4, 5, 6];
             if (t.includes('segunda a sexta')) return [1, 2, 3, 4, 5];
             const i = DIAS.findIndex(d => t.startsWith(d));
             return i >= 0 ? [i] : [];
         }
-        function minutosDoDia(txt) {   // "19h30" -> 1170 | "8h" -> 480
+        function minutosDoDia(txt) {
             const m = String(txt || '').match(/(\d{1,2})\s*[h:]\s*(\d{2})?/i);
             return m ? parseInt(m[1], 10) * 60 + parseInt(m[2] || '0', 10) : null;
         }
@@ -1083,7 +987,6 @@
             } catch (erro) { container.innerHTML = erroHTML('carregarHorarios'); }
         }
 
-        /* ---------- AVISOS ---------- */
         let avisosCache = [];
         async function carregarAvisos() {
             const container = $('avisos-conteudo');
@@ -1106,7 +1009,6 @@
             else window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
         }
 
-        /* ---------- ANIVERSARIANTES ---------- */
         const MESES = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
         function diasAteAniversario(dia, mes) {
             const m = MESES.indexOf(norm(mes)), d = parseInt(dia, 10);
@@ -1131,7 +1033,6 @@
             } catch (erro) { container.innerHTML = erroHTML('carregarAniversariantes'); }
         }
 
-        /* ---------- INTENÇÕES ---------- */
         function rezadasLocal() { try { return JSON.parse(localStorage.getItem('rezadas') || '[]'); } catch (_) { return []; } }
 
         async function carregarIntencoes() {
@@ -1194,7 +1095,6 @@
             } catch (e) { btn.disabled = false; }
         }
 
-        /* ---------- INICIALIZAÇÃO ---------- */
         let ultimaCarga = Date.now();
         function carregarTudo() {
             ultimaCarga = Date.now();
@@ -1208,14 +1108,9 @@
         carregarTudo();
         iniciarDizimo();
 
-        // Ao voltar para o app depois de um tempo, atualiza os dados sozinho
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && Date.now() - ultimaCarga > 5 * 60 * 1000) carregarTudo();
         });
     </script>
-    <!-- ============================================================ -->
-    <!-- FIM DO JAVASCRIPT                                            -->
-    <!-- ============================================================ -->
-
 </body>
 </html>
