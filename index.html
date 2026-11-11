@@ -282,7 +282,7 @@
         .btn-dz.claro { background: #fff; color: var(--primaria); border: 1.5px solid var(--primaria); }
         .aviso-pix { font-size: .78rem; color: var(--cinza); text-align: center; margin-top: 14px; line-height: 1.5; }
 
-        /* ---------- Galeria fixa da igreja (aba História) ---------- */
+        /* ---------- Galeria fixa da igreja ---------- */
         .grade-igreja { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .grade-igreja .tile { aspect-ratio: 4 / 3; border-radius: 12px; }
         .grade-igreja .tile:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
@@ -372,6 +372,13 @@
             <button type="button" class="btn-expandir" data-aba="pascom">Ver todas as fotos e vídeos</button>
         </div>
 
+        <!-- 👇 AQUI ESTÁ A GALERIA DA IGREJA NA PÁGINA INICIAL -->
+        <div class="card" id="card-igreja">
+            <h2><i class="fas fa-images"></i> Conheça Nossa Igreja</h2>
+            <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
+            <div id="grade-igreja" class="grade grade-igreja"></div>
+        </div>
+
         <div class="card">
             <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
             <p class="sub-texto">Acesse a Palavra de Deus.</p>
@@ -455,12 +462,6 @@
             <p>
                <strong>A Congada:</strong> A fé da comunidade caminha lado a lado com a tradicional <strong>Congada de Boa Vista</strong>. Com origem no período da escravidão, o grupo mantém viva a dança, a música e a devoção, sendo um patrimônio imaterial da região.
             </p>
-        </div>
-
-        <div class="card" id="card-igreja">
-            <h2><i class="fas fa-images"></i> Conheça Nossa Igreja</h2>
-            <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
-            <div id="grade-igreja" class="grade grade-igreja"></div>
         </div>
     </div>
 
@@ -550,7 +551,6 @@
             $('aba-' + nome).classList.add('ativa');
             window.scrollTo(0, 0);
             if (nome === 'pascom' && Date.now() - pascomEm > 2 * 60 * 1000) carregarPascom();
-            if (nome === 'institucional' && !igrejaMontada) { igrejaMontada = true; montarIgreja(); }
         }
         document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
 
@@ -835,6 +835,8 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharDizimo(); });
 
         function montarIgreja() {
+            if (igrejaMontada) return;
+            igrejaMontada = true;
             const g = $('grade-igreja');
             g.innerHTML = '';
             for (let n = 1; n <= TOTAL_IGREJA; n++) {
@@ -1104,6 +1106,7 @@
             carregarAniversariantes();
             carregarIntencoes();
             carregarPascom();
+            montarIgreja(); // 👈 Inicia a galeria da igreja na tela inicial
         }
         carregarTudo();
         iniciarDizimo();
