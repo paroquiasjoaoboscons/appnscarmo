@@ -226,6 +226,7 @@
 
         /* ---------- Pascom ---------- */
         .segmento { display: flex; background: var(--tinta); border-radius: 12px; padding: 4px; margin-bottom: 14px; }
+        .position: relative; z-index: 10; }
         .seg { flex: 1; border: none; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--primaria); font-size: .92rem; cursor: pointer; }
         .seg.ativo { background: #fff; box-shadow: 0 2px 6px rgba(75,45,110,.18); }
         .grade { display: grid; gap: 6px; }
@@ -793,19 +794,19 @@
             return b;
         }
 
-                function desenharPascom() {
+                    function desenharPascom() {
             const gf = $('grade-foto'), gv = $('grade-video'), c = $('carrossel-home');
             gf.innerHTML = ''; gv.innerHTML = ''; c.innerHTML = '';
             pascomFotos.forEach((_, i) => gf.appendChild(tileFoto(pascomFotos, i)));
             pascomVideos.forEach((_, i) => gv.appendChild(tileVideo(pascomVideos, i)));
 
-            // CORREÇÃO: Carrossel "Momentos da Semana" agora mistura fotos e vídeos (3 fotos + 2 vídeos)
+            // Carrossel misturando fotos e vídeos
             const recentesFotos = pascomFotos.slice(0, 3);
             const recentesVideos = pascomVideos.slice(0, 2);
             const recentes = [
                 ...recentesFotos.map(f => ({ ...f, tipo: 'foto' })),
                 ...recentesVideos.map(v => ({ ...v, tipo: 'video' }))
-            ].sort((a, b) => b.url.localeCompare(a.url)).slice(0, 5); // Pega as 5 mais recentes de forma geral
+            ].sort((a, b) => b.url.localeCompare(a.url)).slice(0, 5);
 
             recentes.forEach((midia, i) => {
                 if (midia.tipo === 'foto') {
@@ -817,15 +818,17 @@
                     c.appendChild(img);
                 } else {
                     const wrap = document.createElement('div');
-                    wrap.style.cssText = 'position:relative;flex:0 0 80%;height:210px;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;scroll-snap-align:center';
+                    // 👇 ADICIONADO pointer-events: auto; e z-index: 1;
+                    wrap.style.cssText = 'position:relative;flex:0 0 80%;height:210px;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;scroll-snap-align:center;pointer-events:auto;z-index:1';
                     const v = document.createElement('video');
                     v.muted = true; v.preload = 'metadata'; v.playsInline = true;
                     v.setAttribute('playsinline', '');
                     v.src = midia.url + '#t=0.1';
+                    // 👇 pointer-events: none; no vídeo para o clique ir para o container (wrap)
                     v.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none';
                     const play = document.createElement('span');
                     play.innerHTML = '<i class="fas fa-play"></i>';
-                    play.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;padding-left:3px;font-size:1.1rem';
+                    play.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;padding-left:3px;font-size:1.1rem;pointer-events:none';
                     wrap.appendChild(v); wrap.appendChild(play);
                     wrap.addEventListener('click', () => abrirLB(recentes.map(r => ({ tipo: r.tipo, url: r.url, leg: 'Momentos da Semana' })), i));
                     c.appendChild(wrap);
@@ -836,7 +839,7 @@
             document.querySelector('.seg[data-seg="foto"]').textContent = pascomFotos.length ? `Fotos (${pascomFotos.length})` : 'Fotos';
             document.querySelector('.seg[data-seg="video"]').textContent = pascomVideos.length ? `Vídeos (${pascomVideos.length})` : 'Vídeos';
             atualizarVazioPascom();
-        }
+        }    
         // ===== FIM: PASCOM (leitura pela API) =====
 
         // ===== INÍCIO: DÍZIMO (QR CODE PIX) — apenas exibe os dados, não processa pagamento =====
