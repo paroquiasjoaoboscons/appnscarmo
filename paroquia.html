@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4b2d6e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Paróquia São João Bosco">
+    <title>Paróquia São João Bosco</title>
+    <link rel="manifest" href="manifest-paroquia.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw-paroquia.js').catch(()=>{});
+      }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primaria: #4b2d6e;
+            --secundaria: #6d4a96;
+            --tinta: #efe8f7;
+            --dourado: #c9a24b;
+            --dourado-escuro: #a07f2c;
+            --creme: #faf6ee;
+            --texto: #2e2339;
+            --cinza: #7a6f85;
+            --borda: #e8e0f0;
+            --nav-h: 64px;
+            --safe-b: env(safe-area-inset-bottom, 0px);
+        }
+        @supports (color: color-mix(in srgb, red 10%, white)) {
+            :root { --tinta: color-mix(in srgb, var(--primaria) 9%, #fff); }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        [hidden] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+            background: var(--creme); color: var(--texto);
+            padding-bottom: calc(var(--nav-h) + var(--safe-b) + 16px);
+        }
+        body.sem-scroll { overflow: hidden; }
+        h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; }
+        button { font-family: inherit; }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            position: relative; min-height: 250px;
+            background: url('igreja-paroquia.jpg') center / cover no-repeat, var(--primaria);
+            display: flex; align-items: flex-end; justify-content: center; text-align: center; color: #fff;
+            border-radius: 0 0 28px 28px; border-bottom: 3px solid var(--dourado);
+            overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.2);
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(75,45,110,.55) 0%, rgba(75,45,110,.92) 100%);
+        }
+        .hero-content { position: relative; z-index: 1; padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 26px; width: 100%; }
+        .hero-cruz {
+            width: 52px; height: 52px; margin: 0 auto 12px; border-radius: 50%;
+            border: 2px solid var(--dourado); background: rgba(255,255,255,.14);
+            display: flex; align-items: center; justify-content: center; color: var(--dourado); font-size: 1.3rem;
+        }
+        .hero h1 { font-size: 1.45rem; line-height: 1.2; text-shadow: 0 2px 6px rgba(0,0,0,.45); }
+        .hero p { font-size: .9rem; opacity: .92; margin-top: 6px; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+
+        /* ---------- ABAS ---------- */
+        .aba-conteudo { display: none; padding: 18px 16px 0; max-width: 640px; margin: 0 auto; }
+        .aba-conteudo.ativa { display: block; animation: surgir .28s ease; }
+        @keyframes surgir { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+        .card {
+            background: #fff; border-radius: 18px; padding: 20px 18px 22px; margin-bottom: 18px;
+            box-shadow: 0 3px 14px rgba(75,45,110,.09); border-top: 4px solid var(--dourado);
+        }
+        .card h2 {
+            color: var(--primaria); font-size: 1.15rem; margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--borda); display: flex; align-items: center; gap: 10px;
+        }
+        .card h2 i { color: var(--dourado-escuro); font-size: 1.05rem; }
+        .sub-texto { font-size: .88rem; color: var(--cinza); line-height: 1.45; margin-bottom: 14px; }
+        .btn-link { background: none; border: none; color: var(--secundaria); font-weight: 700; text-decoration: underline; cursor: pointer; font-size: inherit; }
+        .erro-msg { color: #b3392f; font-size: .9rem; }
+        .vazio { color: var(--cinza); font-size: .92rem; text-align: center; padding: 14px 0; }
+
+        .skel {
+            height: 14px; border-radius: 7px; margin: 10px 0;
+            background: linear-gradient(90deg, #eee 25%, #f8f8f8 50%, #eee 75%); background-size: 200% 100%;
+            animation: brilho 1.2s infinite;
+        }
+        @keyframes brilho { to { background-position: -200% 0; } }
+
+        /* ---------- Próxima missa + atalhos ---------- */
+        .proxima {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff;
+            border-radius: 16px; padding: 16px 18px; border-left: 5px solid var(--dourado);
+            box-shadow: 0 4px 14px rgba(0,0,0,.18);
+        }
+        .proxima > i { font-size: 1.6rem; color: var(--dourado); }
+        .proxima small { display: block; font-size: .72rem; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+        .proxima strong { font-size: 1rem; line-height: 1.3; display: block; margin-top: 2px; }
+        .atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+        .atalho {
+            background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 12px 4px;
+            display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+            color: var(--primaria); font-size: .72rem; font-weight: 700; box-shadow: 0 2px 8px rgba(75,45,110,.07);
+        }
+        .atalho i {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--tinta); color: var(--primaria);
+            display: flex; align-items: center; justify-content: center; font-size: 1.05rem; border: 1.5px solid var(--dourado);
+        }
+        .atalho:active { transform: scale(.96); }
+
+        /* ---------- Pároco ---------- */
+        .card-padre { display: flex; align-items: center; gap: 15px; }
+        .foto-padre {
+            width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            border: 3px solid var(--dourado); background: var(--tinta);
+        }
+        .foto-padre.fallback { display: flex; align-items: center; justify-content: center; color: var(--primaria); font-size: 1.5rem; }
+        .info-padre h3 { font-size: 1.02rem; color: var(--primaria); line-height: 1.25; }
+        .info-padre p { font-size: .85rem; color: var(--cinza); margin-top: 3px; }
+
+        /* ---------- Liturgia ---------- */
+        .info { font-weight: 700; color: var(--cinza); font-size: .88rem; margin-bottom: 3px; }
+        .leitura { margin-top: 16px; border-top: 1px solid var(--borda); padding-top: 12px; }
+        .leitura .titulo { color: var(--secundaria); font-weight: 700; font-family: Georgia, serif; font-size: 1.02rem; margin-bottom: 3px; }
+        .leitura .texto { font-size: .95rem; line-height: 1.6; white-space: pre-line; margin-top: 8px; }
+        .liturgia-extra { display: none; }
+        .btn-expandir {
+            width: 100%; margin-top: 16px; padding: 13px; border-radius: 12px; cursor: pointer;
+            background: #fff; border: 1.5px solid var(--primaria); color: var(--primaria); font-weight: 700; font-size: .95rem;
+        }
+        .btn-expandir:active { background: var(--tinta); }
+
+        .btn-biblia {
+            display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+            background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); color: #fff;
+            padding: 14px; border-radius: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(160,127,44,.3);
+        }
+
+        /* ---------- Carrossel "Momentos" ---------- */
+        .carrossel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+        .carrossel::-webkit-scrollbar { display: none; }
+        .carrossel img {
+            flex: 0 0 80%; height: 210px; object-fit: cover; border-radius: 14px; scroll-snap-align: center;
+            cursor: pointer; background: var(--tinta); box-shadow: 0 2px 8px rgba(0,0,0,.14);
+        }
+        .dica-mini { font-size: .78rem; color: var(--cinza); text-align: center; margin-top: 8px; }
+
+        /* ---------- Comunidades (cards) ---------- */
+        .comunidade {
+            background: #fff; border-radius: 18px; overflow: hidden;
+            box-shadow: 0 3px 14px rgba(75,45,110,.09); border-top: 4px solid var(--dourado);
+            text-decoration: none; color: inherit; display: block; margin-bottom: 14px;
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+        .comunidade:active { transform: scale(.98); box-shadow: 0 2px 8px rgba(75,45,110,.15); }
+        .comunidade-img {
+            width: 100%; height: 140px; object-fit: cover; display: block; background: var(--tinta);
+        }
+        .comunidade-info { padding: 16px 18px 18px; }
+        .comunidade-info h3 {
+            font-size: 1.15rem; color: var(--primaria); margin-bottom: 6px; line-height: 1.25;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .comunidade-info h3 i { color: var(--dourado-escuro); font-size: .95rem; }
+        .comunidade-info .local {
+            font-size: .85rem; color: var(--cinza); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .comunidade-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 12px; border-top: 1px solid var(--borda);
+        }
+        .horario-missa {
+            font-size: .82rem; font-weight: 700; color: var(--secundaria);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .horario-missa i { color: var(--dourado-escuro); }
+        .btn-acessar {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+            color: #fff; padding: 8px 16px; border-radius: 20px;
+            font-size: .82rem; font-weight: 700;
+            box-shadow: 0 2px 8px rgba(75,45,110,.25);
+        }
+
+        /* ---------- Horários ---------- */
+        .grupo-horario h3 { font-size: .85rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--dourado-escuro); margin: 18px 0 4px; }
+        .grupo-horario:first-child h3 { margin-top: 0; }
+        .horario-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--borda); }
+        .grupo-horario .horario-item:last-child { border-bottom: none; }
+        .horario-dia { font-weight: 700; color: var(--primaria); font-size: .95rem; }
+        .horario-hora { text-align: right; font-weight: 700; font-size: .95rem; }
+        .horario-hora small { display: block; font-weight: 400; color: var(--cinza); font-size: .78rem; }
+
+        /* ---------- Avisos / aniversariantes ---------- */
+        .aviso-item { border-left: 4px solid var(--dourado); background: var(--tinta); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 12px; }
+        .aviso-data { font-size: .72rem; color: var(--dourado-escuro); text-transform: uppercase; font-weight: 700; letter-spacing: .8px; }
+        .aviso-item h3 { font-size: 1.02rem; margin: 4px 0; color: var(--primaria); }
+        .aviso-item p { font-size: .92rem; line-height: 1.5; white-space: pre-line; }
+        .btn-compartilhar { margin-top: 8px; background: none; border: none; color: var(--secundaria); font-weight: 700; font-size: .82rem; cursor: pointer; padding: 4px 0; }
+        .aniversariante-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--borda); font-size: .93rem; }
+        .aniversariante-item:last-child { border-bottom: none; }
+        .aniversariante-data { min-width: 62px; text-align: center; background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff; border-radius: 8px; padding: 4px 8px; font-size: .8rem; font-weight: 700; }
+        .aniversariante-item.hoje .aniversariante-data { background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); }
+        .badge-hoje { margin-left: auto; font-size: .72rem; font-weight: 700; color: var(--dourado-escuro); }
+
+        /* ---------- Intenções ---------- */
+        .caixa-form { background: var(--tinta); border-radius: 14px; padding: 16px; margin-bottom: 22px; border: 1px solid var(--borda); }
+        .caixa-form h3 { font-size: 1rem; color: var(--primaria); margin-bottom: 8px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: .85rem; margin-bottom: 6px; font-weight: 700; color: var(--primaria); }
+        .form-group input[type="text"], .form-group textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--borda); border-radius: 12px;
+            font-family: inherit; font-size: 16px; background: #fff; outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--secundaria); box-shadow: 0 0 0 3px rgba(109,74,150,.15); }
+        .form-group textarea { height: 96px; resize: vertical; }
+        .contador { text-align: right; font-size: .75rem; color: var(--cinza); margin-top: 3px; }
+        .linha-check { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
+        .linha-check input { width: 20px; height: 20px; accent-color: var(--primaria); flex: none; }
+        .linha-check label { margin: 0; font-weight: 400; font-size: .85rem; color: var(--texto); }
+        .btn-enviar {
+            width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff;
+            font-size: 1rem; font-weight: 700; box-shadow: 0 4px 12px rgba(75,45,110,.28);
+        }
+        .btn-enviar:disabled { opacity: .6; }
+        .msg-alerta { padding: 11px 14px; border-radius: 10px; margin-bottom: 14px; font-size: .9rem; font-weight: 700; display: none; }
+        .msg-sucesso { background: #e1f3e8; color: #1f6b3f; }
+        .msg-erro { background: #fbe4e1; color: #a02b22; }
+        .intencao-item { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+        .intencao-nome { font-weight: 700; color: var(--primaria); font-size: .9rem; }
+        .intencao-texto { margin: 6px 0; font-size: .95rem; line-height: 1.5; white-space: pre-line; }
+        .intencao-footer { display: flex; justify-content: space-between; align-items: center; font-size: .78rem; color: var(--cinza); margin-top: 8px; }
+        .btn-rezar {
+            display: flex; align-items: center; gap: 6px; background: none; cursor: pointer;
+            border: 1.5px solid var(--secundaria); color: var(--secundaria); border-radius: 20px; padding: 6px 14px; font-size: .82rem; font-weight: 700;
+        }
+        .btn-rezar.feito { background: var(--primaria); border-color: var(--primaria); color: #fff; cursor: default; }
+
+        /* ---------- Galeria ---------- */
+        .grade { display: grid; gap: 6px; }
+        .grade-igreja { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .grade-igreja .tile { aspect-ratio: 4 / 3; border-radius: 12px; }
+        .grade-igreja .tile:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+        .tile {
+            position: relative; overflow: hidden; cursor: pointer; border: none; padding: 0; border-radius: 10px;
+            aspect-ratio: 1; background: linear-gradient(90deg, #eee 25%, #f8f8f8 50%, #eee 75%); background-size: 200% 100%;
+            animation: brilho 1.2s infinite;
+        }
+        .tile.ok { animation: none; background: #000; }
+        .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        /* ---------- História ---------- */
+        .historia p { font-size: .96rem; line-height: 1.7; margin-bottom: 15px; }
+        .historia strong { color: var(--primaria); }
+        .card-padroeiro { display: flex; align-items: center; gap: 15px; }
+        .foto-padroeiro {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            border: 3px solid var(--dourado); background: var(--tinta);
+        }
+        .foto-padroeiro.fallback { display: flex; align-items: center; justify-content: center; color: var(--primaria); font-size: 1.8rem; }
+        .info-padroeiro h3 { font-size: 1.05rem; color: var(--primaria); line-height: 1.25; }
+        .info-padroeiro p { font-size: .85rem; color: var(--cinza); margin-top: 3px; }
+        .info-padroeiro .frase { font-style: italic; color: var(--secundaria); font-size: .82rem; margin-top: 6px; }
+
+        /* ---------- Dízimo ---------- */
+        .btn-dizimo {
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px;
+            border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 700; color: #fff;
+            background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro)); box-shadow: 0 4px 12px rgba(160,127,44,.3);
+        }
+        .btn-dizimo:active { transform: scale(.98); }
+        .sheet { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; justify-content: center; }
+        .sheet-fundo { position: absolute; inset: 0; background: rgba(15,8,25,.7); }
+        .sheet-painel {
+            position: relative; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto;
+            background: var(--creme); border-radius: 24px 24px 0 0; border-top: 4px solid var(--dourado);
+            padding: 18px 18px calc(22px + var(--safe-b)); animation: subir .25s ease;
+        }
+        @keyframes subir { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .sheet-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .sheet-topo h3 { color: var(--primaria); font-size: 1.2rem; }
+        .sheet-fechar { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--tinta); color: var(--primaria); font-size: 1rem; cursor: pointer; }
+        .qr-box { background: #fff; border: 2px solid var(--dourado); border-radius: 18px; padding: 14px; max-width: 300px; margin: 8px auto 16px; box-shadow: 0 4px 14px rgba(75,45,110,.12); }
+        .qr-box img { width: 100%; height: auto; display: block; }
+        .dados-pix { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 2px 14px; margin-bottom: 14px; }
+        .dados-pix > div { padding: 10px 0; border-bottom: 1px dashed var(--borda); }
+        .dados-pix > div:last-child { border-bottom: none; }
+        .dados-pix dt { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--dourado-escuro); font-weight: 700; }
+        .dados-pix dd { font-size: .98rem; font-weight: 700; margin-top: 2px; word-break: break-all; }
+        .dz-botoes { display: flex; flex-direction: column; gap: 10px; }
+        .btn-dz {
+            display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border-radius: 12px;
+            font-size: .95rem; font-weight: 700; cursor: pointer; text-decoration: none;
+            background: linear-gradient(135deg, var(--primaria), var(--secundaria)); color: #fff; border: none;
+        }
+        .btn-dz.claro { background: #fff; color: var(--primaria); border: 1.5px solid var(--primaria); }
+        .aviso-pix { font-size: .78rem; color: var(--cinza); text-align: center; margin-top: 14px; line-height: 1.5; }
+
+        /* ---------- Menu inferior ---------- */
+        .menu-inferior {
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000;
+            height: calc(var(--nav-h) + var(--safe-b)); padding-bottom: var(--safe-b);
+            background: #fff; border-top: 1px solid var(--borda); box-shadow: 0 -4px 16px rgba(75,45,110,.1); display: flex;
+        }
+        .menu-item {
+            flex: 1; min-width: 0; background: none; border: none; cursor: pointer; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            color: var(--cinza); font-size: .62rem; font-weight: 700; padding: 0 2px;
+        }
+        .menu-item i { font-size: 1.2rem; }
+        .menu-item.ativo { color: var(--primaria); }
+        .menu-item.ativo::before { content: ''; position: absolute; top: 0; left: 26%; right: 26%; height: 3px; background: var(--dourado); border-radius: 0 0 4px 4px; }
+
+        /* ---------- Lightbox ---------- */
+        .lightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(15,8,25,.97); display: none; flex-direction: column; }
+        .lightbox.ativo { display: flex; }
+        .lb-topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 10px; color: #fff; }
+        .lb-topo .lb-info { min-width: 0; }
+        .lb-topo .lb-info b { display: block; font-family: Georgia, serif; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lb-topo .lb-info span { font-size: .78rem; opacity: .75; }
+        .lb-btn { background: rgba(255,255,255,.15); color: #fff; border: none; width: 42px; height: 42px; border-radius: 50%; font-size: 1rem; cursor: pointer; flex: none; }
+        .lb-acoes { display: flex; gap: 8px; }
+        .lb-palco { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; padding: 0 6px calc(14px + var(--safe-b)); }
+        .lb-palco img, .lb-palco video { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; }
+        .lb-seta { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,.18); color: #fff; font-size: 1.5rem; cursor: pointer; }
+        #lb-ant { left: 8px; } #lb-prox { right: 8px; }
+
+        /* ---------- Rodapé da aba História ---------- */
+        .rodape-acessos {
+            margin-top: 24px; padding: 16px; text-align: center;
+            border-top: 1px dashed var(--borda);
+        }
+        .rodape-acessos p { font-size: .78rem; color: var(--cinza); margin-bottom: 10px; }
+        .rodape-acessos a {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--secundaria); font-weight: 700; font-size: .85rem;
+            text-decoration: none; padding: 8px 14px; border-radius: 20px;
+            border: 1.5px solid var(--secundaria);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- HERO                                                          -->
+    <!-- ============================================================ -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-cruz"><i class="fas fa-cross"></i></div>
+            <h1>Paróquia São João Bosco</h1>
+            <p>Nova Serrana / MG</p>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- ABA INÍCIO                                                    -->
+    <!-- ============================================================ -->
+    <div id="aba-liturgia" class="aba-conteudo ativa">
+        <div class="proxima" id="proxima-missa" hidden>
+            <i class="fas fa-church"></i>
+            <div><small>Próxima Missa</small><strong id="proxima-txt"></strong></div>
+        </div>
+
+        <div class="atalhos">
+            <button class="atalho" type="button" data-aba="horarios"><i class="fas fa-clock"></i>Horários</button>
+            <button class="atalho" type="button" data-aba="avisos"><i class="fas fa-bullhorn"></i>Avisos</button>
+            <button class="atalho" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i>Orações</button>
+            <button class="atalho" type="button" data-aba="comunidades"><i class="fas fa-church"></i>Comunidades</button>
+        </div>
+
+        <div class="card card-padre">
+            <img src="padre.jpg" alt="Padre" class="foto-padre" onerror="semFotoPadre(this)">
+            <div class="info-padre">
+                <h3>Padre Gedler Henriques Breves Pereira</h3>
+                <p>Pároco da Paróquia São João Bosco</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-bible"></i> Liturgia Diária</h2>
+            <div id="liturgia-conteudo">
+                <div class="skel"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:85%"></div>
+            </div>
+        </div>
+
+        <div class="card" id="card-dizimo" hidden>
+            <h2><i class="fas fa-hand-holding-heart"></i> Dízimo e Ofertas</h2>
+            <p class="sub-texto">Contribua com a nossa paróquia pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
+            <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
+        </div>
+
+        <!-- Galeria de fotos da paróquia (paroquia1.jpg ... paroquia9.jpg) -->
+        <div class="card" id="card-galeria-paroquia">
+            <h2><i class="fas fa-images"></i> Nossa Paróquia</h2>
+            <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
+            <div id="grade-paroquia" class="grade grade-igreja"></div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-book-bible"></i> Bíblia Online</h2>
+            <p class="sub-texto">Acesse a Palavra de Deus.</p>
+            <a href="https://www.bibliacatolica.com.br/" target="_blank" rel="noopener" class="btn-biblia">
+                <i class="fas fa-book"></i> Abrir Bíblia Online
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ABA HORÁRIOS                                                  -->
+    <!-- ============================================================ -->
+    <div id="aba-horarios" class="aba-conteudo">
+        <div class="card">
+            <h2><i class="fas fa-clock"></i> Horários e Confissões</h2>
+            <div id="horarios-conteudo"><div class="skel"></div><div class="skel" style="width:75%"></div></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ABA AVISOS                                                    -->
+    <!-- ============================================================ -->
+    <div id="aba-avisos" class="aba-conteudo">
+        <div class="card">
+            <h2><i class="fas fa-bullhorn"></i> Mural de Avisos</h2>
+            <div id="avisos-conteudo"><div class="skel"></div><div class="skel" style="width:75%"></div></div>
+        </div>
+        <div class="card">
+            <h2><i class="fas fa-birthday-cake"></i> Aniversariantes Dizimistas</h2>
+            <div id="aniversariantes-conteudo"><div class="skel"></div><div class="skel" style="width:60%"></div></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ABA INTENÇÕES                                                 -->
+    <!-- ============================================================ -->
+    <div id="aba-intencoes" class="aba-conteudo">
+        <div class="card">
+            <h2><i class="fas fa-praying-hands"></i> Intenções de Oração</h2>
+            <div id="mensagem-intencao" class="msg-alerta"></div>
+            <div class="caixa-form">
+                <h3>Deixe seu pedido</h3>
+                <form id="form-intencao">
+                    <div class="form-group">
+                        <label for="nome">Seu nome (opcional)</label>
+                        <input type="text" id="nome" maxlength="60" placeholder="Ex: Maria">
+                    </div>
+                    <div class="form-group">
+                        <label for="pedido">Seu pedido de oração *</label>
+                        <textarea id="pedido" maxlength="500" placeholder="Escreva aqui..." required></textarea>
+                        <div class="contador"><span id="cont-pedido">0</span>/500</div>
+                    </div>
+                    <div class="linha-check">
+                        <input type="checkbox" id="privada">
+                        <label for="privada">Manter em sigilo (apenas o padre verá)</label>
+                    </div>
+                    <button type="submit" class="btn-enviar" id="btn-enviar-intencao">Enviar Intenção</button>
+                </form>
+            </div>
+            <h3 style="font-size:1rem;color:var(--primaria);margin-bottom:12px">Intenções da Comunidade</h3>
+            <div id="lista-intencoes"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ABA COMUNIDADES                                               -->
+    <!-- ============================================================ -->
+    <div id="aba-comunidades" class="aba-conteudo">
+        <div class="card" style="padding: 18px 18px 22px;">
+            <h2><i class="fas fa-church"></i> Nossas Comunidades</h2>
+            <p class="sub-texto">Toque na comunidade para acessar o app dela com horários, avisos e liturgia.</p>
+        </div>
+
+        <!-- COMUNIDADE 1: Nossa Senhora do Carmo -->
+        <a href="index.html" class="comunidade">
+            <img src="igreja.jpg" alt="Comunidade Nossa Senhora do Carmo" class="comunidade-img" onerror="this.style.display='none'">
+            <div class="comunidade-info">
+                <h3><i class="fas fa-church"></i> Nossa Senhora do Carmo</h3>
+                <p class="local"><i class="fas fa-map-marker-alt"></i> Boa Vista de Minas</p>
+                <div class="comunidade-footer">
+                    <span class="horario-missa"><i class="fas fa-clock"></i> Domingos às 19h</span>
+                    <span class="btn-acessar">Acessar <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </a>
+
+        <!-- MODELO COMUNIDADE 2 (descomentar quando tiver) -->
+        <!--
+        <a href="comunidade-sao-jose.html" class="comunidade">
+            <img src="foto-comunidade-2.jpg" alt="Comunidade São José" class="comunidade-img" onerror="this.style.display='none'">
+            <div class="comunidade-info">
+                <h3><i class="fas fa-church"></i> São José</h3>
+                <p class="local"><i class="fas fa-map-marker-alt"></i> Bairro Centro</p>
+                <div class="comunidade-footer">
+                    <span class="horario-missa"><i class="fas fa-clock"></i> Sábados às 18h</span>
+                    <span class="btn-acessar">Acessar <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </a>
+        -->
+
+        <!-- MODELO COMUNIDADE 3 (descomentar quando tiver) -->
+        <!--
+        <a href="comunidade-sao-pedro.html" class="comunidade">
+            <img src="foto-comunidade-3.jpg" alt="Comunidade São Pedro" class="comunidade-img" onerror="this.style.display='none'">
+            <div class="comunidade-info">
+                <h3><i class="fas fa-church"></i> São Pedro</h3>
+                <p class="local"><i class="fas fa-map-marker-alt"></i> Bairro Jardim das Acácias</p>
+                <div class="comunidade-footer">
+                    <span class="horario-missa"><i class="fas fa-clock"></i> Domingos às 9h</span>
+                    <span class="btn-acessar">Acessar <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </a>
+        -->
+
+        <p class="dica-mini" style="margin-top: 18px;">Mais comunidades serão adicionadas em breve.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ABA HISTÓRIA                                                  -->
+    <!-- ============================================================ -->
+    <div id="aba-institucional" class="aba-conteudo">
+
+        <!-- Padroeiro -->
+        <div class="card card-padroeiro">
+            <img src="sao-joao-bosco.jpg" alt="São João Bosco" class="foto-padroeiro" onerror="semFotoPadroeiro(this)">
+            <div class="info-padroeiro">
+                <h3>São João Bosco</h3>
+                <p>Padroeiro da Paróquia • 31 de janeiro</p>
+                <p class="frase">"Basta que sejais jovens para que eu vos ame profundamente."</p>
+            </div>
+        </div>
+
+        <!-- História -->
+        <div class="card historia">
+            <h2><i class="fas fa-church"></i> Nossa História</h2>
+            <p>
+              A <strong>Paróquia São João Bosco</strong>, em Nova Serrana/MG, é uma comunidade de fé que reúne diversas capelas e comunidades espalhadas pelo município. Tem como padroeiro <strong>São João Bosco</strong>, o santo educador italiano que dedicou sua vida aos jovens, fundador da Congregação Salesiana e da Família Salesiana.
+            </p>
+            <p>
+              A paróquia nasceu do desejo de acolher e evangelizar as famílias da região, especialmente os jovens, seguindo o carisma salesiano de <strong>"formar bons cristãos e honestos cidadãos"</strong>. Ao longo dos anos, cresceu e se organizou em comunidades, cada uma com sua própria capela e devoção.
+            </p>
+            <p>
+              Hoje, a paróquia reúne fiéis de diferentes bairros e distritos, promovendo celebrações, catequese, pastorais e ações sociais. Sua missão continua sendo levar o Evangelho a todos, com o olhar carinhoso de São João Bosco para com os mais necessitados.
+            </p>
+        </div>
+
+        <!-- Galeria de fotos da paróquia -->
+        <div class="card" id="card-igreja">
+            <h2><i class="fas fa-images"></i> Conheça Nossa Paróquia</h2>
+            <p class="sub-texto">Toque em uma foto para ampliar e deslize para ver as próximas.</p>
+            <div id="grade-igreja" class="grade grade-igreja"></div>
+        </div>
+
+        <!-- Link para a Central de Acessos -->
+        <div class="rodape-acessos">
+            <p>Equipe da Paróquia? Acesse os painéis administrativos:</p>
+            <a href="links.html">
+                <i class="fas fa-key"></i> Central de Acessos
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MENU INFERIOR                                                 -->
+    <!-- ============================================================ -->
+    <nav class="menu-inferior">
+        <button class="menu-item ativo" type="button" data-aba="liturgia"><i class="fas fa-book-open"></i><span>Início</span></button>
+        <button class="menu-item" type="button" data-aba="horarios"><i class="fas fa-clock"></i><span>Horários</span></button>
+        <button class="menu-item" type="button" data-aba="avisos"><i class="fas fa-bullhorn"></i><span>Avisos</span></button>
+        <button class="menu-item" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i><span>Intenções</span></button>
+        <button class="menu-item" type="button" data-aba="comunidades"><i class="fas fa-church"></i><span>Comunidades</span></button>
+        <button class="menu-item" type="button" data-aba="institucional"><i class="fas fa-landmark"></i><span>História</span></button>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- DÍZIMO (Sheet)                                                -->
+    <!-- ============================================================ -->
+    <div id="dizimo-sheet" class="sheet" hidden>
+        <div class="sheet-fundo" id="dz-fundo"></div>
+        <div class="sheet-painel" role="dialog" aria-modal="true" aria-label="Dízimo e Ofertas">
+            <div class="sheet-topo">
+                <h3>Dízimo e Ofertas</h3>
+                <button type="button" class="sheet-fechar" id="dz-fechar" aria-label="Fechar"><i class="fas fa-xmark"></i></button>
+            </div>
+            <p class="sub-texto" id="dz-msg"></p>
+            <div class="qr-box" id="dz-qrbox"><img id="dz-qr" alt="QR Code Pix para dízimo e ofertas"></div>
+            <dl class="dados-pix" id="dz-dados"></dl>
+            <div class="dz-botoes" id="dz-botoes"></div>
+            <p class="aviso-pix">O pagamento é feito no aplicativo do seu banco. Este app não recebe nem processa pagamentos. Confira o nome do favorecido antes de confirmar.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- LIGHTBOX                                                      -->
+    <!-- ============================================================ -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+        <div class="lb-topo">
+            <div class="lb-info"><b id="lb-titulo"></b><span id="lb-contador"></span></div>
+            <div class="lb-acoes">
+                <button type="button" class="lb-btn" id="lb-compartilhar" aria-label="Compartilhar"><i class="fas fa-share-nodes"></i></button>
+                <button type="button" class="lb-btn" id="lb-fechar" aria-label="Fechar"><i class="fas fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="lb-palco" id="lb-palco">
+            <button type="button" class="lb-seta" id="lb-ant" aria-label="Anterior">&#8249;</button>
+            <button type="button" class="lb-seta" id="lb-prox" aria-label="Próximo">&#8250;</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT                                                    -->
+    <!-- ============================================================ -->
+    <script>
+        /* ========== CONFIGURAÇÃO ========== */
+        // Usa o mesmo Worker da comunidade Nossa Senhora do Carmo,
+        // mas você pode depois criar um Worker próprio para a paróquia.
+        const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
+
+        // Galeria da paróquia: paroquia1.jpg ... paroquia9.jpg
+        const PREFIXO_PAROQUIA = 'paroquia', TOTAL_PAROQUIA = 9;
+        const VERSAO_IGREJA = Math.floor(Date.now() / 86400000);
+
+        // Dízimo da paróquia
+        const DIZIMO = {
+            imagem: 'qrcode-dizimo-paroquia.png',
+            favorecido: 'Paróquia São João Bosco',
+            banco: '',
+            tipoChave: '',
+            chave: '',
+            copiaECola: '',
+            mensagem: 'Sua contribuição ajuda a manter as atividades da nossa paróquia. Que São João Bosco interceda por você!'
+        };
+
+        /* ========== UTILITÁRIOS ========== */
+        const $ = (id) => document.getElementById(id);
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+        async function getJSON(caminho) {
+            const r = await fetch(URL_API + caminho);
+            if (!r.ok) throw new Error('http ' + r.status);
+            return r.json();
+        }
+        const erroHTML = (fn) => `<p class="erro-msg">Não foi possível carregar. <button type="button" class="btn-link" onclick="${fn}()">Tentar novamente</button></p>`;
+
+        function lerData(s) {
+            if (!s) return null;
+            let t = String(s);
+            if (/^\d{4}-\d{2}-\d{2} \d/.test(t)) t = t.replace(' ', 'T') + 'Z';
+            const d = new Date(t);
+            return isNaN(d) ? null : d;
+        }
+
+        function semFotoPadre(img) {
+            const d = document.createElement('div');
+            d.className = 'foto-padre fallback';
+            d.innerHTML = '<i class="fas fa-cross"></i>';
+            img.replaceWith(d);
+        }
+        function semFotoPadroeiro(img) {
+            const d = document.createElement('div');
+            d.className = 'foto-padroeiro fallback';
+            d.innerHTML = '<i class="fas fa-hands-praying"></i>';
+            img.replaceWith(d);
+        }
+
+        /* ========== NAVEGAÇÃO ========== */
+        function irParaAba(nome) {
+            document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.remove('ativa'));
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('ativo', b.dataset.aba === nome));
+            $('aba-' + nome).classList.add('ativa');
+            window.scrollTo(0, 0);
+        }
+        document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
+
+        /* ========== LIGHTBOX ========== */
+        let lbLista = [], lbIdx = 0, xInicio = 0, yInicio = 0;
+        function renderLB() {
+            const it = lbLista[lbIdx];
+            const palco = $('lb-palco');
+            palco.querySelectorAll('img, video').forEach(e => { if (e.tagName === 'VIDEO') e.pause(); e.remove(); });
+            let el;
+            if (it.tipo === 'foto') { el = new Image(); el.src = it.url; el.alt = it.leg; }
+            else {
+                el = document.createElement('video');
+                el.src = it.url; el.controls = true; el.autoplay = true; el.preload = 'metadata';
+                el.playsInline = true; el.setAttribute('playsinline', '');
+            }
+            palco.insertBefore(el, palco.firstChild);
+            $('lb-titulo').textContent = it.leg;
+            $('lb-contador').textContent = `${lbIdx + 1} de ${lbLista.length}`;
+            $('lb-ant').hidden = $('lb-prox').hidden = lbLista.length < 2;
+        }
+        function abrirLB(lista, indice) {
+            if (!lista.length) return;
+            lbLista = lista; lbIdx = indice;
+            renderLB();
+            $('lightbox').classList.add('ativo');
+            document.body.classList.add('sem-scroll');
+            history.pushState({ lb: 1 }, '');
+        }
+        function limparLB() {
+            if (!$('lightbox').classList.contains('ativo')) return;
+            $('lb-palco').querySelectorAll('video').forEach(v => v.pause());
+            $('lb-palco').querySelectorAll('img, video').forEach(e => e.remove());
+            $('lightbox').classList.remove('ativo');
+            document.body.classList.remove('sem-scroll');
+        }
+        function fecharLB() {
+            limparLB();
+            if (history.state && history.state.lb) history.back();
+        }
+        function navegarLB(p) {
+            if (lbLista.length < 2) return;
+            lbIdx = (lbIdx + p + lbLista.length) % lbLista.length;
+            renderLB();
+        }
+        async function compartilharMidia() {
+            const it = lbLista[lbIdx]; if (!it) return;
+            const url = new URL(it.url, location.href).href.split('?')[0].split('#')[0];
+            if (navigator.share) { try { await navigator.share({ title: 'Paróquia São João Bosco', url }); } catch (_) {} }
+            else window.open('https://wa.me/?text=' + encodeURIComponent(url), '_blank');
+        }
+        $('lb-fechar').addEventListener('click', fecharLB);
+        $('lb-ant').addEventListener('click', () => navegarLB(-1));
+        $('lb-prox').addEventListener('click', () => navegarLB(1));
+        $('lb-compartilhar').addEventListener('click', compartilharMidia);
+        $('lb-palco').addEventListener('click', (e) => { if (e.target === $('lb-palco')) fecharLB(); });
+        window.addEventListener('popstate', limparLB);
+        document.addEventListener('keydown', (e) => {
+            if (!$('lightbox').classList.contains('ativo')) return;
+            if (e.key === 'Escape') fecharLB();
+            if (e.key === 'ArrowLeft') navegarLB(-1);
+            if (e.key === 'ArrowRight') navegarLB(1);
+        });
+        $('lightbox').addEventListener('touchstart', (e) => { xInicio = e.changedTouches[0].clientX; yInicio = e.changedTouches[0].clientY; }, { passive: true });
+        $('lightbox').addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - xInicio, dy = e.changedTouches[0].clientY - yInicio;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) navegarLB(dx < 0 ? 1 : -1);
+        }, { passive: true });
+
+        /* ========== DÍZIMO ========== */
+        let dizimoTemQR = false;
+        function iniciarDizimo() {
+            const temTexto = !!(DIZIMO.chave || DIZIMO.copiaECola);
+            const img = new Image();
+            img.onload = () => { dizimoTemQR = true; $('card-dizimo').hidden = false; };
+            img.onerror = () => { if (temTexto) $('card-dizimo').hidden = false; };
+            img.src = `${DIZIMO.imagem}?v=${VERSAO_IGREJA}`;
+        }
+        function copiarTexto(texto, btn) {
+            const original = btn.innerHTML;
+            const ok = () => { btn.innerHTML = '<i class="fas fa-check"></i> Copiado!'; setTimeout(() => { btn.innerHTML = original; }, 2000); };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(ok).catch(() => copiarAntigo(texto, ok));
+            } else copiarAntigo(texto, ok);
+        }
+        function copiarAntigo(texto, ok) {
+            const t = document.createElement('textarea');
+            t.value = texto; t.style.position = 'fixed'; t.style.opacity = '0';
+            document.body.appendChild(t); t.select();
+            try { document.execCommand('copy'); ok(); } catch (_) {}
+            t.remove();
+        }
+        function abrirDizimo() {
+            $('dz-msg').textContent = DIZIMO.mensagem || '';
+            $('dz-msg').hidden = !DIZIMO.mensagem;
+            const qr = $('dz-qr');
+            $('dz-qrbox').hidden = !dizimoTemQR;
+            if (dizimoTemQR) qr.src = `${DIZIMO.imagem}?v=${VERSAO_IGREJA}`;
+            const dados = $('dz-dados'); dados.innerHTML = '';
+            const linha = (rotulo, valor) => {
+                if (!valor) return;
+                const d = document.createElement('div');
+                const dt = document.createElement('dt'); dt.textContent = rotulo;
+                const dd = document.createElement('dd'); dd.textContent = valor;
+                d.appendChild(dt); d.appendChild(dd); dados.appendChild(d);
+            };
+            linha('Favorecido', DIZIMO.favorecido);
+            linha('Banco', DIZIMO.banco);
+            linha(DIZIMO.tipoChave ? `Chave Pix (${DIZIMO.tipoChave})` : 'Chave Pix', DIZIMO.chave);
+            dados.hidden = !dados.children.length;
+            const botoes = $('dz-botoes'); botoes.innerHTML = '';
+            if (DIZIMO.chave) {
+                const b = document.createElement('button'); b.type = 'button'; b.className = 'btn-dz';
+                b.innerHTML = '<i class="fas fa-copy"></i> Copiar chave Pix';
+                b.addEventListener('click', () => copiarTexto(DIZIMO.chave, b)); botoes.appendChild(b);
+            }
+            if (DIZIMO.copiaECola) {
+                const b = document.createElement('button'); b.type = 'button'; b.className = 'btn-dz';
+                b.innerHTML = '<i class="fas fa-copy"></i> Copiar Pix Copia e Cola';
+                b.addEventListener('click', () => copiarTexto(DIZIMO.copiaECola, b)); botoes.appendChild(b);
+            }
+            if (dizimoTemQR) {
+                const a = document.createElement('a'); a.className = 'btn-dz claro';
+                a.href = DIZIMO.imagem; a.download = 'qrcode-dizimo-paroquia.png';
+                a.innerHTML = '<i class="fas fa-download"></i> Salvar QR Code';
+                botoes.appendChild(a);
+            }
+            $('dizimo-sheet').hidden = false;
+            document.body.classList.add('sem-scroll');
+            history.pushState({ dz: 1 }, '');
+        }
+        function limparDizimo() {
+            if ($('dizimo-sheet').hidden) return;
+            $('dizimo-sheet').hidden = true;
+            if ($('lightbox').classList.contains('ativo') === false) document.body.classList.remove('sem-scroll');
+        }
+        function fecharDizimo() {
+            limparDizimo();
+            if (history.state && history.state.dz) history.back();
+        }
+        $('btn-dizimo').addEventListener('click', abrirDizimo);
+        $('dz-fechar').addEventListener('click', fecharDizimo);
+        $('dz-fundo').addEventListener('click', fecharDizimo);
+        window.addEventListener('popstate', limparDizimo);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharDizimo(); });
+
+        /* ========== GALERIAS ========== */
+        function montarGaleria(idContainer, prefixo, total, legenda, onVazio) {
+            const g = $(idContainer);
+            g.innerHTML = '';
+            for (let n = 1; n <= total; n++) {
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'tile';
+                b.setAttribute('aria-label', legenda + ', foto ' + n);
+                const img = new Image();
+                img.loading = 'lazy'; img.decoding = 'async'; img.alt = legenda;
+                img.onload = () => b.classList.add('ok');
+                img.onerror = () => { b.remove(); if (!g.children.length && onVazio) onVazio(); };
+                b.appendChild(img);
+                b.addEventListener('click', () => {
+                    const tiles = [...g.querySelectorAll('.tile')];
+                    abrirLB(tiles.map(t => ({ tipo: 'foto', url: t.querySelector('img').src, leg: legenda })), tiles.indexOf(b));
+                });
+                g.appendChild(b);
+                img.src = `${prefixo}${n}.jpg?v=${VERSAO_IGREJA}`;
+            }
+        }
+        function montarIgreja() {
+            montarGaleria('grade-igreja', PREFIXO_PAROQUIA, TOTAL_PAROQUIA, 'Nossa Paróquia',
+                () => { $('card-igreja').hidden = true; });
+        }
+        function montarGaleriaHome() {
+            montarGaleria('grade-paroquia', PREFIXO_PAROQUIA, TOTAL_PAROQUIA, 'Nossa Paróquia',
+                () => { $('card-galeria-paroquia').hidden = true; });
+        }
+
+        /* ========== LITURGIA ========== */
+        const TEMAS = [
+            { chave: 'verde',    p: '#2e6b3a', s: '#4f9a5a' },
+            { chave: 'roxo',     p: '#4b2d6e', s: '#6d4a96' },
+            { chave: 'branco',   p: '#a07f2c', s: '#c9a24b' },
+            { chave: 'dourado',  p: '#a07f2c', s: '#c9a24b' },
+            { chave: 'vermelho', p: '#a82a2a', s: '#d04545' },
+            { chave: 'rosa',     p: '#b0306a', s: '#d6568f' }
+        ];
+        function aplicarCorLiturgica(cor) {
+            const t = TEMAS.find(x => norm(cor).includes(x.chave));
+            if (!t) return;
+            const root = document.documentElement;
+            root.style.setProperty('--primaria', t.p);
+            root.style.setProperty('--secundaria', t.s);
+            document.querySelector('meta[name="theme-color"]').content = t.p;
+        }
+        async function carregarLiturgia() {
+            const container = $('liturgia-conteudo');
+            const lista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+            const bloco = (tituloPadrao, itens) => lista(itens).map(i => `
+                <div class="leitura">
+                    <p class="titulo">${esc(i.titulo || tituloPadrao)}</p>
+                    ${i.referencia ? `<p class="info">${esc(i.referencia)}</p>` : ''}
+                    ${i.refrao ? `<p><em>${esc(i.refrao)}</em></p>` : ''}
+                    <p class="texto">${esc(i.texto || '')}</p>
+                </div>`).join('');
+            try {
+                const resposta = await fetch('https://liturgia.up.railway.app/v2/');
+                if (!resposta.ok) throw new Error('API fora do ar');
+                const dados = await resposta.json();
+                if (dados.cor) aplicarCorLiturgica(dados.cor);
+                let html = '';
+                if (dados.data) html += `<p class="info">Data: ${esc(dados.data)}</p>`;
+                if (dados.liturgia) html += `<p class="info">${esc(dados.liturgia)}</p>`;
+                if (dados.cor) html += `<p class="info">Cor Litúrgica: ${esc(dados.cor)}</p>`;
+                const l = dados.leituras;
+                if (l) {
+                    html += bloco('Primeira Leitura', l.primeiraLeitura);
+                    html += `<div class="liturgia-extra" id="liturgia-extra">`;
+                    html += bloco('Salmo Responsorial', l.salmo);
+                    html += bloco('Segunda Leitura', l.segundaLeitura);
+                    html += bloco('Evangelho', l.evangelho);
+                    html += `</div>`;
+                    html += `<button class="btn-expandir" type="button" onclick="toggleLiturgia(this)">Ver Liturgia Completa <i class="fas fa-chevron-down"></i></button>`;
+                } else {
+                    html += '<p class="vazio">A liturgia não está disponível agora.</p>';
+                }
+                container.innerHTML = html;
+            } catch (erro) {
+                container.innerHTML = erroHTML('carregarLiturgia');
+            }
+        }
+        function toggleLiturgia(botao) {
+            const extra = $('liturgia-extra');
+            const aberto = extra.style.display === 'block';
+            extra.style.display = aberto ? 'none' : 'block';
+            botao.innerHTML = aberto ? 'Ver Liturgia Completa <i class="fas fa-chevron-down"></i>' : 'Mostrar Menos <i class="fas fa-chevron-up"></i>';
+        }
+
+        /* ========== HORÁRIOS ========== */
+        const DIAS = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+        const NOMES_DIA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        const ORDEM_DIA = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+        function diasDaSemana(txt) {
+            const t = norm(txt);
+            if (t.includes('todos')) return [0, 1, 2, 3, 4, 5, 6];
+            if (t.includes('segunda a sexta')) return [1, 2, 3, 4, 5];
+            const i = DIAS.findIndex(d => t.startsWith(d));
+            return i >= 0 ? [i] : [];
+        }
+        function minutosDoDia(txt) {
+            const m = String(txt || '').match(/(\d{1,2})\s*[h:]\s*(\d{2})?/i);
+            return m ? parseInt(m[1], 10) * 60 + parseInt(m[2] || '0', 10) : null;
+        }
+        function ordemDia(txt) {
+            const t = norm(txt);
+            if (t.includes('todos')) return 8;
+            if (t.includes('segunda a sexta')) return 7;
+            const i = ORDEM_DIA.findIndex(d => t.startsWith(d));
+            return i >= 0 ? i : 99;
+        }
+        function mostrarProximaMissa(lista) {
+            const agora = new Date();
+            let melhor = null;
+            lista.filter(i => norm(i.tipo).includes('missa')).forEach(i => {
+                const dias = diasDaSemana(i.dia), min = minutosDoDia(i.horario);
+                if (!dias.length || min === null) return;
+                for (let off = 0; off < 8; off++) {
+                    const d = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + off, Math.floor(min / 60), min % 60);
+                    if (d <= agora || !dias.includes(d.getDay())) continue;
+                    if (!melhor || d < melhor.d) melhor = { d, i, off };
+                    break;
+                }
+            });
+            if (!melhor) { $('proxima-missa').hidden = true; return; }
+            const quando = melhor.off === 0 ? 'Hoje' : melhor.off === 1 ? 'Amanhã' : NOMES_DIA[melhor.d.getDay()];
+            $('proxima-txt').textContent = `${quando} às ${melhor.i.horario} · ${melhor.i.local}`;
+            $('proxima-missa').hidden = false;
+        }
+        async function carregarHorarios() {
+            const container = $('horarios-conteudo');
+            try {
+                const dados = await getJSON('/horarios');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhum horário cadastrado.</p>'; $('proxima-missa').hidden = true; return; }
+                const prioridade = (t) => { const n = norm(t); return n.includes('missa') ? 0 : n.includes('confiss') ? 1 : n.includes('adora') ? 2 : n.includes('terco') ? 3 : 4; };
+                const grupos = {};
+                dados.forEach(i => { (grupos[i.tipo] = grupos[i.tipo] || []).push(i); });
+                const tipos = Object.keys(grupos).sort((a, b) => prioridade(a) - prioridade(b) || a.localeCompare(b));
+                container.innerHTML = tipos.map(tp => {
+                    const itens = grupos[tp].sort((a, b) => ordemDia(a.dia) - ordemDia(b.dia) || (minutosDoDia(a.horario) ?? 0) - (minutosDoDia(b.horario) ?? 0));
+                    return `<div class="grupo-horario"><h3>${esc(tp)}</h3>${itens.map(i => `
+                        <div class="horario-item">
+                            <span class="horario-dia">${esc(i.dia)}</span>
+                            <span class="horario-hora">${esc(i.horario)}<small>${esc(i.local)}</small></span>
+                        </div>`).join('')}</div>`;
+                }).join('');
+                mostrarProximaMissa(dados);
+            } catch (erro) { container.innerHTML = erroHTML('carregarHorarios'); }
+        }
+
+        /* ========== AVISOS ========== */
+        let avisosCache = [];
+        async function carregarAvisos() {
+            const container = $('avisos-conteudo');
+            try {
+                avisosCache = await getJSON('/avisos');
+                if (!avisosCache.length) { container.innerHTML = '<p class="vazio">Nenhum aviso no momento.</p>'; return; }
+                container.innerHTML = avisosCache.map((a, i) => `
+                    <div class="aviso-item">
+                        <span class="aviso-data">${esc(a.data)}</span>
+                        <h3>${esc(a.titulo)}</h3>
+                        <p>${esc(a.texto)}</p>
+                        <button type="button" class="btn-compartilhar" onclick="compartilharAviso(${i})"><i class="fas fa-share-nodes"></i> Compartilhar</button>
+                    </div>`).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarAvisos'); }
+        }
+        function compartilharAviso(i) {
+            const a = avisosCache[i]; if (!a) return;
+            const texto = `*${a.titulo}*\n${a.data}\n\n${a.texto}\n\nParóquia São João Bosco`;
+            if (navigator.share) navigator.share({ text: texto }).catch(() => {});
+            else window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+        }
+
+        /* ========== ANIVERSARIANTES ========== */
+        const MESES = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        function diasAteAniversario(dia, mes) {
+            const m = MESES.indexOf(norm(mes)), d = parseInt(dia, 10);
+            if (m < 0 || isNaN(d)) return 9999;
+            const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+            const alvo = new Date(hoje.getFullYear(), m, d);
+            if (alvo < hoje) alvo.setFullYear(alvo.getFullYear() + 1);
+            return Math.round((alvo - hoje) / 864e5);
+        }
+        async function carregarAniversariantes() {
+            const container = $('aniversariantes-conteudo');
+            try {
+                const dados = await getJSON('/aniversariantes');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhum aniversariante cadastrado.</p>'; return; }
+                const lista = dados.map(i => ({ ...i, falta: diasAteAniversario(i.dia, i.mes) })).sort((a, b) => a.falta - b.falta);
+                container.innerHTML = lista.map(i => `
+                    <div class="aniversariante-item ${i.falta === 0 ? 'hoje' : ''}">
+                        <span class="aniversariante-data">${esc(i.dia)}/${esc(String(i.mes).substring(0, 3))}</span>
+                        <span>${esc(i.nome)}</span>
+                        ${i.falta === 0 ? '<span class="badge-hoje"><i class="fas fa-cake-candles"></i> Hoje!</span>' : ''}
+                    </div>`).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarAniversariantes'); }
+        }
+
+        /* ========== INTENÇÕES ========== */
+        function rezadasLocal() { try { return JSON.parse(localStorage.getItem('rezadas') || '[]'); } catch (_) { return []; } }
+        async function carregarIntencoes() {
+            const container = $('lista-intencoes');
+            try {
+                const dados = await getJSON('/intencoes');
+                if (!dados.length) { container.innerHTML = '<p class="vazio">Nenhuma intenção pública ainda.</p>'; return; }
+                const jaRezei = rezadasLocal();
+                container.innerHTML = dados.map(item => {
+                    const dt = lerData(item.criado_em);
+                    const feito = jaRezei.includes(item.id);
+                    return `
+                    <div class="intencao-item">
+                        <p class="intencao-nome">${esc(item.nome || 'Anônimo')}</p>
+                        <p class="intencao-texto">${esc(item.pedido)}</p>
+                        <div class="intencao-footer">
+                            <span>${dt ? dt.toLocaleDateString('pt-BR') : ''}</span>
+                            <button type="button" class="btn-rezar ${feito ? 'feito' : ''}" ${feito ? 'disabled' : ''} onclick="rezar(${Number(item.id)}, this)">
+                                <i class="fas fa-praying-hands"></i> Rezei (${Number(item.rezadas) || 0})
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (erro) { container.innerHTML = erroHTML('carregarIntencoes'); }
+        }
+        $('pedido').addEventListener('input', (e) => { $('cont-pedido').textContent = e.target.value.length; });
+        $('form-intencao').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = $('btn-enviar-intencao'), msgDiv = $('mensagem-intencao');
+            btn.disabled = true; btn.innerText = 'Enviando...'; msgDiv.style.display = 'none';
+            try {
+                const resposta = await fetch(`${URL_API}/intencoes`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nome: $('nome').value.trim(),
+                        pedido: $('pedido').value.trim(),
+                        visibilidade: $('privada').checked ? 'privada' : 'publica'
+                    })
+                });
+                if (!resposta.ok) throw new Error('Erro ao enviar');
+                msgDiv.className = 'msg-alerta msg-sucesso'; msgDiv.innerText = 'Sua intenção foi enviada. Rezaremos por você!'; msgDiv.style.display = 'block';
+                $('form-intencao').reset(); $('cont-pedido').textContent = '0';
+                carregarIntencoes();
+                setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
+            } catch (erro) {
+                msgDiv.className = 'msg-alerta msg-erro'; msgDiv.innerText = 'Erro ao enviar. Tente novamente.'; msgDiv.style.display = 'block';
+            } finally { btn.disabled = false; btn.innerText = 'Enviar Intenção'; }
+        });
+        async function rezar(id, btn) {
+            btn.disabled = true;
+            try {
+                const resposta = await fetch(`${URL_API}/rezar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+                if (!resposta.ok) throw new Error();
+                const lista = rezadasLocal(); lista.push(id);
+                try { localStorage.setItem('rezadas', JSON.stringify(lista)); } catch (_) {}
+                carregarIntencoes();
+            } catch (e) { btn.disabled = false; }
+        }
+
+        /* ========== INICIALIZAÇÃO ========== */
+        let ultimaCarga = Date.now();
+        function carregarTudo() {
+            ultimaCarga = Date.now();
+            carregarLiturgia();
+            carregarHorarios();
+            carregarAvisos();
+            carregarAniversariantes();
+            carregarIntencoes();
+            montarGaleriaHome();   // galeria da paróquia na tela inicial
+            montarIgreja();        // galeria da paróquia na aba História
+        }
+        carregarTudo();
+        iniciarDizimo();
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && Date.now() - ultimaCarga > 5 * 60 * 1000) carregarTudo();
+        });
+    </script>
+</body>
+</html>
