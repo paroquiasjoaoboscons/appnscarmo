@@ -258,6 +258,21 @@
         .tile.ok { animation: none; background: #000; }
         .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
+        /* ===== INÍCIO: CSS PASCOM ===== */
+        .segmento { display: flex; background: var(--tinta); border-radius: 12px; padding: 4px; margin-bottom: 14px; position: relative; z-index: 10; }
+        .seg { flex: 1; border: none; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--primaria); font-size: .92rem; cursor: pointer; position: relative; z-index: 11; }
+        .seg.ativo { background: #fff; box-shadow: 0 2px 6px rgba(75,45,110,.18); }
+        .grade-foto { grid-template-columns: repeat(3, 1fr); }
+        .grade-video { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grade-video .tile { aspect-ratio: 16 / 9; }
+        .tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .tile .play {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(0,0,0,.55); color: #fff; display: flex; align-items: center; justify-content: center; padding-left: 3px; font-size: .9rem;
+        }
+        .tile .dur { position: absolute; right: 6px; bottom: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: .7rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+        /* ===== FIM: CSS PASCOM ===== */
+
         /* ---------- História ---------- */
         .historia p { font-size: .96rem; line-height: 1.7; margin-bottom: 15px; }
         .historia strong { color: var(--primaria); }
@@ -314,7 +329,7 @@
         .menu-item {
             flex: 1; min-width: 0; background: none; border: none; cursor: pointer; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-            color: var(--cinza); font-size: .62rem; font-weight: 700; padding: 0 2px;
+            color: var(--cinza); font-size: .58rem; font-weight: 700; padding: 0 2px;
         }
         .menu-item i { font-size: 1.2rem; }
         .menu-item.ativo { color: var(--primaria); }
@@ -333,19 +348,6 @@
         .lb-palco img, .lb-palco video { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; }
         .lb-seta { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,.18); color: #fff; font-size: 1.5rem; cursor: pointer; }
         #lb-ant { left: 8px; } #lb-prox { right: 8px; }
-
-        /* ---------- Rodapé da aba História ---------- */
-        .rodape-acessos {
-            margin-top: 24px; padding: 16px; text-align: center;
-            border-top: 1px dashed var(--borda);
-        }
-        .rodape-acessos p { font-size: .78rem; color: var(--cinza); margin-bottom: 10px; }
-        .rodape-acessos a {
-            display: inline-flex; align-items: center; gap: 6px;
-            color: var(--secundaria); font-weight: 700; font-size: .85rem;
-            text-decoration: none; padding: 8px 14px; border-radius: 20px;
-            border: 1.5px solid var(--secundaria);
-        }
     </style>
 </head>
 <body>
@@ -397,6 +399,15 @@
             <p class="sub-texto">Contribua com a nossa paróquia pelo Pix: abra o QR Code e pague no aplicativo do seu banco.</p>
             <button type="button" class="btn-dizimo" id="btn-dizimo"><i class="fas fa-qrcode"></i> Ver QR Code</button>
         </div>
+
+        <!-- ===== INÍCIO: CARD MOMENTOS DA PASCOM ===== -->
+        <div class="card" id="card-momentos" hidden>
+            <h2><i class="fas fa-images"></i> Momentos Recentes</h2>
+            <div class="carrossel" id="carrossel-home"></div>
+            <p class="dica-mini">Arraste para o lado e toque para ampliar</p>
+            <button type="button" class="btn-expandir" data-aba="pascom">Ver todas as fotos e vídeos</button>
+        </div>
+        <!-- ===== FIM: CARD MOMENTOS DA PASCOM ===== -->
 
         <!-- Galeria de fotos da paróquia (paroquia1.jpg ... paroquia9.jpg) -->
         <div class="card" id="card-galeria-paroquia">
@@ -525,6 +536,26 @@
     </div>
 
     <!-- ============================================================ -->
+    <!-- ===== INÍCIO: ABA PASCOM ===== -->
+    <!-- ============================================================ -->
+    <div id="aba-pascom" class="aba-conteudo">
+        <div class="card">
+            <h2><i class="fas fa-camera"></i> Pascom</h2>
+            <p class="sub-texto">Momentos especiais registrados pela Pastoral da Comunicação. Toque para ampliar ou assistir.</p>
+
+            <div class="segmento">
+                <button type="button" class="seg ativo" data-seg="foto">Fotos</button>
+                <button type="button" class="seg" data-seg="video">Vídeos</button>
+            </div>
+
+            <div id="grade-foto" class="grade grade-foto"></div>
+            <div id="grade-video" class="grade grade-video" hidden></div>
+            <p id="pascom-vazio" class="vazio" hidden>Ainda não há fotos publicadas.</p>
+        </div>
+    </div>
+    <!-- ===== FIM: ABA PASCOM ===== -->
+
+    <!-- ============================================================ -->
     <!-- ABA HISTÓRIA                                                  -->
     <!-- ============================================================ -->
     <div id="aba-institucional" class="aba-conteudo">
@@ -560,14 +591,6 @@
             <div id="grade-igreja" class="grade grade-igreja"></div>
         </div>
 
-        <!-- Link para a Central de Acessos -->
-        <div class="rodape-acessos">
-            <p>Equipe da Paróquia? Acesse os painéis administrativos:</p>
-            <a href="links.html">
-                <i class="fas fa-key"></i> Central de Acessos
-            </a>
-        </div>
-
     </div>
 
     <!-- ============================================================ -->
@@ -579,6 +602,9 @@
         <button class="menu-item" type="button" data-aba="avisos"><i class="fas fa-bullhorn"></i><span>Avisos</span></button>
         <button class="menu-item" type="button" data-aba="intencoes"><i class="fas fa-praying-hands"></i><span>Intenções</span></button>
         <button class="menu-item" type="button" data-aba="comunidades"><i class="fas fa-church"></i><span>Comunidades</span></button>
+        <!-- ===== INÍCIO: BOTÃO PASCOM ===== -->
+        <button class="menu-item" type="button" data-aba="pascom"><i class="fas fa-camera"></i><span>Pascom</span></button>
+        <!-- ===== FIM: BOTÃO PASCOM ===== -->
         <button class="menu-item" type="button" data-aba="institucional"><i class="fas fa-landmark"></i><span>História</span></button>
     </nav>
 
@@ -622,9 +648,10 @@
     <!-- ============================================================ -->
     <script>
         /* ========== CONFIGURAÇÃO ========== */
-        // Usa o mesmo Worker da comunidade Nossa Senhora do Carmo,
-        // mas você pode depois criar um Worker próprio para a paróquia.
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
+
+        // Pascom desta igreja (a Comunidade do Carmo usa "carmo")
+        const IGREJA_PASCOM = 'paroquia';
 
         // Galeria da paróquia: paroquia1.jpg ... paroquia9.jpg
         const PREFIXO_PAROQUIA = 'paroquia', TOTAL_PAROQUIA = 9;
@@ -680,6 +707,9 @@
             document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('ativo', b.dataset.aba === nome));
             $('aba-' + nome).classList.add('ativa');
             window.scrollTo(0, 0);
+            // ===== INÍCIO: recarrega a Pascom ao abrir a aba =====
+            if (nome === 'pascom' && Date.now() - pascomEm > 2 * 60 * 1000) carregarPascom();
+            // ===== FIM: recarrega a Pascom ao abrir a aba =====
         }
         document.querySelectorAll('[data-aba]').forEach(el => el.addEventListener('click', () => irParaAba(el.dataset.aba)));
 
@@ -1084,6 +1114,137 @@
             } catch (e) { btn.disabled = false; }
         }
 
+        /* ===== INÍCIO: JS PASCOM ===== */
+        const LIMITE_FOTOS = 20, LIMITE_VIDEOS = 5;
+        let pascomFotos = [], pascomVideos = [];
+        let pascomEm = 0, pascomPronto = false, pascomErro = false;
+
+        const urlMidia = (u) => /^https?:\/\//i.test(u) ? u : URL_API + (String(u).startsWith('/') ? '' : '/') + u;
+        const urlEhVideo = (u) => /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(u || '');
+
+        async function carregarPascom() {
+            pascomEm = Date.now();
+            if (!pascomPronto) atualizarVazioPascom();
+            try {
+                // Só as fotos e vídeos enviados para a PARÓQUIA
+                const r = await fetch(`${URL_API}/pascom?igreja=${IGREJA_PASCOM}`, { cache: 'no-cache' });
+                if (!r.ok) throw new Error('http ' + r.status);
+                const dados = await r.json();
+                if (!Array.isArray(dados)) throw new Error('formato');
+                const itens = dados.filter(i => i && i.url).map(i => ({
+                    url: urlMidia(i.url),
+                    tipo: (i.tipo === 'video' || (!i.tipo && urlEhVideo(i.url))) ? 'video' : 'foto'
+                }));
+                pascomFotos = itens.filter(i => i.tipo === 'foto').slice(0, LIMITE_FOTOS);
+                pascomVideos = itens.filter(i => i.tipo === 'video').slice(0, LIMITE_VIDEOS);
+                pascomErro = false;
+            } catch (e) {
+                pascomErro = true;
+            }
+            pascomPronto = true;
+            desenharPascom();
+        }
+
+        function atualizarVazioPascom() {
+            const aba = document.querySelector('.seg.ativo').dataset.seg;
+            const lista = aba === 'foto' ? pascomFotos : pascomVideos;
+            const el = $('pascom-vazio');
+            if (!pascomPronto) { el.hidden = false; el.textContent = 'Carregando…'; return; }
+            if (pascomErro && !lista.length) {
+                el.hidden = false;
+                el.innerHTML = 'Não foi possível carregar. <button type="button" class="btn-link" onclick="carregarPascom()">Tentar novamente</button>';
+                return;
+            }
+            el.hidden = lista.length > 0;
+            el.textContent = aba === 'foto' ? 'Ainda não há fotos publicadas.' : 'Ainda não há vídeos publicados.';
+        }
+
+        function tileFoto(lista, i) {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Foto ' + (i + 1));
+            const img = new Image();
+            img.loading = 'lazy'; img.decoding = 'async'; img.alt = 'Foto ' + (i + 1);
+            img.onload = () => b.classList.add('ok');
+            img.onerror = () => b.remove();
+            img.src = lista[i].url;
+            b.appendChild(img);
+            b.addEventListener('click', () => abrirLB(lista.map((f, n) => ({ tipo: 'foto', url: f.url, leg: 'Foto ' + (n + 1) })), i));
+            return b;
+        }
+
+        function tileVideo(lista, i) {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Vídeo ' + (i + 1));
+            const v = document.createElement('video');
+            v.muted = true; v.preload = 'metadata'; v.playsInline = true; v.setAttribute('playsinline', '');
+            v.onloadedmetadata = () => {
+                b.classList.add('ok');
+                if (isFinite(v.duration) && !b.querySelector('.dur')) {
+                    const m = Math.floor(v.duration / 60), s = Math.floor(v.duration % 60);
+                    const d = document.createElement('span'); d.className = 'dur'; d.textContent = `${m}:${String(s).padStart(2, '0')}`;
+                    b.appendChild(d);
+                }
+            };
+            v.onerror = () => b.remove();
+            setTimeout(() => b.classList.add('ok'), 4000);
+            v.src = lista[i].url + '#t=0.1';
+            const play = document.createElement('span'); play.className = 'play'; play.innerHTML = '<i class="fas fa-play"></i>';
+            b.appendChild(v); b.appendChild(play);
+            b.addEventListener('click', () => abrirLB(lista.map((f, n) => ({ tipo: 'video', url: f.url, leg: 'Vídeo ' + (n + 1) })), i));
+            return b;
+        }
+
+        function desenharPascom() {
+            const gf = $('grade-foto'), gv = $('grade-video'), c = $('carrossel-home');
+            gf.innerHTML = ''; gv.innerHTML = ''; c.innerHTML = '';
+            pascomFotos.forEach((_, i) => gf.appendChild(tileFoto(pascomFotos, i)));
+            pascomVideos.forEach((_, i) => gv.appendChild(tileVideo(pascomVideos, i)));
+
+            const recentes = [
+                ...pascomFotos.slice(0, 3).map(f => ({ ...f, tipo: 'foto' })),
+                ...pascomVideos.slice(0, 2).map(v => ({ ...v, tipo: 'video' }))
+            ].sort((a, b) => b.url.localeCompare(a.url)).slice(0, 5);
+
+            recentes.forEach((midia, i) => {
+                const abrir = () => abrirLB(recentes.map(r => ({ tipo: r.tipo, url: r.url, leg: 'Momentos Recentes' })), i);
+                if (midia.tipo === 'foto') {
+                    const img = new Image();
+                    img.loading = 'lazy'; img.decoding = 'async'; img.alt = 'Momento ' + (i + 1);
+                    img.onerror = () => { img.remove(); if (!c.children.length) $('card-momentos').hidden = true; };
+                    img.addEventListener('click', abrir);
+                    img.src = midia.url;
+                    c.appendChild(img);
+                } else {
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'position:relative;flex:0 0 80%;height:210px;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;scroll-snap-align:center';
+                    const v = document.createElement('video');
+                    v.muted = true; v.preload = 'metadata'; v.playsInline = true; v.setAttribute('playsinline', '');
+                    v.src = midia.url + '#t=0.1';
+                    v.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none';
+                    const play = document.createElement('span');
+                    play.innerHTML = '<i class="fas fa-play"></i>';
+                    play.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;padding-left:3px;font-size:1.1rem;pointer-events:none';
+                    wrap.appendChild(v); wrap.appendChild(play);
+                    wrap.addEventListener('click', abrir);
+                    c.appendChild(wrap);
+                }
+            });
+            $('card-momentos').hidden = recentes.length === 0;
+
+            document.querySelector('.seg[data-seg="foto"]').textContent = pascomFotos.length ? `Fotos (${pascomFotos.length})` : 'Fotos';
+            document.querySelector('.seg[data-seg="video"]').textContent = pascomVideos.length ? `Vídeos (${pascomVideos.length})` : 'Vídeos';
+            atualizarVazioPascom();
+        }
+
+        document.querySelectorAll('.seg').forEach(s => s.addEventListener('click', () => {
+            document.querySelectorAll('.seg').forEach(x => x.classList.remove('ativo'));
+            s.classList.add('ativo');
+            $('grade-foto').hidden = s.dataset.seg !== 'foto';
+            $('grade-video').hidden = s.dataset.seg !== 'video';
+            atualizarVazioPascom();
+        }));
+        /* ===== FIM: JS PASCOM ===== */
+
         /* ========== INICIALIZAÇÃO ========== */
         let ultimaCarga = Date.now();
         function carregarTudo() {
@@ -1093,6 +1254,7 @@
             carregarAvisos();
             carregarAniversariantes();
             carregarIntencoes();
+            carregarPascom();      // Pascom da paróquia
             montarGaleriaHome();   // galeria da paróquia na tela inicial
             montarIgreja();        // galeria da paróquia na aba História
         }
