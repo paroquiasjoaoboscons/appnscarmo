@@ -505,6 +505,10 @@
 
     <script>
         const URL_API = 'https://api-paroquia.paroquiasjoaoboscons.workers.dev';
+
+        // Pascom desta igreja (a Paróquia usa "paroquia")
+        const IGREJA_PASCOM = 'carmo';
+
         const PREFIXO_IGREJA = 'igreja', TOTAL_IGREJA = 9;
         const VERSAO_IGREJA = Math.floor(Date.now() / 86400000);
 
@@ -632,7 +636,8 @@
             pascomEm = Date.now();
             if (!pascomPronto) atualizarVazioPascom();
             try {
-                const r = await fetch(`${URL_API}/pascom`, { cache: 'no-cache' });
+                // Só as fotos e vídeos enviados para a COMUNIDADE DO CARMO
+                const r = await fetch(`${URL_API}/pascom?igreja=${IGREJA_PASCOM}`, { cache: 'no-cache' });
                 if (!r.ok) throw new Error('http ' + r.status);
                 const dados = await r.json();
                 if (!Array.isArray(dados)) throw new Error('formato');
